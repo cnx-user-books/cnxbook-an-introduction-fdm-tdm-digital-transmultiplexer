@@ -1,0 +1,1023 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Appendix C</title>
+  <metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m32675</md:content-id>
+  <md:title>Appendix C</md:title>
+  <md:abstract/>
+  <md:uuid>5232f0b5-cc5b-46c4-b761-6b290e1d2d70</md:uuid>
+</metadata>
+
+<content>
+    <section id="cid1">
+      <title>Structure and Spectral Description</title>
+      <para id="id214084">The focus of this technical note is on the decomposition of an FDM signal into its constituent narrowband components. As we have seen, the use of the right assumptions allows digital implementation of this operation to be done very efficiently with an FDM-to-TDM transmultiplexer. In practice, there are applications in which it is desirable to perform the converse operation - combine multiple narrowband signals into an FDM composite. As might be expected, if suitable simplifying assumptions are made, some of the same efficiencies that lead to the FDM-to-TDM transmultiplexer allow the formulation of a TDM-to-FDM transmultiplexer. This appendix demonstrates how this is done. For simplicity, the architecture shown here uses complex-valued input signals and produces a complex-valued output signal.</para>
+      <para id="id214094">The block diagram of a digitally implemented frequency-division multiplexer is shown in <link target-id="uid1"/>. Each input signal, denoted <m:math overflow="scroll"><m:mrow><m:msub><m:mi>x</m:mi><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>, is complex-valued and sampled at a rate of <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>M</m:mi></m:mfrac></m:math>. It is zero-filled by the factor <emphasis effect="italics">M</emphasis> to produce the sequence <m:math overflow="scroll"><m:mrow><m:msub><m:mover><m:mi>x</m:mi><m:mo>¯</m:mo></m:mover><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> and then lowpass-filtered to produce the interpolated sequence <m:math overflow="scroll"><m:mrow><m:msub><m:mi>ρ</m:mi><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>. This interpolated sequence is then upconverted by <emphasis effect="italics">ω<sub>n</sub></emphasis> and then added with other similarly processed inputs to produce the FDM output <m:math overflow="scroll"><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>.</para>
+      <figure id="uid1"><media id="uid1_media" alt="This figure is a flow chart progressing from left to right. On the left hand side is the phrase Complex Samples above the mathematical expression X_n(r)@f_s/M. An arrow points to the right from the expression to a rectangle containing the phrase Zero-fill by M. Below this rectangel is a series of five vertical dots. An arrow points to the right from the previous rectangle to another rectangle. Above the arrow is the expression (this x has an overbar) x_n(k). The rectangle contains the phrase FIR Lowpass Filter and below the rectangle is a series of five vertical dots. An arrow points to the right and above this arrow is the expression p-n(k). The arrow points to a circle an x. Below the circle is another arrow labeled with the expression below e^(jω_nkT). There are also a series of five dots below this expression. Another arrow points from the circle to the right to another circle containing a +. Around the left side of this circle are five other arrows pointing to the circle, and on the left end of these arrows are dots. To the right of this circle is another arrow pointing to the right to the phrase FDM Output y(k)@f_s">
+          <image mime-type="image/png" src="../../media/fig33.png" id="uid1_onlineimage" width="700"><!-- NOTE: attribute width changes image size online (pixels). original width is 2500. --></image>
+          <image for="pdf" mime-type="application/postscript" src="../../media/fig33.eps" id="uid1_printimage"/>
+        </media>
+        
+      <caption>Analytical View of a TDM-FDM Transmultiplexer</caption></figure>
+      <para id="id214236">The spectral implications of these steps are shown in <link target-id="uid2"/>. We start by assuming that the narrowband input signal's spectrum is as shown in <link target-id="uid2"/>(a). The zero-filling process creates <m:math overflow="scroll"><m:mrow><m:mi>M</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math> additional images of the input spectrum and expands the sampling rate to <emphasis effect="italics">f<sub>s</sub></emphasis> Hz. A properly designed lowpass filter removes the images created by the zero-filling, leaving only the original image centered at DC, shown in <link target-id="uid2"/>(d). Multiplication by <m:math overflow="scroll"><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:msub><m:mi>ω</m:mi><m:mi>n</m:mi></m:msub><m:mi>k</m:mi><m:mi>T</m:mi></m:mrow></m:msup></m:math> translates the signal so that it is centered at <emphasis effect="italics">ω<sub>n</sub></emphasis> Hz. If the other translation frequencies are chosen so that the other upconverted input signals do not overlap, then the situation shown in <link target-id="uid2"/>(f) results, that is, the separate input narrowband signals all appear in the single composite output <m:math overflow="scroll"><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>, but in disjoint spectral bands.</para>
+      <figure id="uid2"><media id="uid2_media" alt="This figure consists of 6 images. The first image is labeled (a) Input channel spectrum and consist of a horizontal line on which sits a right triangle where the right angle is formed by the horizontal line and a line rising perpendicular to it on the right side of the line. On the left end of the horizontal line is a small vertical line under which is the mathematical expression f_s/-2M. On the right end of the horizontal line is a small vertical line under which is the mathematical expression f_s/2M. The next figure is labeled (b) After zero-filing. The image consist of a horizontal line whose extremes are labeled -f_s/2 on the left and f_s/2 on the right. Sitting on the line are three right triangles like the previously discussed graph, and also a piece of a triangle on the left missing the right most point and a piece of a triangle on the right missing the left half of the triangle. The third image is labeled Response of LPF. The image consist of a horizontal line with the extremes labeled on the left -f_s/2 and f_s/2 on the right. In the middle of this graph shape which has a nearly vertical lines on the left and right that curve at the top and a straight line the continues from here to connect the two lines. These lines in conjuctions with the bottom horizontal line make something like a curved trapazoid. The fourth image is labeled Filtered, zero-filled signal. It consist of a long horizontal line with the extremes labeled -f_s/2 on the left and f_s/2 on the right. In the middle of this line is a lone right triangle. The fifth  image consist of a long horizontal line with its extremes labeled -f_s/2 on the left and f_s/2 on the right. On the far right side of this line is a single shaded right triangle with a line pointing from the previous graphs right triangle to this one. The sixth image consist of a long horizontal line with the extremes labeled -f_s/2 on the left and f_s/2 on the right. On this line from left to right there is a scalene triangle, a trapazoid forming a right angle on the left corners, a figure that looks like half of a square with rounded corners, and a shaded right triangle.">
+          <image mime-type="image/png" src="../../media/fig34.png" id="uid2_onlineimage" width="650"><!-- NOTE: attribute width changes image size online (pixels). original width is 2105. --></image>
+          <image for="pdf" mime-type="application/postscript" src="../../media/fig34.eps" id="uid2_printimage"/>
+        </media>
+        
+      <caption>Spectral Implications of Passing a Signal Through a TDM-to-FDM Transmultiplexer</caption></figure>
+    </section>
+    <section id="cid2">
+      <title>Mathematical description of equations</title>
+      <para id="id213580">We now develop a set that describes the block diagram shown in <link target-id="uid1"/>. The zero-filled input <m:math overflow="scroll"><m:mrow><m:msub><m:mover><m:mi>x</m:mi><m:mo>¯</m:mo></m:mover><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is given by</para>
+      <equation id="id214558">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mover>
+                <m:mi>x</m:mi>
+                <m:mo>¯</m:mo>
+              </m:mover>
+              <m:mi>ℏ</m:mi>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mfenced separators="" open="{" close="">
+              <m:mtable>
+                <m:mtr>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:msub>
+                        <m:mi>x</m:mi>
+                        <m:mi>n</m:mi>
+                      </m:msub>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>r</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:mo>,</m:mo>
+                    </m:mrow>
+                  </m:mtd>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mi>k</m:mi>
+                      <m:mspace width="4pt"/>
+                      <m:mo>=</m:mo>
+                      <m:mi>r</m:mi>
+                      <m:mi>M</m:mi>
+                      <m:mo>,</m:mo>
+                      <m:mspace width="4pt"/>
+                      <m:mi mathvariant="normal">p</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>0</m:mn>
+                      <m:mo>,</m:mo>
+                    </m:mrow>
+                  </m:mtd>
+                </m:mtr>
+                <m:mtr>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mn>0</m:mn>
+                      <m:mo>,</m:mo>
+                    </m:mrow>
+                  </m:mtd>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mi>k</m:mi>
+                      <m:mspace width="4pt"/>
+                      <m:mo>≠</m:mo>
+                      <m:mi>r</m:mi>
+                      <m:mi>M</m:mi>
+                      <m:mo>,</m:mo>
+                      <m:mspace width="4pt"/>
+                      <m:mi>p</m:mi>
+                      <m:mo>≠</m:mo>
+                      <m:mn>0</m:mn>
+                      <m:mo>,</m:mo>
+                    </m:mrow>
+                  </m:mtd>
+                </m:mtr>
+              </m:mtable>
+            </m:mfenced>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id214692">that is, <m:math overflow="scroll"><m:mrow><m:msub><m:mover><m:mi>x</m:mi><m:mo>¯</m:mo></m:mover><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> equals <m:math overflow="scroll"><m:mrow><m:msub><m:mi>x</m:mi><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> when <m:math overflow="scroll"><m:mrow><m:mi>k</m:mi><m:mo>=</m:mo><m:mi>M</m:mi><m:mi>r</m:mi></m:mrow></m:math> but equals 0 otherwise. If we write <emphasis effect="italics">k</emphasis> as <m:math overflow="scroll"><m:mrow><m:mi>k</m:mi><m:mo>≡</m:mo><m:mi>r</m:mi><m:mi>M</m:mi><m:mo>+</m:mo><m:mi>p</m:mi></m:mrow></m:math>, with <emphasis effect="italics">p</emphasis> ranging from 0 to <m:math overflow="scroll"><m:mrow><m:mi>M</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math>, then we see that <m:math overflow="scroll"><m:mrow><m:msub><m:mover><m:mi>x</m:mi><m:mo>¯</m:mo></m:mover><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> equals zero unless <m:math overflow="scroll"><m:mrow><m:mi>p</m:mi><m:mo>=</m:mo><m:mn>0</m:mn></m:mrow></m:math>.</para>
+      <para id="id214845">The next step is the lowpass filtering of the zero-filled sequence. Denote the pulse response of this filter, as usual, by <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>ℓ</m:mi><m:mo>)</m:mo></m:mrow></m:math>, where <emphasis effect="italics">ℓ</emphasis> runs from 0 to <m:math overflow="scroll"><m:mrow><m:mi>L</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math>, and <emphasis effect="italics">L</emphasis> is the pulse response duration. With no loss of generality we can assume that <emphasis effect="italics">L</emphasis> is an integer multiple of <emphasis effect="italics">M</emphasis>, the interpolation factor, and therefore that there exists some positive integer <emphasis effect="italics">Q</emphasis> that satisfies the equation <m:math overflow="scroll"><m:mrow><m:mi>L</m:mi><m:mo>≡</m:mo><m:mover><m:mi>Q</m:mi><m:mo>¯</m:mo></m:mover><m:mi>M</m:mi></m:mrow></m:math>. This in turn allows <emphasis effect="italics">ℓ</emphasis>, the running index of the pulse response, to be written as <m:math overflow="scroll"><m:mrow><m:mi>ℓ</m:mi><m:mo>=</m:mo><m:mi>q</m:mi><m:mi>M</m:mi><m:mo>+</m:mo><m:mi>v</m:mi></m:mrow></m:math>, where the integer <emphasis effect="italics">q</emphasis> runs from 0 to <m:math overflow="scroll"><m:mrow><m:mover><m:mi>Q</m:mi><m:mo>¯</m:mo></m:mover><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math> and the integer <m:math><m:mi>v</m:mi></m:math> runs from 0 to <m:math overflow="scroll"><m:mrow><m:mi>M</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math>.</para>
+      <para id="id215013">The output of the lowpass interpolation filter <m:math overflow="scroll"><m:mrow><m:msub><m:mi>ρ</m:mi><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is given by the expression</para>
+      <equation id="id215039">
+        <m:math overflow="scroll" mode="display">
+          <m:mstyle scriptlevel="0" displaystyle="true">
+            <m:mrow>
+              <m:msub>
+                <m:mi>p</m:mi>
+                <m:mi>n</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>k</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>ℓ</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>L</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:munderover>
+              <m:msub>
+                <m:mover>
+                  <m:mi>x</m:mi>
+                  <m:mo>¯</m:mo>
+                </m:mover>
+                <m:mi>n</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>k</m:mi>
+                <m:mo>-</m:mo>
+                <m:mi>ℓ</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mi>h</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>ℓ</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>q</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+                <m:mrow>
+                  <m:mover>
+                    <m:mi>Q</m:mi>
+                    <m:mo>¯</m:mo>
+                  </m:mover>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:munderover>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>ν</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>M</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:munderover>
+              <m:msub>
+                <m:mover>
+                  <m:mi>x</m:mi>
+                  <m:mo>¯</m:mo>
+                </m:mover>
+                <m:mi>n</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>k</m:mi>
+                <m:mo>-</m:mo>
+                <m:mi>q</m:mi>
+                <m:mi>M</m:mi>
+                <m:mspace width="4pt"/>
+                <m:mo>-</m:mo>
+                <m:mi>ν</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mi>h</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>q</m:mi>
+                <m:mi>M</m:mi>
+                <m:mspace width="4pt"/>
+                <m:mo>+</m:mo>
+                <m:mi>ν</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mrow>
+          </m:mstyle>
+        </m:math>
+      </equation>
+      <para id="id215225">Substituting the decomposition of <emphasis effect="italics">k</emphasis> as <m:math overflow="scroll"><m:mrow><m:mi>r</m:mi><m:mi>M</m:mi><m:mo>+</m:mo><m:mi>p</m:mi></m:mrow></m:math> yields</para>
+      <equation id="id215251"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>p</m:mi>
+              <m:mi>n</m:mi>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:munderover>
+<m:mrow>
+              <m:mo>∑</m:mo>
+</m:mrow>        
+      <m:mrow>
+                <m:mi>q</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mover>
+                  <m:mi>Q</m:mi>
+                  <m:mo>¯</m:mo>
+                </m:mover>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:munderover>
+<m:mrow>
+              <m:mo>∑</m:mo>
+</m:mrow>        
+      <m:mrow>
+                <m:mi>ν</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>M</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:msub>
+              <m:mover>
+                <m:mi>x</m:mi>
+                <m:mo>¯</m:mo>
+              </m:mover>
+              <m:mi>n</m:mi>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>r</m:mi>
+                <m:mo>-</m:mo>
+                <m:mi>q</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mi>M</m:mi>
+              <m:mo>+</m:mo>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>p</m:mi>
+                <m:mo>-</m:mo>
+                <m:mi>ν</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mi>h</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>q</m:mi>
+              <m:mi>M</m:mi>
+              <m:mo>+</m:mo>
+              <m:mi>ν</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id215385">Note that <m:math overflow="scroll"><m:mrow><m:msub><m:mover><m:mi>x</m:mi><m:mo>¯</m:mo></m:mover><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> has the sifting property, that is, it is non-zero only when <m:math overflow="scroll"><m:mrow><m:mi>p</m:mi><m:mo>-</m:mo><m:mi>v</m:mi><m:mo>=</m:mo><m:mn>0</m:mn></m:mrow></m:math>, because of its zero-filling. Using this, we can write <m:math overflow="scroll"><m:mrow><m:mi>ρ</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo><m:mo>≡</m:mo><m:mi>ρ</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:math> as</para>
+      <equation id="id215463"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>ρ</m:mi>
+              <m:mi>n</m:mi>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>≡</m:mo>
+            <m:msub>
+              <m:mi>ρ</m:mi>
+              <m:mi>n</m:mi>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>r</m:mi>
+              <m:mo>,</m:mo>
+              <m:mi>p</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:munderover>
+<m:mrow>
+              <m:mo>∑</m:mo>
+</m:mrow>        
+      <m:mrow>
+                <m:mi>q</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mover>
+                  <m:mi>Q</m:mi>
+                  <m:mo>¯</m:mo>
+                </m:mover>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:msub>
+              <m:mi>x</m:mi>
+              <m:mi>n</m:mi>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>r</m:mi>
+              <m:mo>-</m:mo>
+              <m:mi>q</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mi>h</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>q</m:mi>
+              <m:mi>M</m:mi>
+              <m:mo>+</m:mo>
+              <m:mi>p</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id215571">Note the close relationship of this expression to the ones developed for <m:math overflow="scroll"><m:mrow><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:math> in previous sections. It is a weighted combination of the input data and, so far, does not depend on the frequency to which the signal will be upconverted.</para>
+      <para id="id215596">Now we produce the multiplexer output by upconverting each interpolated input, indexed by <emphasis effect="italics">n</emphasis>, to its desired center frequency <emphasis effect="italics">ω<sub>n</sub></emphasis> and then summing them. This sum is given by</para>
+      <equation id="id215622"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>y</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:munderover>
+<m:mrow>
+              <m:mo>∑</m:mo>
+</m:mrow>        
+      <m:mrow>
+                <m:mi>n</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:msub>
+              <m:mi>ρ</m:mi>
+              <m:mi>n</m:mi>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mi>j</m:mi>
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mi>n</m:mi>
+                </m:msub>
+                <m:mi>k</m:mi>
+                <m:mi>T</m:mi>
+              </m:mrow>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id215699">where <emphasis effect="italics">N</emphasis> is the number of components to be multiplexed.</para>
+      <para id="id215711">If we substitute the expression of <m:math overflow="scroll"><m:mrow><m:msub><m:mi>ρ</m:mi><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:msub><m:mi>ρ</m:mi><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> into <link target-id="id215622"/>, decompose <emphasis effect="italics">k</emphasis> in the exponential's argument into <emphasis effect="italics">r</emphasis> and <emphasis effect="italics">p</emphasis>, and reverse the order of summation, we obtain a general expression for a digital frequency-division multiplexer:</para>
+      <equation id="id215782">
+        <m:math overflow="scroll" mode="display">
+          <m:mtable>
+            <m:mtr>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mi>y</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>k</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mstyle scriptlevel="0" displaystyle="true">
+                  <m:mrow>
+                    <m:munderover>
+                      <m:mo>∑</m:mo>
+                      <m:mrow>
+                        <m:mi>n</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mn>0</m:mn>
+                      </m:mrow>
+                      <m:mrow>
+                        <m:mi>N</m:mi>
+                        <m:mo>-</m:mo>
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                    </m:munderover>
+                    <m:msup>
+                      <m:mrow>
+                        <m:mi>e</m:mi>
+                      </m:mrow>
+                      <m:mrow>
+                        <m:mi>j</m:mi>
+                        <m:msub>
+                          <m:mi>ω</m:mi>
+                          <m:mi>n</m:mi>
+                        </m:msub>
+                        <m:mi>r</m:mi>
+                        <m:mi>M</m:mi>
+                        <m:mi>T</m:mi>
+                      </m:mrow>
+                    </m:msup>
+                    <m:mo>·</m:mo>
+                    <m:mspace width="4pt"/>
+                    <m:msup>
+                      <m:mi>e</m:mi>
+                      <m:mrow>
+                        <m:mi>j</m:mi>
+                        <m:msub>
+                          <m:mi>ω</m:mi>
+                          <m:mi>n</m:mi>
+                        </m:msub>
+                        <m:mi>p</m:mi>
+                        <m:mi>T</m:mi>
+                      </m:mrow>
+                    </m:msup>
+                    <m:mfenced separators="" open="{" close="}">
+                      <m:mstyle scriptlevel="0" displaystyle="true">
+                        <m:munderover>
+                          <m:mo>∑</m:mo>
+                          <m:mrow>
+                            <m:mi>q</m:mi>
+                            <m:mo>=</m:mo>
+                            <m:mn>0</m:mn>
+                          </m:mrow>
+                          <m:mrow>
+                            <m:mover>
+                              <m:mi>Q</m:mi>
+                              <m:mo>¯</m:mo>
+                            </m:mover>
+                            <m:mo>-</m:mo>
+                            <m:mn>1</m:mn>
+                          </m:mrow>
+                        </m:munderover>
+                        <m:msub>
+                          <m:mi>x</m:mi>
+                          <m:mi>n</m:mi>
+                        </m:msub>
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+                          <m:mi>r</m:mi>
+                          <m:mo>-</m:mo>
+                          <m:mi>q</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                        <m:mi>h</m:mi>
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+                          <m:mi>q</m:mi>
+                          <m:mi>M</m:mi>
+                          <m:mspace width="4pt"/>
+                          <m:mo>+</m:mo>
+                          <m:mi>p</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                      </m:mstyle>
+                    </m:mfenced>
+                  </m:mrow>
+                </m:mstyle>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd columnalign="left">
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mstyle scriptlevel="0" displaystyle="true">
+                  <m:mrow>
+                    <m:munderover>
+                      <m:mo>∑</m:mo>
+                      <m:mrow>
+                        <m:mi>q</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mn>0</m:mn>
+                      </m:mrow>
+                      <m:mrow>
+                        <m:mover>
+                          <m:mi>Q</m:mi>
+                          <m:mo>¯</m:mo>
+                        </m:mover>
+                        <m:mo>-</m:mo>
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                    </m:munderover>
+                    <m:mi>h</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>q</m:mi>
+                      <m:mi>M</m:mi>
+                      <m:mo>+</m:mo>
+                      <m:mi>p</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mfenced separators="" open="{" close="}">
+                      <m:mstyle scriptlevel="0" displaystyle="true">
+                        <m:munderover>
+                          <m:mo>∑</m:mo>
+                          <m:mrow>
+                            <m:mi>n</m:mi>
+                            <m:mo>=</m:mo>
+                            <m:mn>0</m:mn>
+                          </m:mrow>
+                          <m:mrow>
+                            <m:mi>N</m:mi>
+                            <m:mo>-</m:mo>
+                            <m:mn>1</m:mn>
+                          </m:mrow>
+                        </m:munderover>
+                        <m:msup>
+                          <m:mi>e</m:mi>
+                          <m:mrow>
+                            <m:mi>j</m:mi>
+                            <m:msub>
+                              <m:mi>ω</m:mi>
+                              <m:mi>n</m:mi>
+                            </m:msub>
+                            <m:mi>r</m:mi>
+                            <m:mi>M</m:mi>
+                            <m:mi>T</m:mi>
+                          </m:mrow>
+                        </m:msup>
+                        <m:msup>
+                          <m:mi>e</m:mi>
+                          <m:mrow>
+                            <m:mi>j</m:mi>
+                            <m:msub>
+                              <m:mi>ω</m:mi>
+                              <m:mi>n</m:mi>
+                            </m:msub>
+                            <m:mi>p</m:mi>
+                            <m:mi>T</m:mi>
+                          </m:mrow>
+                        </m:msup>
+                        <m:msub>
+                          <m:mi>x</m:mi>
+                          <m:mi>n</m:mi>
+                        </m:msub>
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+                          <m:mi>r</m:mi>
+                          <m:mo>-</m:mo>
+                          <m:mi>q</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                      </m:mstyle>
+                    </m:mfenced>
+                  </m:mrow>
+                </m:mstyle>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id216120">This equation assumes that all of the <emphasis effect="italics">N</emphasis> constituent input signals are sampled at the same rate and that the same lowpass interpolating filter is used for each. The upconversion frequencies (the <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:msub><m:mi>ω</m:mi><m:mi>n</m:mi></m:msub><m:mo>}</m:mo></m:mrow></m:math>) are arbitrary, however.</para>
+      <para id="id216150">Suppose now that we choose the upconversion frequencies to be regularly spaced in the spectrum between <m:math overflow="scroll"><m:mrow><m:mo>-</m:mo><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mn>2</m:mn></m:mfrac></m:mrow></m:math> and <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mn>2</m:mn></m:mfrac></m:math>. Mathematically, we do this by assuming that <emphasis effect="italics">ω<sub>n</sub></emphasis> is given by</para>
+      <equation id="id216206">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>ω</m:mi>
+              <m:mi>n</m:mi>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:mn>2</m:mn>
+            <m:mi>π</m:mi>
+            <m:mfrac>
+              <m:mi>n</m:mi>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mi>T</m:mi>
+              </m:mrow>
+            </m:mfrac>
+            <m:mrow>
+              <m:mtext>,</m:mtext>
+              <m:mspace width="4.pt"/>
+              <m:mtext>for</m:mtext>
+            </m:mrow>
+            <m:mspace width="4pt"/>
+            <m:mn>0</m:mn>
+            <m:mo>≤</m:mo>
+            <m:mi mathvariant="normal">n</m:mi>
+            <m:mo>≤</m:mo>
+            <m:mi mathvariant="normal">N</m:mi>
+            <m:mo>-</m:mo>
+            <m:mn>1</m:mn>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id216270">We also define <emphasis effect="italics">K</emphasis> by the familiar ratio <m:math overflow="scroll"><m:mrow><m:mfrac><m:mi>N</m:mi><m:mi>M</m:mi></m:mfrac><m:mo>=</m:mo><m:mi>K</m:mi></m:mrow></m:math>. With these assumptions, the expression for <m:math overflow="scroll"><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:math> further reduces to</para>
+      <equation id="id216333"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>y</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi mathvariant="normal">k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:munderover>
+<m:mrow>
+              <m:mo>∑</m:mo>
+</m:mrow>        
+      <m:mrow>
+                <m:mi mathvariant="normal">q</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mover>
+                  <m:mi mathvariant="normal">Q</m:mi>
+                  <m:mo>¯</m:mo>
+                </m:mover>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:mi>h</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>q</m:mi>
+              <m:mi>M</m:mi>
+              <m:mspace width="4pt"/>
+              <m:mo>+</m:mo>
+              <m:mi>p</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mfenced separators="" open="{" close="}">
+              <m:munderover>
+<m:mrow>         
+       <m:mo>∑</m:mo>
+</m:mrow>        
+        <m:mrow>
+                  <m:mi>n</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>N</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:munderover>
+              <m:msup>
+                <m:mi>e</m:mi>
+                <m:mrow>
+                  <m:mi>j</m:mi>
+                  <m:mn>2</m:mn>
+                  <m:mi>π</m:mi>
+                  <m:mfrac>
+                    <m:mrow>
+                      <m:mi>n</m:mi>
+                      <m:mi>p</m:mi>
+                    </m:mrow>
+                    <m:mi>N</m:mi>
+                  </m:mfrac>
+                </m:mrow>
+              </m:msup>
+              <m:mrow>
+                <m:mo>[</m:mo>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mn>2</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mi>j</m:mi>
+                    <m:mfrac>
+                      <m:mrow>
+                        <m:mi>n</m:mi>
+                        <m:mi>r</m:mi>
+                      </m:mrow>
+                      <m:mi>N</m:mi>
+                    </m:mfrac>
+                  </m:mrow>
+                </m:msup>
+                <m:msub>
+                  <m:mi>x</m:mi>
+                  <m:mi>n</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>r</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mi>q</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>]</m:mo>
+              </m:mrow>
+            </m:mfenced>
+            <m:mo>,</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id216508">the general form of the DFT-based TDM-to-FDM transmultiplexer.</para>
+      <para id="id216511">An important special case of the general equation is the one in which the interpolation factor <emphasis effect="italics">M</emphasis> is chosen to equal the potential number of upconversion carriers <emphasis effect="italics">N</emphasis>. In this case, <m:math overflow="scroll"><m:mrow><m:mi>K</m:mi><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow></m:math>. For this case to be practical, the bandwidth of the input processes <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:msub><m:mi>x</m:mi><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow><m:mo>}</m:mo></m:mrow></m:math> must all be less than <m:math overflow="scroll"><m:mstyle scriptlevel="0" displaystyle="true"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>N</m:mi></m:mfrac></m:mstyle></m:math> Hz and the pulse response <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> must be properly designed. When it is true, <link target-id="id216333"/> reduces to</para>
+      <equation id="id216617"><m:math overflow="scroll" mode="display">
+          <m:mstyle scriptlevel="0" displaystyle="true">
+            <m:mrow>
+              <m:mi>y</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>k</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>q</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+                <m:mrow>
+                  <m:mover>
+                    <m:mi>Q</m:mi>
+                    <m:mo>¯</m:mo>
+                  </m:mover>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:munderover>
+              <m:mi>h</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>q</m:mi>
+                <m:mi>M</m:mi>
+                <m:mo>+</m:mo>
+                <m:mi>p</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mfenced separators="" open="{" close="}">
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>n</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>N</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:munderover>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mn>2</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mfrac>
+                      <m:mrow>
+                        <m:mi>n</m:mi>
+                        <m:mi>p</m:mi>
+                      </m:mrow>
+                      <m:mi>N</m:mi>
+                    </m:mfrac>
+                  </m:mrow>
+                </m:msup>
+                <m:msub>
+                  <m:mi>x</m:mi>
+                  <m:mi>n</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>r</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mi>q</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mfenced>
+            </m:mrow>
+          </m:mstyle>
+<m:mo>.</m:mo>      
+  </m:math>
+      </equation>
+      <para id="id216756">The sum inside the braces can be recognized as the N-point inverse discrete Fourier transform of all <emphasis effect="italics">N</emphasis> inputs <m:math overflow="scroll"><m:mrow><m:msub><m:mi>x</m:mi><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> at time <emphasis effect="italics">r</emphasis>. To make this clear, we define <m:math overflow="scroll"><m:mrow><m:msub><m:mi>D</m:mi><m:mi>p</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>t</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> by the expression</para>
+      <equation id="id216824">
+        <m:math overflow="scroll" mode="display">
+          <m:mstyle scriptlevel="0" displaystyle="true">
+            <m:mrow>
+              <m:msub>
+                <m:mi>D</m:mi>
+                <m:mi>p</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>t</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>n</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>N</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:munderover>
+              <m:msup>
+                <m:mi>e</m:mi>
+                <m:mrow>
+                  <m:mn>2</m:mn>
+                  <m:mi>π</m:mi>
+                  <m:mi>j</m:mi>
+                  <m:mfrac>
+                    <m:mrow>
+                      <m:mi>n</m:mi>
+                      <m:mi>p</m:mi>
+                    </m:mrow>
+                    <m:mi>N</m:mi>
+                  </m:mfrac>
+                </m:mrow>
+              </m:msup>
+              <m:msub>
+                <m:mi>x</m:mi>
+                <m:mi>n</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>t</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mrow>
+          </m:mstyle>
+        </m:math>
+      </equation>
+      <para id="id216915">for integer time index <emphasis effect="italics">t</emphasis>. With this definition, the equation for the basic TDM-to-FDM transmultiplexer becomes</para>
+      <equation id="id216929">
+        <m:math overflow="scroll" mode="display">
+          <m:mstyle scriptlevel="0" displaystyle="true">
+            <m:mrow>
+              <m:mi>y</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>k</m:mi>
+                <m:mo>=</m:mo>
+                <m:mi>r</m:mi>
+                <m:mi>M</m:mi>
+                <m:mo>+</m:mo>
+                <m:mspace width="4pt"/>
+                <m:mi>p</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>≡</m:mo>
+              <m:mi>y</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>r</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>p</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>q</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+                <m:mrow>
+                  <m:mover>
+                    <m:mi>Q</m:mi>
+                    <m:mo>¯</m:mo>
+                  </m:mover>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:munderover>
+              <m:mi>h</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>q</m:mi>
+                <m:mi>N</m:mi>
+                <m:mspace width="4pt"/>
+                <m:mo>+</m:mo>
+                <m:mi>p</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:msub>
+                <m:mi>D</m:mi>
+                <m:mi>p</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>r</m:mi>
+                <m:mo>-</m:mo>
+                <m:mi>q</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mrow>
+          </m:mstyle>
+        </m:math>
+      </equation>
+      <para id="id217049">Thus each sample of the FDM output <m:math overflow="scroll"><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> is a weighted combination of the current and <m:math overflow="scroll"><m:mrow><m:mover><m:mi>Q</m:mi><m:mo>¯</m:mo></m:mover><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math> past DFTs of the <emphasis effect="italics">N</emphasis> channel inputs.</para>
+      <para id="id217097">A block diagram of the processor implied by <link target-id="id216929"/> is shown in <link target-id="uid3"/>. At each input sampling instant <emphasis effect="italics">r</emphasis>, all <emphasis effect="italics">N</emphasis> inputs to the transmultiplexer are Fourier transformed and the resulting N-point DFT stored in a buffer. The transmultiplexer output for each interpolated time instant <m:math overflow="scroll"><m:mrow><m:mi>k</m:mi><m:mo>=</m:mo><m:mi>r</m:mi><m:mi>N</m:mi><m:mo>+</m:mo><m:mi>p</m:mi></m:mrow></m:math> is computed with a dot product of the <m:math overflow="scroll"><m:mover><m:mi>Q</m:mi><m:mo>¯</m:mo></m:mover></m:math> points of the pulse response <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>q</m:mi><m:mi>N</m:mi><m:mo>+</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:math>, for <m:math overflow="scroll"><m:mrow><m:mn>0</m:mn><m:mo>≤</m:mo><m:mi>q</m:mi><m:mo>≤</m:mo><m:mover><m:mi>Q</m:mi><m:mo>¯</m:mo></m:mover><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math>, and the stored DFT points <m:math overflow="scroll"><m:mrow><m:msub><m:mi>D</m:mi><m:mi>p</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>-</m:mo><m:mi>q</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>, for <emphasis effect="italics">q</emphasis> over the same range. Thus <m:math overflow="scroll"><m:mrow><m:mn>2</m:mn><m:mover><m:mi>Q</m:mi><m:mo>¯</m:mo></m:mover></m:mrow></m:math> real multiplies are needed for each output, assuming that <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> is real-valued, and therefore <m:math overflow="scroll"><m:mrow><m:mn>2</m:mn><m:mover><m:mi>Q</m:mi><m:mo>¯</m:mo></m:mover><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub></m:mrow></m:math> multiply-adds/sec are needed for this weighting operation.</para>
+      <figure id="uid3"><media id="uid3_media" alt="This figure is a flow chart progressing from left to right. On the upper left hand side is the phrase Complex Sampled Channel Inputs, below which are three mathematical expression. The first expression is x_0(r) with an arrow pointing to the right. The second expression is x_1(r) with another arrow pointing to the right. The third row only has an arrow pointing to the right, but the fourth row has the expression x_(N-1)(r) with an arrow pointing to the right. All of the arrows point to a rectangle containing the phrase DFT of Order N at Rate f_s/M. A large block arrow points to the right from the first rectangle to another rectangle containing the phrase Buffer Q Most Recent DFT Output Vectors. Then another block arrow points to the right to another rectangle containing the phrase Compute H^TpD_p(r) for each p for Every r. To the right of this rectangle is a series of 8 lines ending in dots. These line are longer on the upper and lower extremes and get shorter as the progress towards the middle. Above these lines is the expression p=0 and below is the expression p=N-1. To the right of this series of lines is an expression y(r,p)=y(k) at rate f_s with an arrow pointing to the left at the space between the second and third lines from the top in the previous series of lines.">
+          <image mime-type="image/png" src="../../media/fig35.png" id="uid3_onlineimage" width="800"><!-- NOTE: attribute width changes image size online (pixels). original width is 2831. --></image>
+          <image for="pdf" mime-type="application/postscript" src="../../media/fig35.eps" id="uid3_printimage"/>
+        </media>
+        
+      <caption>Block Diagram of the Computational Steps Needed for a Basic TDM-FDM Transmultiplexer</caption></figure>
+    </section>
+    <section id="cid3">
+      <title>Relationship between the Basic TDM-FDM and FDM-TDM Transmultiplexers</title>
+      <para id="id217321">We immediately observe that this computation is exactly that required to demultiplex all <emphasis effect="italics">N</emphasis> channels in a basic FDM-to-TDM transmux. In fact, the FDM-TDM and TDM-FDM transmultiplexers are mathematical duals of each other and virtually any manipulation feasible with one has its analog in the other. They are not precisely the same, however. An example is the definition of <emphasis effect="italics">Q</emphasis> and <m:math overflow="scroll"><m:mover><m:mi>Q</m:mi><m:mo>¯</m:mo></m:mover></m:math>. The former depends on <emphasis effect="italics">f<sub>s</sub></emphasis> and <emphasis effect="italics">N</emphasis>, the number of channels, while the latter depends on <emphasis effect="italics">f<sub>s</sub></emphasis> and <emphasis effect="italics">M</emphasis>, the interpolation factor. For the basic transmux equations <m:math overflow="scroll"><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mi>M</m:mi></m:mrow></m:math> and the two are identical, but the fundamental relationship is duality, not equality.</para>
+      <para id="id217421">Practically, however, many things are the same. The computation rate has already been shown to be the same (when the pulse response durations are the same) and the block diagrams are reversed forms of each other. A few other practical observations can be made:</para>
+      <list id="id217426" display="block" list-type="bulleted">
+        <item id="uid4">Picking <emphasis effect="italics">M</emphasis> is tantamount to choosing <emphasis effect="italics">f<sub>s</sub></emphasis>.
+</item>
+        <item id="uid5">Making <m:math overflow="scroll"><m:mrow><m:mi>M</m:mi><m:mo>=</m:mo><m:mi>N</m:mi></m:mrow></m:math> is equivalent to making the channel tuning frequencies equal to the centers of the images created by the zero-filling.
+</item>
+        <item id="uid6">The pulse response <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>ℓ</m:mi><m:mo>)</m:mo></m:mrow></m:math> controls how much of <m:math overflow="scroll"><m:mrow><m:msub><m:mi>x</m:mi><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> leaks into other FDM channels. The design of <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>ℓ</m:mi><m:mo>)</m:mo></m:mrow></m:math> is a compromise between the degree of acceptable passband amplitude distortion, the degree to which the images of the input signal must be suppressed, and the filter order <emphasis effect="italics">L</emphasis>, which proportionally influences the computation needed for the transmultiplexer.
+</item>
+      </list>
+    </section>
+    <section id="cid4">
+      <title>A Pair of Examples</title>
+      <para id="id217581"><link document="m31548">What is an FDM-TDM Transmultiplexer</link> describes several general uses for the FDM-TDM transmultiplexer and <link document="m32668">The Impact of Digital Tuning on the Overall design of an FDM-TDM Transmux</link> examined several case histories of such transmultiplexers when used to solve practical problems. Such depth is not appropriate here, but it useful to see ways in which the TDM-FDM transmultiplexer is used.</para>
+      <para id="id217587"><link target-id="uid7"/>(a) shows a commercial telephone switching application. Several FDM signals enter the system and are demultiplexed by using FDM-TDM transmultiplexers. The demultiplexed channels are presented in a TDM form to the digital switch that reorganizes the voice channel samples in the TDM stream based on the customer's dialled number. The output TDM data is then converted back to FDM form by using TDM-to-FDM transmultiplexers. While it may seem curious to convert to TDM form to perform the switching, it is commonly done owing to the low cost of digital switching, the high cost of direct switching (for example, translating) of FDM channels, and the large number of existing analog transmission systems [circa the 1980s].</para>
+      <figure id="uid7"><media id="uid7_media" alt="This image consist of two figures. The first image is labeled (a) Time-division switching of FDM signals and is a flow graph. The flow begins on the left with the phrase FDM Inputs (for example, Groups or Supergroups) then two parallel arrows point to the left to two parallel rectangles. In between these two arrows is a vertical line of three dots. The upper rectangle contains the phrase FDM-TDM transmux 1, while the lower rectangle contains the phrase FDM-TDM transmux N. Two block arrows point to the left to a single large square labeled Digital Matrix Switch. Two more block arrows point to the right to two parallel rectangles. The upper recrtangle contains the phrase FDM-TDM Transmux 1, and the lower rectangle is labeled FDM-TDM Transmux M. Next two more small arrows point to the right and in between these arrows and to the right is the phrase FDm Outputs. The second image is labeled Frequency-domain filtering. This is another flow graph. On the left hand side is the phrase Wideband signal input. An arrow points for this phrase to the right with the expression x(k) underneath the arrow. To the right of the arrow is a large rectangle that contains the phrase FDM-TDM Transmux. There are a series of these arrows and figures that point to another large rectangle further on the right. Th e first row of this series of arrows has a short arrow point to the right to a circle containing an x. This small arrow has another arrow pointing at it from above where there is the phrase Channelized Signal Components. To the right of the circle is another arrow pointing to the right large rectangle. The second line progresses much the same way. An arrow points to the right to a circle containing an x. This line is a little longer the the line in the first row, so that the circle is below and to the right of the upper circle. Another arrow points up to the first circle from this line. Another arrow continues to the right until it reaches the other large rectangle. The third row is the same as the second except that the first arrow is a little longer than the previous first arrow and another arrow points from this arrow to the second circle and the circle containing the x is below and to the right of the previous circle. A final arrow points to the right large rectangle. The fourth row consist of three small parallel line segments that extend to right with dots at the end and then the mirror three dots with three small parallel arrows pointing to the right large rectangle. Between these two sets of arrows is a gap and an arrow points up in this gap to the circle in the previous row. The fifth row is more similar to the first three rows. There is an arrow pointing to the right towards an circle containing and x. This arrow is longer the other rows arrow resulting in the cirlce being below and to the right of the other arrows. Below this arrow is a group of three veritcal lines ending in tildes which are grouped with a curly brace on the bottom with the phrase Frequency-bin Scaling Coefficients. To the right of the circle is another arrow pointing to the right large rectangle. To the right of this rectangle is an arrow under which is the expression y(k) and the arrow points to the phrase Filtered Wideband Output. ">
+          <image mime-type="image/png" src="../../media/fig36.png" id="uid7_onlineimage" width="750"><!-- NOTE: attribute width changes image size online (pixels). original width is 2757. --></image>
+          <image for="pdf" mime-type="application/postscript" src="../../media/fig36.eps" id="uid7_printimage"/>
+        </media>
+        
+      <caption>Two Applications of TDM-FDM Transmultiplexers</caption></figure>
+      <para id="id217608"><link target-id="uid7"/>(b) shows another example of a TDM-to-FDM transmultiplexer, this one also paired with a FDM-TDM transmultiplexer. The objective of this architecture is to form an easily controlled, high-resolution digital FIR filter. The input signal is decomposed into <emphasis effect="italics">N</emphasis><emphasis effect="italics">unique</emphasis> bins centered at multiples of <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>N</m:mi></m:mfrac></m:math> Hz, where <emphasis effect="italics">f<sub>s</sub></emphasis> is the input sampling rate. The output of each bin is scaled by its own gain <emphasis effect="italics">w<sub>n</sub></emphasis> and then applied to a TDM-FDM transmultiplexer, whose output is the filter output. If the weighting functions for the two transmultiplexers, <m:math overflow="scroll"><m:mrow><m:msub><m:mi>h</m:mi><m:mi>f</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ℓ</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> and <m:math overflow="scroll"><m:mrow><m:msub><m:mi>h</m:mi><m:mi>t</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ℓ</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>, respectively, are chosen so that each equivalent tuner has bandwidth of about <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>N</m:mi></m:mfrac></m:math>, then it can be seen that this structure resembles a graphic equalizer of the type used in stereo equipment. If all gains <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:msub><m:mi>w</m:mi><m:mi>n</m:mi></m:msub><m:mo>}</m:mo></m:mrow></m:math> are equal to unity, then the input signal is decomposed and then recomposed without significant change. If energy at a specific frequency needs to be removed from the output, then all weights except the one corresponding to the bin with the offending energy are set to unity while that one is lowered, potentially to zero. The concept carries forward to the design of filters with rather general amplitude and phase responses with the proper choice of the weights. The pulse response of the structure has duration of about <m:math overflow="scroll"><m:mrow><m:msub><m:mi>L</m:mi><m:mi>f</m:mi></m:msub><m:mo>+</m:mo><m:msub><m:mi>L</m:mi><m:mi>t</m:mi></m:msub><m:mo>=</m:mo><m:mrow><m:mo>(</m:mo><m:msub><m:mi>Q</m:mi><m:mi>f</m:mi></m:msub><m:mo>+</m:mo><m:msub><m:mi>Q</m:mi><m:mi>t</m:mi></m:msub><m:mo>)</m:mo></m:mrow><m:mi>N</m:mi></m:mrow></m:math>, depending on how <emphasis effect="italics">h<sub>f</sub></emphasis> and <emphasis effect="italics">h<sub>t</sub></emphasis> are selected, and the filter has <emphasis effect="italics">N</emphasis> degrees of freedom.</para>
+      <para id="id217881">Why is this filter structure attractive if it offers the user fewer degrees of freedom in pulse response selection than the effective length of the filter pulse response? The answer comes in its ease of control. A single change in a single coefficient of a conventional transversal FIR filter changes the frequency response of the filter at all frequencies. Conversely, with the transmultiplexer/channel bank approach, the change of one coefficient affects only a spectral band known <emphasis effect="italics">a priori</emphasis> to the user.</para>
+      <para id="id217894">This type of behavior makes it well suited to use in adaptive digital filters, and particularly in those whose purpose is to remove concentrated interfering signals from the signal of actual interest to the user. An FDM-TDM/TDM-FDM transmultiplexer pair used to build such an adaptive filter is described in <link target-id="bid0"/>.</para>
+    </section>
+  </content>
+  <bib:file>
+    <bib:entry id="bid0">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Ferrera, E.R.</bib:author>
+        <bib:title>Adaptive Filters</bib:title>
+        <bib:publisher>Prentice-Hall</bib:publisher>
+        <bib:year>1983</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+  </bib:file>
+</document>

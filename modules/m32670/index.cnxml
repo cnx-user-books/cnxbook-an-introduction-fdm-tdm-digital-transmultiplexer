@@ -1,0 +1,2306 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Derivation of the equations for a Basic FDM-TDM Transmux</title>
+  <metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m32670</md:content-id>
+  <md:title>Derivation of the equations for a Basic FDM-TDM Transmux</md:title>
+  <md:abstract/>
+  <md:uuid>a7463ee4-7204-44e9-90ea-bffc784b588e</md:uuid>
+</metadata>
+
+<content>
+    <para id="id270528">Two intuitively reasonable approaches to developing the equations for the FDM-TDM transmultiplexer are presented in this section. The first emulates <link target-id="uid1"/>. We first develop the equations for a digital counterpart of the analog tuners used in the filter bank and then observe that significant computational improvements can be obtained when the tuning frequencies are linked together in a simple way. The second subsection starts from a different point, that of using the discrete Fourier transform as a spectral channelizer. We ultimately find out that these two approaches yield essentially the same analytical results.</para>
+    <figure id="uid1"><media id="uid1_media" alt="Figure one is a flow chart. From left to right, a title begins the chart. It reads, Baseband Input. An arrow pointing to the right follows. Above the arrow is the description x_c(t). The arrow points at a box containing the label A/D. Below this box is an unlabeled arrow pointing up at the box. To the right of the A/D box is another arrow pointing to the right. Above this arrow is the description x(k). The arrow points at a circle containing a large x. Below this circle is a large arrow pointing up at the circle, with the description e^(-j2πf_0kT) beside it. To the right of the circle is another arrow pointing to the right, and above it is the description ρ(k). The arrow points at a box containing the label Digital Filter h(k). To the right of this box is a bigger arrow pointing to the right. Above this arrow is the label y-bar(k). The arrow points at another box, labeled Decimation M. To the right of this box is a final arrow not pointing at anything, with the description y(r).">
+        <image mime-type="image/png" src="../../media/fig5.png" id="uid1_onlineimage" width="500"><!-- NOTE: attribute width changes image size online (pixels). original width is 2315. --></image>
+        <image for="pdf" mime-type="application/postscript" src="../../media/fig5.eps" id="uid1_printimage"/>
+      </media>
+   
+    <caption>Using a digital Tuner to Extract One FDM Channel</caption></figure>
+    <section id="cid1">
+      <title>The Transmux as a Bank of Single Channel Digital Tuners</title>
+      <section id="uid2"><title>Fundamental equations for a Single-Channel Digital Tuner</title><para id="id270569">The input FDM signal is assumed to be the continuous-time waveform <m:math overflow="scroll"><m:mrow><m:msub><m:mi>x</m:mi><m:mi>c</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>t</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>. The analog-to-digital converter shown in <link target-id="uid1"/> samples this waveform at the uniform rate of <emphasis effect="italics">f<sub>s</sub></emphasis> samples per second, producing the discrete-time sequence <m:math overflow="scroll"><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>, where <m:math overflow="scroll"><m:mrow><m:mi>x</m:mi><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow><m:mo>≡</m:mo><m:msub><m:mi>x</m:mi><m:mi>c</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>t</m:mi><m:mo>=</m:mo><m:mi>k</m:mi><m:mi>T</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>, the integer <emphasis effect="italics">k</emphasis> is the time index, and <emphasis effect="italics">T</emphasis> is the sampling interval given by <m:math overflow="scroll"><m:mrow><m:mi>T</m:mi><m:mo>=</m:mo><m:mfrac><m:mn>1</m:mn><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub></m:mfrac></m:mrow></m:math>. The spectrum of this sequence is shifted down in frequency by multiplying it by a complex exponential of the form <m:math overflow="scroll"><m:msup><m:mi>e</m:mi><m:mrow><m:mo>-</m:mo><m:mi>j</m:mi><m:mn>2</m:mn><m:mi>π</m:mi><m:msub><m:mi>f</m:mi><m:mi>0</m:mi></m:msub><m:mi>k</m:mi><m:mi>T</m:mi></m:mrow></m:msup></m:math>, where <emphasis effect="italics">f<sub>0</sub></emphasis> is the desired amount of the frequency downconversion. The product of <m:math overflow="scroll"><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> and this exponential is then filtered in discrete time by using the pulse response <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>. The duration of the pulse response <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> is assumed to be finite and in particular of length no greater than <emphasis effect="italics">L</emphasis>, an integer. The filter output <m:math overflow="scroll"><m:mrow><m:mover><m:mi>y</m:mi><m:mo>¯</m:mo></m:mover><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is then decimated by a factor of <emphasis effect="italics">M</emphasis>, yielding the sequence <m:math overflow="scroll"><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow></m:math>, where the integer <emphasis effect="italics">r</emphasis> is the decimated time index.</para>
+        <para id="id271038">These processing steps are shown in graphical form in <link target-id="uid4"/>. Both sides of the two-sided spectrum of the sampled input signal are seen in <link target-id="uid4"/>(a). For the moment, the input signal is assumed to be real-valued and therefore the spectrum is symmetrical around 0 Hz <footnote id="uid3">Even though real-valued inputs are assumed here, all of the ensuing analysis applies to complex-valued signals as well.</footnote>. A channel of interest in this spectrum has been shaded and its center frequency is noted to be <emphasis effect="italics">f<sub>0</sub></emphasis>. Multiplying the input signal by <m:math overflow="scroll"><m:msup><m:mi>e</m:mi><m:mrow><m:mo>-</m:mo><m:mi>j</m:mi><m:mn>2</m:mn><m:mi>π</m:mi><m:msub><m:mi>f</m:mi><m:mi>0</m:mi></m:msub><m:mi>k</m:mi><m:mi>T</m:mi></m:mrow></m:msup></m:math> has the effect of shifting the spectrum to the left (assuming <m:math overflow="scroll"><m:mrow><m:mn>0</m:mn><m:mo>≤</m:mo><m:msub><m:mi>f</m:mi><m:mn>0</m:mn></m:msub><m:mo>≤</m:mo><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mn>2</m:mn></m:mfrac></m:mrow></m:math>) and centering the desired channel at 0 Hz. The downconverted signal is now complex-valued, and therefore spectral symmetry around 0 Hz is neither required nor expected. The transfer function of the lowpass filter appears in <link target-id="uid4"/>(c). The filter pulse response <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> is chosen to attain the desired spectral characteristics. In particular, the filter needs to pass the channel of interest without degradation and suppress all others sufficiently. How to design such a pulse response is discussed in Appendix A. In general, the quality of the filter grows with the value of the parameter <emphasis effect="italics">L</emphasis>. The filter shown here is symmetrical around 0 Hz and its pulse response <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> can therefore be real-valued. This is not required however.</para>
+        <para id="id271179">After the application of the shifted signal <m:math overflow="scroll"><m:mrow><m:mi>ρ</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> to the filter, the spectrum shown in <link target-id="uid4"/>(d) results. The desired channel is isolated from all others. It is sampled, however, at a rate far faster than required by the Nyquist sampling theorem. The filter output is then decimated by the factor <emphasis effect="italics">M</emphasis>, resulting in the spectrum shown in <link target-id="uid4"/>(e). The channel's bandwidth is the same as before but now its percentage bandwidth, that is, its bandwidth compared to its final sampling rate, is much higher. In a good digital tuner the percentage bandwidth after decimation usually ranges between 0.5 and 0.9, where unity is the theoretical limit imposed by the sampling theorem.</para>
+        <para id="id271212">In principle, the parameters <emphasis effect="italics">f<sub>s</sub></emphasis> (and hence <emphasis effect="italics">T</emphasis>), <emphasis effect="italics">f<sub>0</sub></emphasis>, <emphasis effect="italics">L</emphasis>, and <emphasis effect="italics">M</emphasis> can be chosen arbitrarily. In fact, significant simplications to the implementation of the tuner occur if they are carefully chosen. To do this we must first develop a general equation for the decimated tuner output <m:math overflow="scroll"><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow></m:math>.</para>
+        <figure id="uid4"><media id="uid4_media" alt="Figure two is a five-part diagram of graphs with descriptions. Each graph plots f_0 on the horizontal axis, only displaying the first and second quadrants, and the horizontal axis ranges in value from -f_s/2 to f_s/2. The first graph, titled (a) Original FDM Spectrum, and described as the associated sequence x(k), is a graph of six congruent right triangles with bases on the horizontal axis. Three right triangles in the second quadrant face the center of the graph with their right angles on the left. Three right triangles in the first quadrant face the center of the graph with their right angles on the right. The center triangle in the first quadrant is shaded black. The second graph, titled (b) Spectrum after Downconversion of Desired Channel, and described as the associated sequence ρ(k), is a graph of six congruent right triangles with bases on the horizontal axis, but unlike (a), they are scattered in a less symmetric pattern. Far on the left is the first right triangle, with its right angle on the left. Just before, just after, and on the vertical axis are the next three triangles, all facing to the right with their right angles on the right side. The center triangle in this series is shaded black. A final two triangles further to the right in the first quadrant face away from the vertical axis with their right angles on the left. The third graph, titled (c) Channel Filter response, and described as the associated sequence h(k), contains a short wavering graph with a flat peak centered on the vertical axis. The fourth graph, titled (d) Resulting Filtered Output, and described  as the associated sequence y-bar(k), contains one small black right triangle centered at the origin with its right angle on the right side. The fifth graph, titled (e) Output after Decimation by Factor of M, and described as the associated sequence y(r), contains a large shaded right triangle with a base approximately twice as long as its height, with its base centered in the graph at the vertical axis.">
+            <image mime-type="image/png" src="../../media/fig6.png" id="uid4_onlineimage" width="500"><!-- NOTE: attribute width changes image size online (pixels). original width is 2642. --></image>
+            <image for="pdf" mime-type="application/postscript" src="../../media/fig6.eps" id="uid4_printimage"/>
+          </media>
+          
+        <caption>Spectral Description of Each Step in the Digital Tuning of a Single Channel</caption></figure>
+        <para id="id271294">The undecimated filter output <m:math overflow="scroll"><m:mrow><m:mover><m:mi>y</m:mi><m:mo>¯</m:mo></m:mover><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> can be written as the convolutional sum of <m:math overflow="scroll"><m:mrow><m:mi>ρ</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> and the filter pulse response <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>:</para>
+        <equation id="id271349">
+          <m:math overflow="scroll" mode="display">
+            <m:mstyle scriptlevel="0" displaystyle="true">
+              <m:mrow>
+                <m:mover>
+                  <m:mi>y</m:mi>
+                  <m:mo>¯</m:mo>
+                </m:mover>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>k</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>=</m:mo>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>l</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>L</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:munderover>
+                <m:mi>h</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>l</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mi>ρ</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>k</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mi>l</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>.</m:mo>
+              </m:mrow>
+            </m:mstyle>
+          </m:math>
+        </equation>
+        <para id="id271426">Substituting the expression for <m:math overflow="scroll"><m:mrow><m:mi>ρ</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> yields</para>
+        <equation id="id271445"><m:math overflow="scroll" mode="display">
+		<m:mstyle scriptlevel="0" displaystyle="true">
+			<m:mrow>
+				<m:mover>
+					<m:mi>y</m:mi>
+					<m:mo>¯</m:mo>
+				</m:mover>
+				<m:mrow>
+					<m:mo>(</m:mo>
+					<m:mi>k</m:mi>
+					<m:mo>)</m:mo>
+				</m:mrow>
+				<m:mo>=</m:mo>
+				<m:munderover>
+					<m:mo>∑</m:mo>
+					<m:mrow>
+						<m:mi>l</m:mi>
+						<m:mo>=</m:mo>
+						<m:mn>0</m:mn>
+					</m:mrow>
+					<m:mrow>
+						<m:mi>L</m:mi>
+						<m:mo>-</m:mo>
+						<m:mn>1</m:mn>
+					</m:mrow>
+				</m:munderover>
+				<m:mi>h</m:mi>
+				<m:mrow>
+					<m:mo>(</m:mo>
+					<m:mi>l</m:mi>
+					<m:mo>)</m:mo>
+				</m:mrow>
+				<m:mi>x</m:mi>
+				<m:mrow>
+					<m:mo>(</m:mo>
+					<m:mi>k</m:mi>
+					<m:mspace width="4pt"/>
+					<m:mo>-</m:mo>
+					<m:mi>l</m:mi>
+					<m:mo>)</m:mo>
+				</m:mrow>
+				<m:msup>
+					<m:mi>e</m:mi>
+					<m:mrow>
+						<m:mo>-</m:mo>
+						<m:mi>j</m:mi>
+						<m:mn>2</m:mn>
+						<m:mi>π</m:mi>
+						<m:msub>
+							<m:mi>f</m:mi>
+							<m:mn>0</m:mn>
+						</m:msub>
+						<m:mi>T</m:mi>
+						<m:mrow>
+							<m:mo>(</m:mo>
+							<m:mi>k</m:mi>
+							<m:mo>-</m:mo>
+							<m:mi>l</m:mi>
+							<m:mo>)</m:mo>
+						</m:mrow>
+					</m:mrow>
+				</m:msup>
+				<m:mo>.</m:mo>
+			</m:mrow>
+		</m:mstyle>
+	</m:math>
+</equation>
+        <para id="id271564">Separating the two terms in the exponential produces the next expression:</para>
+        <equation id="id271567"><m:math overflow="scroll" mode="display">
+            <m:mrow>
+              <m:mover>
+                <m:mi>y</m:mi>
+                <m:mo>¯</m:mo>
+              </m:mover>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi mathvariant="normal">k</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:msup>
+                <m:mi>e</m:mi>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>j</m:mi>
+                  <m:mn>2</m:mn>
+                  <m:mi>π</m:mi>
+                  <m:msub>
+                    <m:mi>f</m:mi>
+                    <m:mn>0</m:mn>
+                  </m:msub>
+                  <m:mi>T</m:mi>
+                  <m:mi>k</m:mi>
+                </m:mrow>
+              </m:msup>
+              <m:mo>·</m:mo>
+              <m:munderover>
+<m:mrow>
+                <m:mo>∑</m:mo>
+</m:mrow>        
+        <m:mrow>
+                  <m:mi>l</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>L</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:munderover>
+              <m:mi>h</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>l</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mi>x</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>k</m:mi>
+                <m:mo>-</m:mo>
+                <m:mi>l</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:msup>
+                <m:mi>e</m:mi>
+                <m:mrow>
+                  <m:mi>j</m:mi>
+                  <m:mn>2</m:mn>
+                  <m:mi>π</m:mi>
+                  <m:msub>
+                    <m:mi>f</m:mi>
+                    <m:mn>0</m:mn>
+                  </m:msub>
+                  <m:mi>T</m:mi>
+                  <m:mi>l</m:mi>
+                </m:mrow>
+              </m:msup>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id271694">Decimation by the factor <emphasis effect="italics">M</emphasis> is introduced by evaluating <m:math overflow="scroll"><m:mrow><m:mover><m:mi>y</m:mi><m:mo>¯</m:mo></m:mover><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> only at the values of <emphasis effect="italics">k</emphasis> where <m:math overflow="scroll"><m:mrow><m:mi>k</m:mi><m:mo>=</m:mo><m:mi>r</m:mi><m:mi>M</m:mi></m:mrow></m:math>. We denote the decimated output as <m:math overflow="scroll"><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow></m:math>, given by</para>
+        <equation id="id271764"><m:math overflow="scroll" mode="display">
+            <m:mrow>
+              <m:mi>y</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>r</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>≡</m:mo>
+              <m:mover>
+                <m:mi>y</m:mi>
+                <m:mo>¯</m:mo>
+              </m:mover>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>k</m:mi>
+                <m:mo>=</m:mo>
+                <m:mi>r</m:mi>
+                <m:mi>M</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:msup>
+                <m:mi>e</m:mi>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>j</m:mi>
+                  <m:mn>2</m:mn>
+                  <m:mi>π</m:mi>
+                  <m:msub>
+                    <m:mi>j</m:mi>
+                    <m:mn>0</m:mn>
+                  </m:msub>
+                  <m:mi>T</m:mi>
+                  <m:mi>r</m:mi>
+                  <m:mi>M</m:mi>
+                </m:mrow>
+              </m:msup>
+              <m:mo>·</m:mo>
+              <m:munderover>
+<m:mrow>
+                <m:mo>∑</m:mo>
+</m:mrow>        
+        <m:mrow>
+                  <m:mi>l</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>L</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:munderover>
+              <m:mi>h</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>l</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mi>x</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>r</m:mi>
+                <m:mi>M</m:mi>
+                <m:mo>-</m:mo>
+                <m:mi>l</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:msup>
+                <m:mi>e</m:mi>
+                <m:mrow>
+                  <m:mi>j</m:mi>
+                  <m:mn>2</m:mn>
+                  <m:mi>π</m:mi>
+                  <m:msub>
+                    <m:mi>f</m:mi>
+                    <m:mn>0</m:mn>
+                  </m:msub>
+                  <m:mi>T</m:mi>
+                  <m:mi>l</m:mi>
+                </m:mrow>
+              </m:msup>
+            </m:mrow>
+          </m:math>
+        </equation>
+      </section>
+      <section id="uid5">
+        <title>Choosing Various System Parameters to Simplify the General Equation for the Tuner Output</title>
+        <para id="id271919">Equation 4 holds for arbitrary choice of <emphasis effect="italics">L</emphasis>, <emphasis effect="italics">M</emphasis>, <emphasis effect="italics">f<sub>0</sub></emphasis>, and <emphasis effect="italics">f<sub>s</sub></emphasis>. To obtain the equations for the basic FDM-TDM transmultiplexer, we must first simplify the general equation for the output of the digital tuner. We do this by making the three key assumptions:</para>
+        <list id="id271967" display="block" list-type="enumerated"><item id="uid6">We assume that the sampling rate <emphasis effect="italics">f<sub>s</sub></emphasis> and the tuning frequency <emphasis effect="italics">f<sub>0</sub></emphasis> are integer multiples of the same <emphasis effect="italics">frequency step </emphasis><m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi></m:mrow></m:math>. In the case of FDM multichannel telephone systems for example, <m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi></m:mrow></m:math> is typically 4 kHz. We define the integer parameters <emphasis effect="italics">N</emphasis> and <emphasis effect="italics">n</emphasis> with the expressions <m:math overflow="scroll"><m:mrow><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mo>≡</m:mo><m:mi>N</m:mi><m:mo>·</m:mo><m:mi>Δ</m:mi><m:mi>f</m:mi></m:mrow></m:math> and <m:math overflow="scroll"><m:mrow><m:msub><m:mi>f</m:mi><m:mn>0</m:mn></m:msub><m:mo>≡</m:mo><m:mi>n</m:mi><m:mo>·</m:mo><m:mi>Δ</m:mi><m:mi>f</m:mi></m:mrow></m:math>.
+</item>
+	<item id="uid7">We next assume that the pulse response duration <emphasis effect="italics">L</emphasis> is an integer multiple of the factor <emphasis effect="italics">N</emphasis> defined above. We define the positive integer parameter <emphasis effect="italics">Q</emphasis> where <m:math overflow="scroll"><m:mrow><m:mi>L</m:mi><m:mo>≡</m:mo><m:mi>Q</m:mi><m:mo>·</m:mo><m:mi>N</m:mi></m:mrow></m:math>. This is a nonrestrictive assumption since <emphasis effect="italics">Q</emphasis> can be chosen large enough to make it true for any value of <emphasis effect="italics">L</emphasis>. If <m:math overflow="scroll"><m:mrow><m:mi>Q</m:mi><m:mi>N</m:mi></m:mrow></m:math> exceeds the minimum required value of <emphasis effect="italics">L</emphasis>, then <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> can be made artificially longer by padding it with zero values. The factor <emphasis effect="italics">Q</emphasis> turns out to be an important design parameter. The parameters <emphasis effect="italics">Q</emphasis> and <emphasis effect="italics">N</emphasis> are determined separately and the resulting value of <emphasis effect="italics">L</emphasis> follows from their choice.
+</item>
+	<item id="uid8">We also assume that the decimation factor <emphasis effect="italics">M</emphasis> is chosen to be closely related to the parameter <emphasis effect="italics">N</emphasis>. Typical values are <m:math overflow="scroll"><m:mrow><m:mi>M</m:mi><m:mo>=</m:mo><m:mi>N</m:mi></m:mrow></m:math> and <m:math overflow="scroll"><m:mrow><m:mi>M</m:mi><m:mo>=</m:mo><m:mfrac><m:mi>N</m:mi><m:mn>2</m:mn></m:mfrac></m:mrow></m:math></item>
+</list>
+        <para id="id272301">We can now examine the effects of these assumptions. First, the relationship between <emphasis effect="italics">f<sub>s</sub></emphasis>, <emphasis effect="italics">f<sub>0</sub></emphasis>, and <m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi></m:mrow></m:math> allows <m:math overflow="scroll"><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow></m:math> to be written as</para>
+        <equation id="id272358">
+          <m:math overflow="scroll" mode="display">
+            <m:mstyle scriptlevel="0" displaystyle="true">
+              <m:mrow>
+                <m:msub>
+                  <m:mi>y</m:mi>
+                  <m:mi>n</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>r</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>=</m:mo>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mi>j</m:mi>
+                    <m:mn>2</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mfrac>
+                      <m:mrow>
+                        <m:mi>n</m:mi>
+                        <m:mi>r</m:mi>
+                        <m:mi>M</m:mi>
+                      </m:mrow>
+                      <m:mi>N</m:mi>
+                    </m:mfrac>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>·</m:mo>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>l</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>L</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:munderover>
+                <m:mi>h</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>l</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mi>x</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>r</m:mi>
+                  <m:mi>M</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mi>l</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mn>2</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mfrac>
+                      <m:mrow>
+                        <m:mi>n</m:mi>
+                        <m:mi>l</m:mi>
+                      </m:mrow>
+                      <m:mi>N</m:mi>
+                    </m:mfrac>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>.</m:mo>
+              </m:mrow>
+            </m:mstyle>
+          </m:math>
+        </equation>
+        <para id="id272491">We subscript the decimated output <m:math overflow="scroll"><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow></m:math> by the parameter <emphasis effect="italics">n</emphasis> to indicate that it depends on the tuning frequency <m:math overflow="scroll"><m:mrow><m:msub><m:mi>f</m:mi><m:mn>0</m:mn></m:msub><m:mo>=</m:mo><m:mi>n</m:mi><m:mo>·</m:mo><m:mi>Δ</m:mi><m:mi>f</m:mi></m:mrow></m:math>.</para>
+        <para id="id272546">The second assumption, the definition of the parameter <emphasis effect="italics">Q</emphasis>, permits the single sum to be split into a nested double sum. To do this, define the new integer indices <emphasis effect="italics">q</emphasis> and <emphasis effect="italics">p</emphasis> by the expressions</para>
+        <equation id="id272578"><m:math overflow="scroll" mode="display">
+		<m:mrow>
+			<m:mi>l</m:mi>
+			<m:mo>≡</m:mo>
+			<m:mi>q</m:mi>
+			<m:mi>N</m:mi>
+			<m:mo>+</m:mo>
+			<m:mi>p</m:mi>
+			<m:mo>,</m:mo>
+			<m:mspace width="4pt"/>
+			<m:mi>w</m:mi>
+			<m:mi>h</m:mi>
+			<m:mi>e</m:mi>
+			<m:mi>r</m:mi>
+			<m:mi>e</m:mi>
+			<m:mspace width="4pt"/>
+			<m:mn>0</m:mn>
+			<m:mo>≤</m:mo>
+			<m:mi>q</m:mi>
+			<m:mo>≤</m:mo>
+			<m:mi>Q</m:mi>
+			<m:mo>-</m:mo>
+			<m:mn>1</m:mn>
+			<m:mspace width="4pt"/>
+			<m:mi>a</m:mi>
+			<m:mi>n</m:mi>
+			<m:mi>d</m:mi>
+			<m:mspace width="4pt"/>
+			<m:mn>0</m:mn>
+			<m:mo>≤</m:mo>
+			<m:mi>p</m:mi>
+			<m:mo>≤</m:mo>
+			<m:mi>N</m:mi>
+			<m:mo>-</m:mo>
+			<m:mi>1</m:mi>
+			<m:mo>.</m:mo>
+		</m:mrow>
+	</m:math>
+</equation>
+        <para id="id272665">Examination of <link target-id="id272578"/> shows that the pulse response running index <emphasis effect="italics">l</emphasis> has a unique value in the range from 0 to <m:math overflow="scroll"><m:mrow><m:mi>L</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math> for each permissible value of <emphasis effect="italics">p</emphasis> and <emphasis effect="italics">q</emphasis>. This permits the single convolutional sum over the index <emphasis effect="italics">l</emphasis> to be replaced (for reasons to be shown) with a double sum over the indices <emphasis effect="italics">p</emphasis> and <emphasis effect="italics">q</emphasis>. In particular,</para>
+        <equation id="id272738"><m:math overflow="scroll" mode="display">
+            <m:mtable>
+              <m:mtr>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>y</m:mi>
+                      <m:mi>n</m:mi>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>r</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mstyle scriptlevel="0" displaystyle="true">
+                    <m:mrow>
+                      <m:msup>
+                        <m:mi>e</m:mi>
+                        <m:mrow>
+                          <m:mo>-</m:mo>
+                          <m:mi>j</m:mi>
+                          <m:mn>2</m:mn>
+                          <m:mi>π</m:mi>
+                          <m:mfrac>
+                            <m:mrow>
+                              <m:mi>n</m:mi>
+                              <m:mi>r</m:mi>
+                              <m:mi>M</m:mi>
+                            </m:mrow>
+                            <m:mi>N</m:mi>
+                          </m:mfrac>
+                        </m:mrow>
+                      </m:msup>
+                      <m:mo>·</m:mo>
+                      <m:munderover>
+                        <m:mo>∑</m:mo>
+                        <m:mrow>
+                          <m:mi>l</m:mi>
+                          <m:mo>=</m:mo>
+                          <m:mn>0</m:mn>
+                        </m:mrow>
+                        <m:mrow>
+                          <m:mi>L</m:mi>
+                          <m:mo>-</m:mo>
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+                      </m:munderover>
+                      <m:mi>h</m:mi>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>l</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:mi>x</m:mi>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>r</m:mi>
+                        <m:mi>M</m:mi>
+                        <m:mo>-</m:mo>
+                        <m:mi>l</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:msup>
+                        <m:mi>e</m:mi>
+                        <m:mrow>
+                          <m:mi>j</m:mi>
+                          <m:mn>2</m:mn>
+                          <m:mi>π</m:mi>
+                          <m:mfrac>
+                            <m:mrow>
+                              <m:mi>n</m:mi>
+                              <m:mi>l</m:mi>
+                            </m:mrow>
+                            <m:mi>N</m:mi>
+                          </m:mfrac>
+                        </m:mrow>
+                      </m:msup>
+                    </m:mrow>
+                  </m:mstyle>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd columnalign="left">
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mstyle scriptlevel="0" displaystyle="true">
+                    <m:mrow>
+                      <m:msup>
+                        <m:mi>e</m:mi>
+                        <m:mrow>
+                          <m:mo>-</m:mo>
+                          <m:mi>j</m:mi>
+                          <m:mn>2</m:mn>
+                          <m:mi>π</m:mi>
+                          <m:mfrac>
+                            <m:mrow>
+                              <m:mi>n</m:mi>
+                              <m:mi>r</m:mi>
+                              <m:mi>M</m:mi>
+                            </m:mrow>
+                            <m:mi>N</m:mi>
+                          </m:mfrac>
+                        </m:mrow>
+                      </m:msup>
+                      <m:mo>·</m:mo>
+                      <m:munderover>
+                        <m:mo>∑</m:mo>
+                        <m:mrow>
+                          <m:mi>p</m:mi>
+                          <m:mo>=</m:mo>
+                          <m:mn>0</m:mn>
+                        </m:mrow>
+                        <m:mrow>
+                          <m:mi>N</m:mi>
+                          <m:mo>-</m:mo>
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+                      </m:munderover>
+                      <m:munderover>
+                        <m:mo>∑</m:mo>
+                        <m:mrow>
+                          <m:mi>q</m:mi>
+                          <m:mo>=</m:mo>
+                          <m:mn>0</m:mn>
+                        </m:mrow>
+                        <m:mrow>
+                          <m:mi>Q</m:mi>
+                          <m:mo>-</m:mo>
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+                      </m:munderover>
+                      <m:mi>h</m:mi>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>q</m:mi>
+                        <m:mi>N</m:mi>
+                        <m:mo>+</m:mo>
+                        <m:mi>p</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:mi>x</m:mi>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>r</m:mi>
+                        <m:mi>M</m:mi>
+                        <m:mo>-</m:mo>
+                        <m:mi>q</m:mi>
+                        <m:mi>N</m:mi>
+                        <m:mo>-</m:mo>
+                        <m:mi>p</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:msup>
+                        <m:mi>e</m:mi>
+                        <m:mrow>
+                          <m:mi>j</m:mi>
+                          <m:mn>2</m:mn>
+                          <m:mi>π</m:mi>
+                          <m:mfrac>
+                            <m:mrow>
+                              <m:mi>n</m:mi>
+                              <m:mo>(</m:mo>
+                              <m:mi>q</m:mi>
+                              <m:mi>N</m:mi>
+                              <m:mo>+</m:mo>
+                              <m:mi>p</m:mi>
+                              <m:mo>)</m:mo>
+                            </m:mrow>
+                            <m:mi>N</m:mi>
+                          </m:mfrac>
+                        </m:mrow>
+                      </m:msup>
+                    </m:mrow>
+                  </m:mstyle>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd columnalign="left">
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mstyle scriptlevel="0" displaystyle="true">
+                    <m:mrow>
+                      <m:msup>
+                        <m:mi>e</m:mi>
+                        <m:mrow>
+                          <m:mo>-</m:mo>
+                          <m:mi>j</m:mi>
+                          <m:mn>2</m:mn>
+                          <m:mi>π</m:mi>
+                          <m:mfrac>
+                            <m:mrow>
+                              <m:mi>n</m:mi>
+                              <m:mi>r</m:mi>
+                              <m:mi>M</m:mi>
+                            </m:mrow>
+                            <m:mi>N</m:mi>
+                          </m:mfrac>
+                        </m:mrow>
+                      </m:msup>
+                      <m:mo>·</m:mo>
+                      <m:munderover>
+                        <m:mo>∑</m:mo>
+                        <m:mrow>
+                          <m:mi>p</m:mi>
+                          <m:mo>=</m:mo>
+                          <m:mn>0</m:mn>
+                        </m:mrow>
+                        <m:mrow>
+                          <m:mi>N</m:mi>
+                          <m:mo>-</m:mo>
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+                      </m:munderover>
+                      <m:munderover>
+                        <m:mo>∑</m:mo>
+                        <m:mrow>
+                          <m:mi>q</m:mi>
+                          <m:mo>=</m:mo>
+                          <m:mn>0</m:mn>
+                        </m:mrow>
+                        <m:mrow>
+                          <m:mi>Q</m:mi>
+                          <m:mo>-</m:mo>
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+                      </m:munderover>
+                      <m:mi>h</m:mi>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>q</m:mi>
+                        <m:mi>N</m:mi>
+                        <m:mo>+</m:mo>
+                        <m:mi>p</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:mi>x</m:mi>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>r</m:mi>
+                        <m:mi>M</m:mi>
+                        <m:mo>-</m:mo>
+                        <m:mi>q</m:mi>
+                        <m:mi>N</m:mi>
+                        <m:mo>-</m:mo>
+                        <m:mi>p</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:msup>
+                        <m:mi>e</m:mi>
+                        <m:mrow>
+                          <m:mi>j</m:mi>
+                          <m:mn>2</m:mn>
+                          <m:mi>π</m:mi>
+                          <m:mfrac>
+                            <m:mrow>
+                              <m:mi>n</m:mi>
+                              <m:mi>q</m:mi>
+                              <m:mi>N</m:mi>
+                            </m:mrow>
+                            <m:mi>N</m:mi>
+                          </m:mfrac>
+                        </m:mrow>
+                      </m:msup>
+                      <m:msup>
+                        <m:mi>e</m:mi>
+                        <m:mrow>
+                          <m:mi>j</m:mi>
+                          <m:mn>2</m:mn>
+                          <m:mi>π</m:mi>
+                          <m:mfrac>
+                            <m:mrow>
+                              <m:mi>n</m:mi>
+                              <m:mi>p</m:mi>
+                            </m:mrow>
+                            <m:mi>N</m:mi>
+                          </m:mfrac>
+                        </m:mrow>
+                      </m:msup>
+                    </m:mrow>
+                  </m:mstyle>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd columnalign="left">
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mstyle scriptlevel="0" displaystyle="true">
+                    <m:mrow>
+                      <m:msup>
+                        <m:mi>e</m:mi>
+                        <m:mrow>
+                          <m:mo>-</m:mo>
+                          <m:mi>j</m:mi>
+                          <m:mn>2</m:mn>
+                          <m:mi>π</m:mi>
+                          <m:mfrac>
+                            <m:mrow>
+                              <m:mi>n</m:mi>
+                              <m:mi>r</m:mi>
+                              <m:mi>M</m:mi>
+                            </m:mrow>
+                            <m:mi>N</m:mi>
+                          </m:mfrac>
+                        </m:mrow>
+                      </m:msup>
+                      <m:mo>·</m:mo>
+                      <m:munderover>
+                        <m:mo>∑</m:mo>
+                        <m:mrow>
+                          <m:mi>p</m:mi>
+                          <m:mo>=</m:mo>
+                          <m:mn>0</m:mn>
+                        </m:mrow>
+                        <m:mrow>
+                          <m:mi>N</m:mi>
+                          <m:mo>-</m:mo>
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+                      </m:munderover>
+                      <m:msup>
+                        <m:mi>e</m:mi>
+                        <m:mrow>
+                          <m:mi>j</m:mi>
+                          <m:mn>2</m:mn>
+                          <m:mi>π</m:mi>
+                          <m:mfrac>
+                            <m:mrow>
+                              <m:mi>n</m:mi>
+                              <m:mi>p</m:mi>
+                            </m:mrow>
+                            <m:mi>N</m:mi>
+                          </m:mfrac>
+                        </m:mrow>
+                      </m:msup>
+                      <m:mrow>
+                        <m:mo>[</m:mo>
+                        <m:munderover>
+                          <m:mo>∑</m:mo>
+                          <m:mrow>
+                            <m:mi>q</m:mi>
+                            <m:mo>=</m:mo>
+                            <m:mn>0</m:mn>
+                          </m:mrow>
+                          <m:mrow>
+                            <m:mi>Q</m:mi>
+                            <m:mo>-</m:mo>
+                            <m:mn>1</m:mn>
+                          </m:mrow>
+                        </m:munderover>
+                        <m:mi>h</m:mi>
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+                          <m:mi>q</m:mi>
+                          <m:mi>N</m:mi>
+                          <m:mo>+</m:mo>
+                          <m:mi>p</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                        <m:mi>x</m:mi>
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+                          <m:mi>r</m:mi>
+                          <m:mi>M</m:mi>
+                          <m:mo>-</m:mo>
+                          <m:mi>q</m:mi>
+                          <m:mi>N</m:mi>
+                          <m:mo>-</m:mo>
+                          <m:mi>p</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                        <m:mo>]</m:mo>
+                      </m:mrow>
+                      <m:mo>.</m:mo>
+                    </m:mrow>
+                  </m:mstyle>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+        <para id="id273399">The first portion of the exponential term in the sum vanishes since its argument is always an integer multiple of <m:math overflow="scroll"><m:mrow><m:mn>2</m:mn><m:mi>π</m:mi></m:mrow></m:math>. Moving the terms of the summation in the last step is possible since the remaining term of the exponential does not depend on the running index <emphasis effect="italics">q</emphasis>. It is useful to give a short name to the terms in brackets in the last equation. Noting that it is a function of the decimated time index <emphasis effect="italics">r</emphasis> and the running index <emphasis effect="italics">p</emphasis>, we define the variable <m:math overflow="scroll"><m:mrow><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:math> by the expression</para>
+        <equation id="id273465">
+          <m:math overflow="scroll" mode="display">
+            <m:mstyle scriptlevel="0" displaystyle="true">
+              <m:mrow>
+                <m:mi>v</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>r</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>≡</m:mo>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>q</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>Q</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:munderover>
+                <m:mi>h</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>q</m:mi>
+                  <m:mi>N</m:mi>
+                  <m:mo>+</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>·</m:mo>
+                <m:mi>x</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>r</m:mi>
+                  <m:mi>M</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mi>q</m:mi>
+                  <m:mi>N</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>.</m:mo>
+              </m:mrow>
+            </m:mstyle>
+          </m:math>
+        </equation>
+        <para id="id273561">Notice that <m:math overflow="scroll"><m:mrow><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:math> is a function of the input data <m:math overflow="scroll"><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>, the filter pulse response <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>l</m:mi><m:mo>)</m:mo></m:mrow></m:math>, and the system parameters <emphasis effect="italics">Q</emphasis>, <emphasis effect="italics">M</emphasis>, and <emphasis effect="italics">N</emphasis>, but it is <emphasis effect="underline">not</emphasis> a function of the selected conversion frequency <emphasis effect="italics">f<sub>0</sub></emphasis>, represented in the equation for <m:math overflow="scroll"><m:mrow><m:msub><m:mi>y</m:mi><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> by the integer <emphasis effect="italics">n</emphasis>.</para>
+        <para id="id273696">Substituting <m:math overflow="scroll"><m:mrow><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:math> into the equation for the decimated output <m:math overflow="scroll"><m:mrow><m:msub><m:mi>y</m:mi><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> of the tuner tuned to frequency <m:math overflow="scroll"><m:mrow><m:msub><m:mi>f</m:mi><m:mn>0</m:mn></m:msub><m:mo>=</m:mo><m:mi>n</m:mi><m:mo>·</m:mo><m:mi>Δ</m:mi><m:mi>f</m:mi></m:mrow></m:math> yields</para>
+        <equation id="id273769"><m:math overflow="scroll" mode="display">
+		<m:mstyle scriptlevel="0" displaystyle="true">
+			<m:mrow>
+				<m:msub>
+					<m:mi>y</m:mi>
+					<m:mi>n</m:mi>
+				</m:msub>
+				<m:mrow>
+					<m:mo>(</m:mo>
+					<m:mi>r</m:mi>
+					<m:mo>)</m:mo>
+				</m:mrow>
+				<m:mo>=</m:mo>
+				<m:msup>
+					<m:mi>e</m:mi>
+					<m:mrow>
+						<m:mo>-</m:mo>
+                                                       <m:mi>j</m:mi>
+						<m:mn>2</m:mn>
+						<m:mi>π</m:mi>
+						<m:mfrac>
+							<m:mrow>
+								<m:mi>n</m:mi>
+								<m:mi>r</m:mi>
+								<m:mi>M</m:mi>
+							</m:mrow>
+							<m:mi>N</m:mi>
+						</m:mfrac>
+					</m:mrow>
+				</m:msup>
+				<m:mo>·</m:mo>
+				<m:munderover>
+					<m:mo>∑</m:mo>
+					<m:mrow>
+						<m:mi>p</m:mi>
+						<m:mo>=</m:mo>
+						<m:mn>0</m:mn>
+					</m:mrow>
+					<m:mrow>
+						<m:mi>N</m:mi>
+						<m:mo>-</m:mo>
+						<m:mn>1</m:mn>
+					</m:mrow>
+				</m:munderover>
+				<m:msup>
+					<m:mi>e</m:mi>
+					<m:mrow>
+						<m:mi>j</m:mi>
+						<m:mn>2</m:mn>
+						<m:mi>π</m:mi>
+						<m:mfrac>
+							<m:mrow>
+								<m:mi>n</m:mi>
+								<m:mi>p</m:mi>
+							</m:mrow>
+							<m:mi>N</m:mi>
+						</m:mfrac>
+					</m:mrow>
+				</m:msup>
+				<m:mi>v</m:mi>
+				<m:mrow>
+					<m:mo>(</m:mo>
+					<m:mi>r</m:mi>
+					<m:mo>,</m:mo>
+					<m:mi>p</m:mi>
+					<m:mo>)</m:mo>
+				</m:mrow>
+			</m:mrow>
+		</m:mstyle>
+	</m:math>
+</equation>
+        <para id="id273886">Notice that the frequency dependency of the tuner shows up only in the exponential terms.</para>
+        <para id="id273890">Before discussing this result in detail it remains to examine the effects of the third assumption. To do this, define the decimation factor <emphasis effect="italics">M</emphasis> by the expression <m:math overflow="scroll"><m:mrow><m:mi>M</m:mi><m:mo>≡</m:mo><m:mfrac><m:mi>N</m:mi><m:mi>K</m:mi></m:mfrac></m:mrow></m:math>, where <m:math overflow="scroll"><m:mrow><m:mi>K</m:mi><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow></m:math>, 2, or 4. Look first at the exponential terms preceding the sum. It can now be written as</para>
+        <equation id="id273938"><m:math overflow="scroll" mode="display">
+		<m:mtable>
+			<m:mtr>
+				<m:mtd columnalign="left">
+					<m:msup>
+						<m:mi>e</m:mi>
+						<m:mrow>
+							<m:mo>-</m:mo>
+                                                                <m:mi>j</m:mi>
+							<m:mn>2</m:mn>
+							<m:mi>π</m:mi>
+							<m:mfrac>
+								<m:mrow>
+									<m:mi>n</m:mi>
+									<m:mi>r</m:mi>
+									<m:mi>M</m:mi>
+								</m:mrow>
+								<m:mi>N</m:mi>
+							</m:mfrac>
+						</m:mrow>
+					</m:msup>
+				</m:mtd>
+				<m:mtd columnalign="left">
+					<m:mo>=</m:mo>
+				</m:mtd>
+				<m:mtd columnalign="left">
+					<m:msup>
+						<m:mi>e</m:mi>
+						<m:mrow>
+							<m:mo>-</m:mo>
+							<m:mi>j</m:mi>
+							<m:mn>2</m:mn>
+							<m:mi>π</m:mi>
+							<m:mfrac>
+								<m:mrow>
+									<m:mi>n</m:mi>
+									<m:mi>r</m:mi>
+								</m:mrow>
+								<m:mi>K</m:mi>
+							</m:mfrac>
+						</m:mrow>
+					</m:msup>
+				</m:mtd>
+			</m:mtr>
+			<m:mtr>
+				<m:mtd/>
+				<m:mtd columnalign="left">
+					<m:mo>=</m:mo>
+				</m:mtd>
+				<m:mtd columnalign="left">
+					<m:msup>
+						<m:mrow>
+							<m:mo>[</m:mo>
+							<m:msup>
+								<m:mi>e</m:mi>
+								<m:mrow>
+									<m:mo>-</m:mo>
+									<m:mi>j</m:mi>
+									<m:mfrac>
+										<m:mrow>
+											<m:mn>2</m:mn>
+											<m:mi>π</m:mi>
+										</m:mrow>
+										<m:mi>K</m:mi>
+									</m:mfrac>
+								</m:mrow>
+							</m:msup>
+							<m:mo>]</m:mo>
+						</m:mrow>
+						<m:mrow>
+							<m:mi>n</m:mi>
+							<m:mi>r</m:mi>
+						</m:mrow>
+					</m:msup>
+				</m:mtd>
+			</m:mtr>
+			<m:mtr>
+				<m:mtd/>
+				<m:mtd columnalign="left">
+					<m:mo>=</m:mo>
+				</m:mtd>
+				<m:mtd columnalign="left">
+					<m:mrow>
+						<m:msup>
+							<m:mrow>
+								<m:mo>[</m:mo>
+								<m:mo>-</m:mo>
+								<m:msup>
+									<m:mi>j</m:mi>
+									<m:mfrac>
+										<m:mn>4</m:mn>
+										<m:mi>K</m:mi>
+									</m:mfrac>
+								</m:msup>
+								<m:mo>]</m:mo>
+							</m:mrow>
+							<m:mrow>
+								<m:mi>n</m:mi>
+								<m:mi>r</m:mi>
+							</m:mrow>
+						</m:msup>
+						<m:mo>.</m:mo>
+					</m:mrow>
+				</m:mtd>
+			</m:mtr>
+		</m:mtable>
+	</m:math>
+</equation>
+        <para id="id274097">With <emphasis effect="italics">K</emphasis> defined this way, the most general expression for <m:math overflow="scroll"><m:mrow><m:msub><m:mi>y</m:mi><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is</para>
+        <equation id="id274133"><m:math overflow="scroll" mode="display">
+            <m:mstyle scriptlevel="0" displaystyle="true">
+              <m:mrow>
+                <m:msub>
+                  <m:mi>y</m:mi>
+                  <m:mi>n</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>r</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>=</m:mo>
+                <m:msup>
+                  <m:mrow>
+                    <m:mo>[</m:mo>
+                    <m:mo>-</m:mo>
+                    <m:msup>
+                      <m:mi>j</m:mi>
+                      <m:mfrac>
+                        <m:mn>4</m:mn>
+                        <m:mi>K</m:mi>
+                      </m:mfrac>
+                    </m:msup>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>n</m:mi>
+                    <m:mi>r</m:mi>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>·</m:mo>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>p</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>N</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:munderover>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mn>2</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mfrac>
+                      <m:mrow>
+                        <m:mi>n</m:mi>
+                        <m:mi>p</m:mi>
+                      </m:mrow>
+                      <m:mi>N</m:mi>
+                    </m:mfrac>
+                  </m:mrow>
+                </m:msup>
+                <m:mi>v</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>r</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>,</m:mo>
+                <m:mi>w</m:mi>
+                <m:mi>h</m:mi>
+                <m:mi>e</m:mi>
+                <m:mi>r</m:mi>
+                <m:mi>e</m:mi>
+              </m:mrow>
+            </m:mstyle>
+          </m:math>
+        </equation>
+        <equation id="id274266">
+          <m:math overflow="scroll" mode="display">
+            <m:mstyle scriptlevel="0" displaystyle="true">
+              <m:mrow>
+                <m:mi>v</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>r</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>=</m:mo>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>q</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>Q</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:munderover>
+                <m:mi>h</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>q</m:mi>
+                  <m:mi>N</m:mi>
+                  <m:mo>+</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>·</m:mo>
+                <m:mi>x</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mfrac>
+                    <m:mrow>
+                      <m:mi>r</m:mi>
+                      <m:mi>N</m:mi>
+                    </m:mrow>
+                    <m:mi>K</m:mi>
+                  </m:mfrac>
+                  <m:mo>-</m:mo>
+                  <m:mi>q</m:mi>
+                  <m:mi>N</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>.</m:mo>
+              </m:mrow>
+            </m:mstyle>
+          </m:math>
+        </equation>
+        <para id="id274366">It can be verified that for <m:math overflow="scroll"><m:mrow><m:mi>K</m:mi><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow></m:math>, 2, or 4, the factor multiplying the sum is at most a negation or a swapping from imaginary to real or vice versa. Thus no actual multiplication is needed. By far the cleanest case is the one in which the other system parameters (for example, <emphasis effect="italics">N</emphasis>, <emphasis effect="italics">Q</emphasis>, and <m:math><m:mi>h</m:mi><m:mo>(</m:mo>
+<m:mi>k</m:mi><m:mo>)</m:mo>
+</m:math>) are selected so that the decimation factor <m:math><m:mi>M</m:mi></m:math> exactly equals <m:math>
+<m:mi>N</m:mi>
+</m:math>, or equivalently that <m:math overflow="scroll"><m:mrow><m:mi>K</m:mi><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow></m:math>. In this case, the exponential preceding the sum collapses to unity, yielding what will be termed in this technical note as the basic FDM-TDM transmux equation<footnote id="uid9">Because of the <m:math overflow="scroll"><m:mrow><m:mi>K</m:mi><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow></m:math> assumption, this equation is the simplest of all those seen to this point and will be referred to as the <emphasis effect="italics">basic equation</emphasis>. Many applications require <emphasis effect="italics">M</emphasis> to be chosen differently however (see Section 4 for example) and in these cases equation 12 should be used.</footnote>:</para>
+        <equation id="id274460">
+          <m:math overflow="scroll" mode="display">
+            <m:mstyle scriptlevel="0" displaystyle="true">
+              <m:mrow>
+                <m:msub>
+                  <m:mi>y</m:mi>
+                  <m:mi>n</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>r</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>=</m:mo>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>p</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>N</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:munderover>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mn>2</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mfrac>
+                      <m:mrow>
+                        <m:mi>n</m:mi>
+                        <m:mi>p</m:mi>
+                      </m:mrow>
+                      <m:mi>N</m:mi>
+                    </m:mfrac>
+                  </m:mrow>
+                </m:msup>
+                <m:mi>v</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>r</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>,</m:mo>
+                <m:mspace width="4pt"/>
+                <m:mi>w</m:mi>
+                <m:mi>h</m:mi>
+                <m:mi>e</m:mi>
+                <m:mi>r</m:mi>
+                <m:mi>e</m:mi>
+              </m:mrow>
+            </m:mstyle>
+          </m:math>
+        </equation>
+        <equation id="id274565">
+          <m:math overflow="scroll" mode="display">
+            <m:mstyle scriptlevel="0" displaystyle="true">
+              <m:mrow>
+                <m:mi>v</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>r</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>=</m:mo>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>q</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>Q</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:munderover>
+                <m:mi>h</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>q</m:mi>
+                  <m:mi>N</m:mi>
+                  <m:mo>+</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>·</m:mo>
+                <m:mi>x</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>r</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mi>q</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mi>N</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>.</m:mo>
+              </m:mrow>
+            </m:mstyle>
+          </m:math>
+        </equation>
+      </section>
+      <section id="uid10">
+        <title>Interpretation of the Basic Tuner equation in Terms of the Discrete Fourier Transform</title>
+        <para id="id274674">Examination of <link target-id="id274565"/> shows that each sample of the tuner output, when tuned to frequency <m:math overflow="scroll"><m:mrow><m:msub><m:mi>f</m:mi><m:mn>0</m:mn></m:msub><m:mo>=</m:mo><m:mi>n</m:mi><m:mi>Δ</m:mi><m:mi>f</m:mi></m:mrow></m:math>, is the N-point inverse discrete Fourier transform (DFT) of the preprocessed data <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo><m:mo>}</m:mo></m:mrow></m:math>, evaluated at frequency index <emphasis effect="italics">n</emphasis>. The signal flow described by the equation is shown in <link target-id="uid11"/>. The sampled input data <m:math overflow="scroll"><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> passes into a digital tapped delay line of length <m:math overflow="scroll"><m:mrow><m:mi>Q</m:mi><m:mi>N</m:mi></m:mrow></m:math> at the sampling rate <emphasis effect="italics">f<sub>s</sub></emphasis>. Every M-th sample, the complete contents of the delay line, all <m:math overflow="scroll"><m:mrow><m:mi>Q</m:mi><m:mi>N</m:mi></m:mrow></m:math> samples, are used to compute <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo><m:mo>}</m:mo></m:mrow></m:math>. Thus the <m:math overflow="scroll"><m:mrow><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:math> are computed at the decimated rate <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>M</m:mi></m:mfrac></m:math>. Each of the <emphasis effect="italics">N</emphasis> elements of <m:math overflow="scroll"><m:mrow><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:math> is computed by weighting <emphasis effect="italics">Q</emphasis> of the delayed input samples by the appropriate coefficient from the pulse response vector <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> and summing them together. Notice that at each decimated sampling interval all of the delayed data and all of the pulse response coefficients are used to compute the <m:math overflow="scroll"><m:mrow><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:math>. Notice also that since <m:math overflow="scroll"><m:mrow><m:mi>Q</m:mi><m:mi>N</m:mi></m:mrow></m:math> is usually much greater than <emphasis effect="italics">M</emphasis>, each input sample is used in the production of the <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo><m:mo>}</m:mo></m:mrow></m:math> over several consecutive values of the decimated sampling index <emphasis effect="italics">r</emphasis>.</para>
+        <para id="id274981">The computation of the <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo><m:mo>}</m:mo></m:mrow></m:math> has several names in the literature. In some cases, it is referred to simply as the preprocessor or weighting processor. From the DFT-based filter bank interpretation of the transmultiplexer, in which the filter pulse function <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> is viewed as a spectral window function, the operation is called windowing and folding. Some of the first researchers in the area <link target-id="bid0"/> termed it <emphasis effect="italics">polyphase filtering</emphasis>. Even though the reasons for this name are fairly obscure, it is commonly used.</para>
+        <figure id="uid11"><media id="uid11_media" alt="Figure three is a complex flow chart with three major rows of  objects. The first row is a series of eleven squares containing the label z^-1. The squares are labeled Sampled FDM Input x(k). The squares are grouped in three sections. The first is a series of five squares, with arrows in between them, pointing to the right. To the right of this section are three black dots in line with the arrows. This is followed by a series of three more squares with similar arrows, titled above as x(k-N). To the right of this section are three more black dots in line with the arrows. This is followed by another three squares with similar arrows with the title x(k-QN+1). Below this is a dashed line labeled Decimate by M. Below this, and below the first series of squares, are six arrows pointing down. The next row is labeled Pulse Response Coefficients {h(k)}. This row is a series of circles labeled h(0) through h(5), followed by a black dot, followed by three circles labeled h(N-1), h(N), and h(N+1), followed by two black dots, followed by four more circles labeled h(QN-4), h(QN-3), h(QN-2), h)QN-1). Arrows below these circles point down to a fourth row of objects. This row is centered in the figure with four circles labeled inside with a large plus sign. On the two left circles, there are four black dots along the right side of the circle, and on the two right circles, there are four black dots on top of the circles. In between these two sections of circles are two black dots. The circles point down with arrows to a large rectangle containing an equation. The arrows are labeled v(r, 0), v(r, 1), ..., v(r, N-1). Inside the rectangle, the equation reads y_n(r) = e (-2πrMn)/N N-1 Σ p=0 e^(2πnp/N) v(r, p). Below the rectangle is one more arrow labeled Tuner Output y_n(r) pointing to the right. To the right of the rectangle is a large equation that reads v(r, p) = Q-1 Σ q=0 h(qN + p) × x(rM - qN - p)">
+            <image mime-type="image/png" src="../../media/fig7.png" id="uid11_onlineimage" width="650"><!-- NOTE: attribute width changes image size online (pixels). original width is 3568. --></image>
+            <image for="pdf" mime-type="application/postscript" src="../../media/fig7.eps" id="uid11_printimage"/>
+          </media>
+          
+        <caption>Signal Flow to the Output of the Single-Channel Digital Tuner</caption></figure>
+        <para id="id275052">Once the input data has been preprocessed, windowed and folded, or polyphase filtered, as you will, the resulting <emphasis effect="italics">N</emphasis> values of <m:math overflow="scroll"><m:mrow><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:math> are Fourier-transformed to produce <m:math overflow="scroll"><m:mrow><m:msub><m:mi>y</m:mi><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>. Notice that all of this computation must be repeated for each value of <emphasis effect="italics">r</emphasis>.</para>
+        <para id="id275116">It will be useful later to know how much computation is required to implement this <emphasis effect="italics">simplified</emphasis> tuner. Assume for this calculation that the input data <m:math overflow="scroll"><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> is complex-valued and that the pulse response <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> is real-valued. If so, then <m:math overflow="scroll"><m:mrow><m:mn>2</m:mn><m:mi>Q</m:mi><m:mi>N</m:mi></m:mrow></m:math> multiply-add operations are needed for each computation of the <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo><m:mo>}</m:mo></m:mrow></m:math> and <m:math overflow="scroll"><m:mrow><m:mn>4</m:mn><m:mi>N</m:mi></m:mrow></m:math> multiply-adds (approximately) are needed for the computation of the single point of the DFT, all of this at the decimated sampling rate of <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>M</m:mi></m:mfrac></m:math>. A conventional tuner using a real-valued, L-point pulse response and complex input data requires <m:math overflow="scroll"><m:mrow><m:mn>4</m:mn><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub></m:mrow></m:math> multiply-adds for the mixer and <m:math overflow="scroll"><m:mfrac><m:mrow><m:mn>2</m:mn><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>L</m:mi></m:mrow><m:mi>M</m:mi></m:mfrac></m:math> multiply-adds for the filtering. Comparing the two shows that the filtering/weighting is exactly the same for the two, while the tuning vs. DFT comparison depends on the relative values of <emphasis effect="italics">M</emphasis> and <emphasis effect="italics">N</emphasis>. Using the example of the <emphasis effect="italics">basic transmux</emphasis>, where <m:math overflow="scroll"><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mi>M</m:mi></m:mrow></m:math>, we find that the two are equal. When <m:math overflow="scroll"><m:mrow><m:mi>M</m:mi><m:mo>&lt;</m:mo><m:mi>N</m:mi></m:mrow></m:math>, the simplified equations actually require slightly more computation. Why then do we go to this trouble?</para>
+      </section>
+      <section id="uid12">
+        <title>Generalization to the FFT-Based Digital Transmultiplexer</title>
+        <para id="id275336">What if we desire to tune a second channel, say one that has a center frequency of <m:math overflow="scroll"><m:mrow><m:msub><m:mi>f</m:mi><m:mi>l</m:mi></m:msub><m:mo>=</m:mo><m:mi>m</m:mi><m:mo>·</m:mo><m:mi>Δ</m:mi><m:mi>f</m:mi></m:mrow></m:math> ? Following through the derivation done before, we find that <m:math overflow="scroll"><m:mrow><m:msub><m:mi>y</m:mi><m:mi>m</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is given by the same equations except that <emphasis effect="italics">n</emphasis> is replaced with <emphasis effect="italics">m</emphasis>. Examining the situation more closely we notice that the <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo><m:mo>}</m:mo></m:mrow></m:math> need not be recomputed to obtain the second tuner output. In fact, the only operation required to obtain the second tuner output is to recompute the inverse DFT, but this time evaluated for the index <emphasis effect="italics">m</emphasis> instead of <emphasis effect="italics">n</emphasis>. The conventional tuning approach must be completely repeated to obtain the output for another channel. It is usually the case that the computation of the <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo><m:mo>}</m:mo></m:mrow></m:math> is much larger than the computation required for the DFT. The fact that it need not be repeated quickly makes the preprocessor/DFT scheme significantly more efficient than the conventional digital tuner approach as the number of channels to be tuned grows. If we use the number of multiply-adds as an indication of computational complexity, and if we denote the number of channels to be tuned by the integer <emphasis effect="italics">C</emphasis>, we can quantify this comparison by noting that</para>
+        <equation id="id275494">
+          <m:math overflow="scroll" mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>G</m:mi>
+                <m:mi> converntional </m:mi>
+              </m:msub>
+              <m:mo>=</m:mo>
+              <m:mi>C</m:mi>
+              <m:mrow>
+                <m:mo>[</m:mo>
+                <m:mn>4</m:mn>
+                <m:msub>
+                  <m:mi>f</m:mi>
+                  <m:mi>s</m:mi>
+                </m:msub>
+                <m:mo>+</m:mo>
+                <m:mfrac>
+                  <m:mrow>
+                    <m:mn>2</m:mn>
+                    <m:msub>
+                      <m:mi>f</m:mi>
+                      <m:mi>s</m:mi>
+                    </m:msub>
+                    <m:mi>Q</m:mi>
+                    <m:mi>N</m:mi>
+                  </m:mrow>
+                  <m:mi>M</m:mi>
+                </m:mfrac>
+                <m:mo>]</m:mo>
+              </m:mrow>
+              <m:mi> multiply </m:mi>
+              <m:mo>-</m:mo>
+              <m:mi> adds </m:mi>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id275558">are needed for <emphasis effect="italics">C</emphasis> conventional decimated digital tuners while</para>
+        <equation id="id275572">
+          <m:math overflow="scroll" mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>G</m:mi>
+                <m:mrow>
+                  <m:mi>D</m:mi>
+                  <m:mi>F</m:mi>
+                  <m:mi>T</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mrow>
+                  <m:mn>2</m:mn>
+                  <m:msub>
+                    <m:mi>f</m:mi>
+                    <m:mi>s</m:mi>
+                  </m:msub>
+                  <m:mi>Q</m:mi>
+                  <m:mi>N</m:mi>
+                </m:mrow>
+                <m:mi>M</m:mi>
+              </m:mfrac>
+              <m:mo>+</m:mo>
+              <m:mfrac>
+                <m:mrow>
+                  <m:mn>4</m:mn>
+                  <m:mi>C</m:mi>
+                  <m:msub>
+                    <m:mi>f</m:mi>
+                    <m:mi>s</m:mi>
+                  </m:msub>
+                  <m:mi>N</m:mi>
+                </m:mrow>
+                <m:mi>M</m:mi>
+              </m:mfrac>
+              <m:mi> multiply </m:mi>
+              <m:mo>-</m:mo>
+              <m:mi> adds </m:mi>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id275643">are needed for the preprocessor/DFT method.</para>
+        <para id="id275647">The goal outlined in <link document="m31548">the section "What is an FDM-TDM Transmultiplexer"</link> was to demultiplex all of the channels carried in the input FDM signal. If the input sampling rate is not chosen extravagantly, then the number of channels should be somewhat less than <m:math overflow="scroll"><m:mfrac><m:mi>N</m:mi><m:mn>2</m:mn></m:mfrac></m:math> if the input signal is real-valued, and somewhat less than <emphasis effect="italics">N</emphasis> if the signal is complex-valued. To obtain the worst-case situation, we assume that it is complex-valued and that <m:math overflow="scroll"><m:mrow><m:mi>C</m:mi><m:mo>=</m:mo><m:mi>N</m:mi></m:mrow></m:math>. In this case, the total multiply-add computation is given by</para>
+        <equation id="id275691"><m:math overflow="scroll" mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>G</m:mi>
+                <m:mrow>
+                  <m:mi>D</m:mi>
+                  <m:mi>F</m:mi>
+                  <m:mi>T</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>N</m:mi>
+                <m:mspace width="4pt"/>
+                <m:mtext>channels</m:mtext>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mrow>
+                  <m:mn>2</m:mn>
+                  <m:msub>
+                    <m:mi>f</m:mi>
+                    <m:mi>s</m:mi>
+                  </m:msub>
+                  <m:mi>Q</m:mi>
+                  <m:mi>N</m:mi>
+                </m:mrow>
+                <m:mi>M</m:mi>
+              </m:mfrac>
+              <m:mo>+</m:mo>
+              <m:mfrac>
+                <m:mrow>
+                  <m:mn>4</m:mn>
+                  <m:msub>
+                    <m:mi>f</m:mi>
+                    <m:mi>s</m:mi>
+                  </m:msub>
+                  <m:msup>
+                    <m:mi>N</m:mi>
+                    <m:mn>2</m:mn>
+                  </m:msup>
+                </m:mrow>
+                <m:mi>M</m:mi>
+              </m:mfrac>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id275775">Even though this value is less than that required by the direct tuning method, the quadratic dependence on the number of channels <emphasis effect="italics">N</emphasis> makes this method expensive for situations where a large number of channels must be dealt with.</para>
+        <para id="id275790">Solution to this problem comes in the form of the fast Fourier transform (FFT), a class of algorithms that can be used to efficiently compute all of the points of a DFT if <emphasis effect="italics">N</emphasis> the size of the DFT, meets certain conditions. In particular, if <emphasis effect="italics">N</emphasis> is a so-called <emphasis effect="italics">highly composite</emphasis> number that is, it is the product of small positive integers, then various symmetries can be exploited to dramatically reduce the computation needed to compute the desired <emphasis effect="italics">C</emphasis> tuner outputs.</para>
+        <para id="id275829">In practice the size of the DFT, <emphasis effect="italics">N</emphasis>, is typically chosen to equal <emphasis effect="italics">2<sup>R</sup></emphasis> or <m:math overflow="scroll"><m:msup><m:mn>4</m:mn><m:mfrac><m:mi>R</m:mi><m:mn>2</m:mn></m:mfrac></m:msup></m:math> , where <emphasis effect="italics">R</emphasis> is some positive integer, resulting in what is known as the <emphasis effect="italics">radix-2</emphasis> or <emphasis effect="italics">radix-4</emphasis> FFT, respectively<footnote id="uid13">An important exception to this is the so-called prime-factor transform in which <emphasis effect="italics">N</emphasis> is the product of small, prime factors (e.g., 2, 3, 5 , 7, 11, etc).</footnote>.</para>
+        <para id="id275915">For discussion here we will assume the use of a radix-2 FFT (even though it is well known that the radix-4 algorithm is somewhat more computationally efficient). With this assumption we find that the number of multiply-adds needed to compute all <emphasis effect="italics">N</emphasis> possible tuner outputs, is given by</para>
+        <equation id="id275928">
+          <m:math overflow="scroll" mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>G</m:mi>
+                <m:mrow>
+                  <m:mi> radix </m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>2</m:mn>
+                  <m:mspace width="4pt"/>
+                  <m:mi> FFT </m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi mathvariant="normal">N</m:mi>
+                <m:mspace width="4pt"/>
+                <m:mi> channels </m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mrow>
+                  <m:mn>2</m:mn>
+                  <m:msub>
+                    <m:mi>f</m:mi>
+                    <m:mi>s</m:mi>
+                  </m:msub>
+                  <m:mi>N</m:mi>
+                </m:mrow>
+                <m:mi>M</m:mi>
+              </m:mfrac>
+              <m:mrow>
+                <m:mo>[</m:mo>
+                <m:mi>Q</m:mi>
+                <m:mo>+</m:mo>
+                <m:mi>l</m:mi>
+                <m:mi>o</m:mi>
+                <m:msub>
+                  <m:mi>g</m:mi>
+                  <m:mn>2</m:mn>
+                </m:msub>
+                <m:mi>N</m:mi>
+                <m:mo>]</m:mo>
+              </m:mrow>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id276017">Comparison of this equation with <link target-id="id275572"/> shows that the FFT-based method always requires less computation than direct DFT computation of all <emphasis effect="italics">N</emphasis> tuners and requires less than the direct DFT computation of <emphasis effect="italics">C</emphasis> tuners when <emphasis effect="italics">C</emphasis> exceeds <m:math overflow="scroll"><m:mrow><m:mi>l</m:mi><m:mi>o</m:mi><m:msub><m:mi>g</m:mi><m:mn>2</m:mn></m:msub><m:mi>N</m:mi></m:mrow></m:math>. For example, suppose that: <m:math overflow="scroll"><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>64</m:mn></m:mrow></m:math> for a particular problem. If more than <m:math overflow="scroll"><m:mrow><m:mi>l</m:mi><m:mi>o</m:mi><m:msub><m:mi>g</m:mi><m:mn>2</m:mn></m:msub><m:mn>64</m:mn><m:mo>=</m:mo><m:mn>6</m:mn></m:mrow></m:math> tuners are required, then the FFT is more efficient. If <emphasis effect="italics">C</emphasis> is more on the order of 50, as it probably would be, then FFT-based computation of the DFT is about eight times more efficient than direct computation of the DFT and even more efficient compared to conventional computation of the tuner outputs. A graphical example is shown in <link target-id="uid16"/>.</para>
+        <para id="id276123">The generic FFT-based transmultiplexer consists of a preprocessor, which blocks, weights, and sums the input data to produce the <emphasis effect="italics">N</emphasis> values of <m:math overflow="scroll"><m:mrow><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:math>, and an FFT, which efficiently computes the DFT for every value of <emphasis effect="italics">n</emphasis>. This structure is shown in <link target-id="uid17"/>. The input data is sampled (or provided by a preceding digital subsystem), preprocessed, and DFTed using the FFT algorithm. The FFT output bins are read out sequentially, thus producing the time division multiplexed (TDM) form promised originally.</para>
+        <para id="id276168">The computational efficiency of the transmultiplexer can therefore be traced to two key items:</para>
+        <list id="id276172" display="block" list-type="enumerated"><item id="uid14">Separation of the tuning computation into two segments, one of which (the <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo><m:mo>}</m:mo></m:mrow></m:math>) need be computed only once
+</item>
+          <item id="uid15">The use of the FFT algorithm to compute the inverse DFT
+</item>
+        </list>
+        <para id="id276226">The first accrues from strategic choices of the sampling and tuning frequencies, while the second depends on <emphasis effect="italics">N</emphasis> being chosen to be a highly composite integer.</para>
+        <figure id="uid16"><media id="uid16_media" alt="Figure four is a traditional cartesian graph in the first quadrant, with horizontal axis labeled Channels to be Tuned Simultaneously C, and vertical axis labeled Mega Multiply Adds. The values on the horizontal axis range from 0 to 40 in increments of 10, and the vertical axis ranges from 0 to 150 in increments of 50. There is one horizontal line labeled FFT-based Transmux with a vertical value of approximately 25. At (10, 25) and approximately (32, 25) there are small squares on the line. Beginning near the origin and increasing with a shallow, constant slope is a line labeled DFT-Based Transmux, with two hash-marks near the end of the graph. Beginning at the origin and increasing with a strong positive constant slope is a third line, labeled Conventional One-step Digital Tuning. There is a label in the middle of the figure that reads: System Parameters. f_s = 512 kHz, N = 128, Q = 16, ∆f = 4 kHz, M = N.">
+            <image mime-type="image/png" src="../../media/fig8.png" id="uid16_onlineimage" width="500"><!-- NOTE: attribute width changes image size online (pixels). original width is 2131. --></image>
+            <image for="pdf" mime-type="application/postscript" src="../../media/fig8.eps" id="uid16_printimage"/>
+          </media>
+          
+        <caption>The Number of Multiply-Adds Needed to Compute C Tuner Outputs for a Particular Set of System Parameters</caption></figure>
+        <figure id="uid17"><media id="uid17_media" alt="Figure 5 is a flow chart. Moving from left to right, the flow chart begins with the caption Analog FDM Signal. An arrow points to the right at a large rectangle containing the label A/D. Below this rectangle is an arrow pointing up, labeled f_s = N ⋅ ∆f. A large arrow points to the right from the A/D rectangle at a second rectangle that contains the caption Preprocessor. Below this rectangle are three bullet points that read, block points, weight, computer v(r, p). A large arrow again points to the right at a third rectangle labeled N Point Inverse DFT. To the right of this are a series of small horizontal lines, an arrow pointing to the top-left corner of the figure, and a large arrow pointing to the right. This series of lines and arrows is labeled Commutator.">
+            <image mime-type="image/png" src="../../media/fig9.png" id="uid17_onlineimage" width="500"><!-- NOTE: attribute width changes image size online (pixels). original width is 2610. --></image>
+            <image for="pdf" mime-type="application/postscript" src="../../media/fig9.eps" id="uid17_printimage"/>
+          </media>
+          
+        <caption>The Basic FDM-to-TDM Digital Transmultiplexer</caption></figure>
+      </section>
+    </section>
+    <section id="cid2">
+      <title>The Transmux as a DFT-based Filter Bank</title>
+      <para id="id276275">We have just developed an FDM-TDM transmultiplexer by first writing the equations for a single, decimated digital tuner. The equations for a bank of tuners come from then assuming that (1) they all use the same filter pulse response and (2) their center frequencies are all integer multiples of some basic frequency step. In this section, we develop an alternate view, which happens to yield the same equations. It produces a different set of insights, however, making its presentation worthwhile.</para>
+      <section id="uid18">
+        <title>Using the DFT as a Filter Bank</title>
+        <para id="id276291">Instead of building a bank of tuners and then constraining their tuning frequencies to be regularly spaced, suppose we start with a structure known to provide equally-spaced spectral measurements and then manipulate it to obtain the desired performance.</para>
+        <para id="id276296">Consider the structure shown in <link target-id="uid20"/>. The sampled input signal <m:math overflow="scroll"><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> enters a tapped delay line of length <emphasis effect="italics">N</emphasis>. At every sampling instant, all <emphasis effect="italics">N</emphasis> current and delayed samples are weighted by constant coefficients <m:math overflow="scroll"><m:mrow><m:mi>w</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>)</m:mo></m:mrow></m:math> (where <m:math overflow="scroll"><m:mrow><m:mi>w</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>)</m:mo></m:mrow></m:math> scales <m:math overflow="scroll"><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>-</m:mo><m:mi>i</m:mi><m:mo>)</m:mo></m:mrow></m:math>, for <emphasis effect="italics">i</emphasis> between 0 and <m:math overflow="scroll"><m:mrow><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math>), and then applied to an inverse discrete Fourier transform<footnote id="uid19">Whether or not it is implemented with an FFT is irrelevant at this point. Also, we happen to use the inverse DFT to produce a result consistent with that found in the proceeding subsction, but the forward DFT could also be used.</footnote>. The complete N-point DFT is computed for every value of <emphasis effect="italics">k</emphasis> and produces <emphasis effect="italics">N</emphasis> outputs. The output sample stream from the m-th bin of the DFT is denoted as <m:math overflow="scroll"><m:mrow><m:msub><m:mi>X</m:mi><m:mi>m</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.</para>
+        <figure id="uid20"><media id="uid20_media" alt="Figure six is a flow chart involving three rows of labeled shapes. The first row is labeled Input data, followed by an arrow pointing to the right labeled x(k) at a box containing the caption z^-1. To the right is another arrow pointing right labeled x(k-1) at a box containing the caption z^-1. To the right of this is a longer unlabeled arrow pointing to the right at a third box containing the caption z^-1. Above this box is a caption that reads x(k-N+1). In the middle of each arrow, and after the last box, there are four arrows pointing down at four circles containing a large x. From left to right, these circles have arrows pointing at them from the left side that are labeled w_0, w_1, w_2, and w_N-1. Each circle also has an arrow below it pointing down at a long rectangle containing the caption N-point DFT. Aligned with the arrows above are four more arrows below this rectangle that point at the expressions below them that read from left to right, x_0(k), x_1(k), x_2(k), x_N-1(k).">
+            <image mime-type="image/png" src="../../media/fig10.png" id="uid20_onlineimage" width="500"><!-- NOTE: attribute width changes image size online (pixels). original width is 2168. --></image>
+            <image for="pdf" mime-type="application/postscript" src="../../media/fig10.eps" id="uid20_printimage"/>
+          </media>
+          
+        <caption>Processing Weighted, Delayed Signals with Discrete Fourier Transform</caption></figure>
+        <para id="id276477">Since DFTs are often associated with spectrum analysis, it may seem counterintuitive to consider the output bins as time samples. It is strictly legal from an analytical point of view, however, since the DFT is merely an N-input, N-output, memoryless, linear transformation. Even so, the relationship of this scheme and digital spectrum analysis will be commented upon later. We continue by first examining the path from the input to a specific output bin, the m-th one, say. For every input sample <m:math overflow="scroll"><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> there is an output sample <m:math overflow="scroll"><m:mrow><m:msub><m:mi>X</m:mi><m:mi>m</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>. By inspection we can write an equation relating the input and chosen output:</para>
+        <equation id="id276525">
+          <m:math overflow="scroll" mode="display">
+            <m:mstyle scriptlevel="0" displaystyle="true">
+              <m:mrow>
+                <m:msub>
+                  <m:mi>X</m:mi>
+                  <m:mi>m</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>k</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>=</m:mo>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>p</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>N</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:munderover>
+                <m:mi>x</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>k</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mi>w</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mn>2</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mfrac>
+                      <m:mrow>
+                        <m:mi>m</m:mi>
+                        <m:mi>p</m:mi>
+                      </m:mrow>
+                      <m:mi>N</m:mi>
+                    </m:mfrac>
+                  </m:mrow>
+                </m:msup>
+              </m:mrow>
+            </m:mstyle>
+          </m:math>
+        </equation>
+        <para id="id276624">the m-th bin of an N-point DFT of the weighted, delayed data. We can look at this equation another way by defining <m:math overflow="scroll"><m:mrow><m:msub><m:mover><m:mi>w</m:mi><m:mo>¯</m:mo></m:mover><m:mi>m</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> by the expression</para>
+        <equation id="id276656">
+          <m:math overflow="scroll" mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mover>
+                  <m:mi>w</m:mi>
+                  <m:mo>¯</m:mo>
+                </m:mover>
+                <m:mi>m</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>p</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>≡</m:mo>
+              <m:mi>w</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>p</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>·</m:mo>
+              <m:msup>
+                <m:mi>e</m:mi>
+                <m:mrow>
+                  <m:mi>j</m:mi>
+                  <m:mn>2</m:mn>
+                  <m:mi>π</m:mi>
+                  <m:mfrac>
+                    <m:mrow>
+                      <m:mi>n</m:mi>
+                      <m:mi>p</m:mi>
+                    </m:mrow>
+                    <m:mi>N</m:mi>
+                  </m:mfrac>
+                </m:mrow>
+              </m:msup>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id276722">and observing that <link target-id="id276525"/> can be written as</para>
+        <equation id="id276728">
+          <m:math overflow="scroll" mode="display">
+            <m:mstyle scriptlevel="0" displaystyle="true">
+              <m:mrow>
+                <m:msub>
+                  <m:mi>X</m:mi>
+                  <m:mi>m</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>k</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>=</m:mo>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>p</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>N</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:munderover>
+                <m:mi>x</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>k</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>·</m:mo>
+                <m:msub>
+                  <m:mover>
+                    <m:mi>w</m:mi>
+                    <m:mo>¯</m:mo>
+                  </m:mover>
+                  <m:mi>m</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>.</m:mo>
+              </m:mrow>
+            </m:mstyle>
+          </m:math>
+        </equation>
+        <para id="id276820">From this equation it is clear <m:math overflow="scroll"><m:mrow><m:msub><m:mi>X</m:mi><m:mi>m</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is the output of the FIR digital filter that has <m:math overflow="scroll"><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> as its input and <m:math overflow="scroll"><m:mrow><m:msub><m:mover><m:mi>w</m:mi><m:mo>¯</m:mo></m:mover><m:mi>m</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> as its pulse response. Since the pulse response does not depend on the time index <emphasis effect="italics">k</emphasis>, the filtering is linear and shift-invariant. For such a filter we can compute its transfer function, using the expression</para>
+        <equation id="id276903">
+          <m:math overflow="scroll" mode="display">
+            <m:mstyle scriptlevel="0" displaystyle="true">
+              <m:mrow>
+                <m:msub>
+                  <m:mi>W</m:mi>
+                  <m:mi>m</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>=</m:mo>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>p</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>N</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:munderover>
+                <m:msub>
+                  <m:mover>
+                    <m:mi>w</m:mi>
+                    <m:mo>¯</m:mo>
+                  </m:mover>
+                  <m:mi>m</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>·</m:mo>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mi>j</m:mi>
+                    <m:mi>ω</m:mi>
+                    <m:mi>p</m:mi>
+                    <m:mi>T</m:mi>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>,</m:mo>
+                <m:mspace width="4pt"/>
+                <m:mfrac>
+                  <m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mi>π</m:mi>
+                  </m:mrow>
+                  <m:mi>T</m:mi>
+                </m:mfrac>
+                <m:mo>≤</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>≤</m:mo>
+                <m:mfrac>
+                  <m:mi>π</m:mi>
+                  <m:mi>T</m:mi>
+                </m:mfrac>
+                <m:mo>.</m:mo>
+              </m:mrow>
+            </m:mstyle>
+          </m:math>
+        </equation>
+        <para id="id277027">Suppose that we first choose the simple case with uniform weighting, that is, <m:math overflow="scroll"><m:mrow><m:mi>w</m:mi><m:mo>(</m:mo><m:mi>p</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow></m:math> for <m:math overflow="scroll"><m:mrow><m:mn>0</m:mn><m:mo>≤</m:mo><m:mi>p</m:mi><m:mo>≤</m:mo><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math> and, therefore, <m:math overflow="scroll"><m:mrow><m:msub><m:mover><m:mi>w</m:mi><m:mo>¯</m:mo></m:mover><m:mi>m</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mn>2</m:mn><m:mi>π</m:mi><m:mfrac><m:mrow><m:mi>m</m:mi><m:mi>p</m:mi></m:mrow><m:mi>N</m:mi></m:mfrac></m:mrow></m:msup></m:mrow></m:math>. In this case, <m:math overflow="scroll"><m:mrow><m:msub><m:mi>W</m:mi><m:mi>m</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>w</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is given by</para>
+        <equation id="id277152">
+          <m:math overflow="scroll" mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>W</m:mi>
+                <m:mi>m</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:msup>
+                <m:mi>e</m:mi>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>j</m:mi>
+                  <m:mfrac>
+                    <m:mrow>
+                      <m:mi>π</m:mi>
+                      <m:mi>m</m:mi>
+                    </m:mrow>
+                    <m:mi>N</m:mi>
+                  </m:mfrac>
+                </m:mrow>
+              </m:msup>
+              <m:mo>·</m:mo>
+              <m:msup>
+                <m:mi>e</m:mi>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>j</m:mi>
+                  <m:mfrac>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>N</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mn>1</m:mn>
+                      <m:mo>)</m:mo>
+                      <m:mi>ω</m:mi>
+                      <m:mi>T</m:mi>
+                    </m:mrow>
+                    <m:mn>2</m:mn>
+                  </m:mfrac>
+                </m:mrow>
+              </m:msup>
+              <m:mo>·</m:mo>
+              <m:mfrac>
+                <m:mrow>
+                  <m:mi>s</m:mi>
+                  <m:mi>i</m:mi>
+                  <m:mi>n</m:mi>
+                  <m:mfrac>
+                    <m:mrow>
+                      <m:mi>N</m:mi>
+                      <m:mi>ω</m:mi>
+                      <m:mi>T</m:mi>
+                    </m:mrow>
+                    <m:mn>2</m:mn>
+                  </m:mfrac>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>s</m:mi>
+                  <m:mi>i</m:mi>
+                  <m:mi>n</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mfrac>
+                    <m:mrow>
+                      <m:mi>π</m:mi>
+                      <m:mi>m</m:mi>
+                    </m:mrow>
+                    <m:mi>N</m:mi>
+                  </m:mfrac>
+                  <m:mo>-</m:mo>
+                  <m:mfrac>
+                    <m:mrow>
+                      <m:mi>ω</m:mi>
+                      <m:mi>T</m:mi>
+                    </m:mrow>
+                    <m:mn>2</m:mn>
+                  </m:mfrac>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mfrac>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id277290">The magnitude of this transfer function is plotted in <link target-id="uid21"/>. From this plot we can conclude that the pulse response <m:math overflow="scroll"><m:mrow><m:msub><m:mover><m:mi>w</m:mi><m:mo>¯</m:mo></m:mover><m:mi>m</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> has what might be generally considered to be the frequency response of a bandpass filter. The filter is centered on bin <emphasis effect="italics">m</emphasis> and its bandwidth is nominally <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>N</m:mi></m:mfrac></m:math>. While it might be characterized as a bandpass filter, we also note that the passband is quite rounded and the stopband rejection is relatively poor. The first sidelobes are only 13 dB lower than the peak of the passband response.</para>
+        <para id="id277355">We've now shown that the path from the input to the m-th bin can be described as a finite impulse response (FIR) filtering operation and that the transfer function of that filtering operation has a fairly sloppy bandpass characteristic, at least when the data weighting is uniform. What happens for other values of <emphasis effect="italics">m</emphasis> then? The answer is "the same thing." For each value of <emphasis effect="italics">m</emphasis> between 0 and <m:math overflow="scroll"><m:mrow><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math>, the pulse response <m:math overflow="scroll"><m:mrow><m:msub><m:mover><m:mi>w</m:mi><m:mo>¯</m:mo></m:mover><m:mi>m</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is computed, leading to the transfer function <m:math overflow="scroll"><m:mrow><m:msub><m:mi>W</m:mi><m:mi>m</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>. An overlay of these bandpass responses is shown in the lower portion of <link target-id="uid21"/>. From this we can conclude that the block diagram shown in <link target-id="uid20"/> describes a single-input, N-output bank of filters. The filter center frequencies are spaced uniformly in increments of <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>N</m:mi></m:mfrac></m:math> Hz. All <emphasis effect="italics">N</emphasis> outputs are sampled in time as frequently as the input. When the weighting function <m:math overflow="scroll"><m:mrow><m:mi>w</m:mi><m:mo>(</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:math> is uniform, then the bandpass filters have the form of <link target-id="id277152"/>, shown in <link target-id="uid21"/>.</para>
+        <figure id="uid21"><media id="uid21_media" alt="Figure seven contains two parts. Part a is labeled  Transfer Function H_m(f) of processing from input x(k) to the DFT Output Bin X_m(k). It is the first quadrant of a cartesian graph, with vertical axis labeled Transfer Function H_m(f), and horizontal axis labeled Frequency (Hz). The horizontal axis contains the following labeled points from left to right: -f_s/2, 0, [(m-1)f_s]/N mf_s/N, [(m+1)f_s]/N + f_s/2. The graph contains seven rounded peaks that return to points on the horizontal axis. The peaks are uneven and deformed in shape. The second label corresponds with the fourth point, the third label corresponds with the fifth point, the fourth label corresponds with the sixth peak, and the fifth label corresponds with the sixth point. The sixth peak is significantly larger than any of the other peaks on the graph. Part b is labeled Overlay of Transfer Function for all N DFT Bin Outputs X_m(f), 0 ≤ m ≤ N-1. The vertical axis is labeled Transfer Function H;(f), and the horizontal axis is labeled Frequency (Hz). The graph consists of a series of uniform crossing peaked curves. A new curve begins from the origin at each point that the previous curve reaches its apex, meaning at each marked point on the graph there is a curve at its apex, a curve ending at the horizontal axis, and a curve just beginning on the horizontal axis. These points are labeled -f_s/2, m-1, m, m+1, 0, n-1, n, n+1 ⋅⋅ f_s/2.">
+            <image mime-type="image/png" src="../../media/fig11.png" id="uid21_onlineimage" width="500"><!-- NOTE: attribute width changes image size online (pixels). original width is 2394. --></image>
+            <image for="pdf" mime-type="application/postscript" src="../../media/fig11.eps" id="uid21_printimage"/>
+          </media>
+          
+        <caption>Transfer Functions of the Paths from the Data Input <m:math overflow="scroll"><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> to the DFT Outputs <m:math overflow="scroll"><m:mrow><m:msub><m:mi>X</m:mi><m:mi>m</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math></caption></figure>
+      </section>
+      <section id="uid22">
+        <title>The Implications of Attaining the Desired Bandpass Characteristic</title>
+        <para id="id277551">We've just shown that the DFT of delayed versions of the input sequence <m:math overflow="scroll"><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> has the general properties of a bank of regularly-spaced bandpass filters. Two considerations leave us short of our goals. The first is that the shape of the transfer function for each bandpass filter is not good enough for most applications and must be improved. The second is that of reducing the amount of computation required. We address the first one in this section, and temporarily defer the computation issue.</para>
+        <para id="id277575"><link target-id="uid23"/> shows two transfer functions. The one pointed to from the left is exactly the same as that shown in <link target-id="uid21"/> and defined in <link target-id="id277152"/>. The one pointed to from the right is representative of the type needed for demultiplexing FDM multichannel telephone signals. It offers essentially flat response for most of the passband, has very sharp transition bands, and suppresses all energy outside of the transition bands by 55 dB or more. While other applications may require different transfer functions, as a rule they will be much more stringent than unweighted transfer function shown in <link target-id="uid23"/>.</para>
+        <figure id="uid23"><media id="uid23_media" alt="Figure eight is a graph with horizontal axis labeled Frequency (in Radians) and vertical axis labeled POWER IN. The horizontal axis shows its leftmost point as πf_s and its rightmost point as πf_s. The vertical axis is labeled from -60 to 0 in dB. The graph is a series of tight waves running a pattern of constant wavelength but increasing and decreasing amplitude. The midpoint of the waves begins along a vertical value of -40dB, then increases gradually to a high point of 0dB, where it is labeled, Typical Desired  Characteristic. The graph then symmetrically reduces back to a midpoint of -40. To the left of the vertical axis is the label, Unweighted Transfer Function.">
+            <image mime-type="image/png" src="../../media/fig12.png" id="uid23_onlineimage" width="500"><!-- NOTE: attribute width changes image size online (pixels). original width is 1673. --></image>
+            <image for="pdf" mime-type="application/postscript" src="../../media/fig12.eps" id="uid23_printimage"/>
+          </media>
+          
+        <caption>Comparison of the Unweighted Transfer Function <m:math overflow="scroll"><m:mrow><m:msub><m:mi>W</m:mi><m:mi>m</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> and a typical Desired Characteristic</caption></figure>
+        <para id="id277624">How then do we attain different transfer function characteristics? In fact, we use some of the remaining degrees of freedom, the weighting function <m:math overflow="scroll"><m:mrow><m:mi>w</m:mi><m:mo>(</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:math>. By allowing <m:math overflow="scroll"><m:mrow><m:mi>w</m:mi><m:mo>(</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:math> to be non-uniform we can now alter the shape of the transfer function of each bandpass filter. By using well-known FIR filter design techniques (see <link document="m32646">An Introduction to the FDM-TDM Digital Transmultiplexer: Appendix A</link>) it is possible to attain virtually any shape. It is not, however, possible to always attain the desired shape and the desired bandwidth while keeping the duration of the pulse response constant. In fact, as discussed in <link document="m32646">An Introduction to the FDM-TDM Digital Transmultiplexer: Appendix A</link>, for a constant bandwidth, the pulse response duration must grow as the transition bandwidth is forced to be smaller and as the stopband suppression in increased. The chain of events described in <link target-id="uid24"/> then unfolds.</para>
+        <para id="id277666">Shown across the top of <link target-id="uid24"/> is a stylized version of that seen in the bottom portion of <link target-id="uid21"/>. The uniform weight shown on the top right leads to the bandpass filter shapes shown on the left. Note that the filters are separated in frequency by <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>N</m:mi></m:mfrac></m:math> Hz.</para>
+        <figure id="uid24"><media id="uid24_media" alt="Figure nine is a four-part figure. Part a contains a graph with vertical axis labeled transfer function. It is a series of uniform waves that begin and end at the horizontal axis. They cross each other and continue for half the figure, then continue with some dots in a horizontal line, then finish with more waves. Below the graph is a distance measured between the beginning of a wave and its apex, and the width is labeled Δf = f_s/N. To the right of part a is a horizontal axis containing evenly-spaced line segments, titled Uniform weighting. Part b contains a graph with waves that have wide, flat peaks. The width of half of the wave is measured as Δf = f_s/N. the vertical axis of the graph is labeled Transfer Function. to the right of the graph is a second graph with one major positive wave and two minor negative waves with their area drawn down or up to the horizontal axis shaded black, and labeled Non-uniform weighting. Part c contains another graph labeled Transfer function. Its waves are similar to the waves in a, but are aligned closer together. The distance measured on the bottom is labeled δf = Δf/Q = f_s/QN. The graph to the right is similar to the graph in part b, except that it is wider, and labeled Non-uniform weighting; N' = QN. Part d is wider than parts a and c, but narrower in peaks than part b, and its width is measured as Δf = f_s/N, with the identical graph to the right of waves as part c, labeled Non-uniform Weighting; N' = QN; Thinning Output. Below all four figures is a label describing the horizontal axes as Frequency.">
+            <image mime-type="image/png" src="../../media/fig13.png" id="uid24_onlineimage" width="600"><!-- NOTE: attribute width changes image size online (pixels). original width is 2747. --></image>
+            <image for="pdf" mime-type="application/postscript" src="../../media/fig13.eps" id="uid24_printimage"/>
+          </media>
+          
+        <caption>Effects of Changing Data Weighting and DFT Size</caption></figure>
+        <para id="id277701">Now suppose we employ non-uniform weighting to improve the shape of the bandpass filters. As discussed in <link document="" target-id="">Appendix A</link>, such non-uniform weighting can be used to attain the desired transfer function shape, but virtually always at the expense of the bandpass filter's bandwidth. In fact, to obtain the desired characteristic shown in <link target-id="uid23"/>, with its flat passband, sharp skirts, and high-attenuation stopband, the minimum passband bandwidth is more than a factor of ten larger than the unweighted response. Thus the use of a non-uniform weighting, as shown on the right of <link target-id="uid21"/>(b), results in the situation shown on the left side. There are still <emphasis effect="italics">N</emphasis> bandpass filters, and their center frequencies are still separated by integer multiples <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>N</m:mi></m:mfrac></m:math> Hz, but each filter has been widened considerably, leading to a high degree of overlap.</para>
+        <para id="id277750">The first problem to deal with is not the overlap, but rather the fact that the individual bandpass filters are far wider than the original goal of about <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>N</m:mi></m:mfrac></m:math> Hz. This is dealt with by returning to <link target-id="uid20"/> and simply letting the delay line length, the number of weighting coefficients, and the DFT order grow until the filters are sufficiently narrowband to meet our objectives. Again using the example of the desired frequency response seen in <link target-id="uid23"/>, the dimensions must grow by more than a factor of ten.</para>
+        <para id="id277777">While the resulting dimensions can take on rather arbitrary values (above some minimum value) we'll assume here that the new size <emphasis effect="italics">N'</emphasis> is an integer multiple of <emphasis effect="italics">N</emphasis>. In particular, we assume that the delay line, and the weighting and DFT with it, are extended to the length <emphasis effect="italics">N'</emphasis> where:</para>
+        <equation id="id277819">
+          <m:math overflow="scroll" mode="display">
+            <m:mrow>
+              <m:msup>
+                <m:mi>N</m:mi>
+                <m:mo>'</m:mo>
+              </m:msup>
+              <m:mo>=</m:mo>
+              <m:mi>Q</m:mi>
+              <m:mo>·</m:mo>
+              <m:mi>N</m:mi>
+              <m:mo>,</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id277847">where <emphasis effect="italics">Q</emphasis> is a positive integer. We further assume that <emphasis effect="italics">Q</emphasis> is chosen to be large enough that a weighting function of length <emphasis effect="italics">N<sup><emphasis effect="normal">'</emphasis></sup></emphasis> can be designed to produce not only the desired shape but also a bandwidth of about <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>N</m:mi></m:mfrac></m:math> Hz. The resulting situation is shown in <link target-id="uid24"/>(c). The weighting function is now longer than before (by a factor of <emphasis effect="italics">Q</emphasis>). On the left we see that there are now <emphasis effect="italics">N<sup><emphasis effect="normal">'</emphasis></sup></emphasis> filters in the filter bank. Each one of them now has the desired nominal bandwidth of <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>N</m:mi></m:mfrac></m:math> Hz, but their center frequencies are now separated by <m:math overflow="scroll"><m:mrow><m:mi>δ</m:mi><m:mi>f</m:mi><m:mo>=</m:mo><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:msup><m:mi>N</m:mi><m:mo>'</m:mo></m:msup></m:mfrac><m:mo>=</m:mo><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mrow><m:mi>N</m:mi><m:mi>Q</m:mi></m:mrow></m:mfrac></m:mrow></m:math> Hz instead of <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>N</m:mi></m:mfrac></m:math> Hz. The overlap seen just above still exists but now there is a factor of <emphasis effect="italics">Q</emphasis> more filters, a factor of <emphasis effect="italics">Q</emphasis> narrower, and a factor of <emphasis effect="italics">Q</emphasis> more closely spaced. Thus the positive effect of expanding the delay line dimension to <m:math overflow="scroll"><m:mrow><m:mi>Q</m:mi><m:mi>N</m:mi></m:mrow></m:math> is that the resulting filter bank includes the desired bandpass filters, both in bandpass characteristics and center frequencies. The negative aspects include the fact that the amount of weighting and DFT computation have gone up by a factor of <emphasis effect="italics">Q</emphasis> and that there are now <m:math overflow="scroll"><m:mrow><m:mo>(</m:mo><m:mi>Q</m:mi><m:mo>-</m:mo><m:mn>1</m:mn><m:mo>)</m:mo><m:mo>·</m:mo><m:mi>N</m:mi></m:mrow></m:math> superfluous bandpass filters.</para>
+        <para id="id278088">Suppose now that we choose to compute only every Q-th point of the DFT. The delay line is still <m:math overflow="scroll"><m:mrow><m:mi>Q</m:mi><m:mi>N</m:mi></m:mrow></m:math> samples long, there are still <m:math overflow="scroll"><m:mrow><m:mi>Q</m:mi><m:mi>N</m:mi></m:mrow></m:math> coefficients in the weighting function, and the DFT still has order <m:math overflow="scroll"><m:mrow><m:mi>Q</m:mi><m:mi>N</m:mi></m:mrow></m:math>, but we'll choose to only compute those output bins <m:math overflow="scroll"><m:mrow><m:msub><m:mi>X</m:mi><m:mi>m</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> where <emphasis effect="italics">m</emphasis> is an integer multiple of <emphasis effect="italics">Q</emphasis>. This results in the situation shown in <link target-id="uid24"/>(d). The same QN-point weighting function is used as immediately above. This case, with <emphasis effect="italics">N</emphasis> filters of nominal bandwidth <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>N</m:mi></m:mfrac></m:math> Hz and spaced <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>N</m:mi></m:mfrac></m:math> Hz apart, was our objective. To achieve it, however, required expanding the dimensions of the preceding operations quite considerably.</para>
+        <para id="id278217">We now develop some equations that describe the steps just traversed. Starting with <link target-id="id276525"/> we replace <emphasis effect="italics">N</emphasis> with <m:math overflow="scroll"><m:mrow><m:msup><m:mi>N</m:mi><m:mo>'</m:mo></m:msup><m:mo>=</m:mo><m:mi>Q</m:mi><m:mi>N</m:mi></m:mrow></m:math>, obtaining an expression for the time sequence seen at the m-th DFT bin.</para>
+        <equation id="id278252">
+          <m:math overflow="scroll" mode="display">
+            <m:mstyle scriptlevel="0" displaystyle="true">
+              <m:mrow>
+                <m:msub>
+                  <m:mi>X</m:mi>
+                  <m:mi>m</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>k</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>=</m:mo>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>p</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>Q</m:mi>
+                    <m:mi>N</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:munderover>
+                <m:mi>x</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>k</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mi>ω</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mn>2</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mfrac>
+                      <m:mrow>
+                        <m:mi>m</m:mi>
+                        <m:mi>p</m:mi>
+                      </m:mrow>
+                      <m:mrow>
+                        <m:mi>Q</m:mi>
+                        <m:mi>N</m:mi>
+                      </m:mrow>
+                    </m:mfrac>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>.</m:mo>
+              </m:mrow>
+            </m:mstyle>
+          </m:math>
+        </equation>
+        <para id="id278359">Suppose, as discussed above, that we eliminate the filter overlapping by evaluating only every Q-th DFT bin. Thus we compute <m:math overflow="scroll"><m:mrow><m:msub><m:mi>X</m:mi><m:mi>m</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> only for those values of <emphasis effect="italics">m</emphasis> that are integer multiples of <emphasis effect="italics">Q</emphasis>. Specifically, if <emphasis effect="italics">n</emphasis> is assumed to be an integer, then we only compute <m:math overflow="scroll"><m:mrow><m:msub><m:mi>X</m:mi><m:mi>m</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> for values of <emphasis effect="italics">m</emphasis> given by <m:math overflow="scroll"><m:mrow><m:mi>m</m:mi><m:mo>=</m:mo><m:mi>Q</m:mi><m:mi>n</m:mi></m:mrow></m:math>. This is leads to</para>
+        <equation id="id278464"><m:math overflow="scroll" mode="display">
+            <m:mstyle scriptlevel="0" displaystyle="true">
+              <m:mrow>
+                <m:msub>
+                  <m:mi>X</m:mi>
+                  <m:mi>m</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>k</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>=</m:mo>
+                <m:msub>
+                  <m:mi>X</m:mi>
+                  <m:mrow>
+                    <m:mi>Q</m:mi>
+                    <m:mi>n</m:mi>
+                  </m:mrow>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>k</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>≡</m:mo>
+                <m:msub>
+                  <m:mi>X</m:mi>
+                  <m:mi>n</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>k</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>=</m:mo>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>p</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>Q</m:mi>
+                    <m:mi>N</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:munderover>
+                <m:mi>x</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>k</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mi>w</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mn>2</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mfrac>
+                      <m:mrow>
+                        <m:mi>n</m:mi>
+                        <m:mi>p</m:mi>
+                      </m:mrow>
+                      <m:mi>N</m:mi>
+                    </m:mfrac>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>.</m:mo>
+              </m:mrow>
+            </m:mstyle>
+          </m:math>
+        </equation>
+        <para id="id278605">Since we have achieved the goal of constructing spectrally concentrated bandpass filters (albeit at the cost of expanding the size of all steps preceding the final DFT computation), we can now consider decimating the filter outputs. Since the filter bandwidths are nominally <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>N</m:mi></m:mfrac></m:math> Hz, decimation by up to <emphasis effect="italics">N</emphasis> is possible without violating the sampling theorem. Suppose we decimate by the factor <emphasis effect="italics">M</emphasis>, where <m:math overflow="scroll"><m:mrow><m:mn>0</m:mn><m:mo>&lt;</m:mo><m:mi>M</m:mi><m:mo>≤</m:mo><m:mi>N</m:mi></m:mrow></m:math>. This means evaluating the integer time index <emphasis effect="italics">k</emphasis> only at integer multiples of <emphasis effect="italics">M</emphasis>. If we allow the integer to be the decimated time index, the decimated version of the n-th DFT bin output is</para>
+        <equation id="id278686"><m:math overflow="scroll" mode="display">
+            <m:mstyle scriptlevel="0" displaystyle="true">
+              <m:mrow>
+                <m:msub>
+                  <m:mi>X</m:mi>
+                  <m:mi>n</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>k</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mi>r</m:mi>
+                  <m:mi>M</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>=</m:mo>
+                <m:msub>
+                  <m:mi>X</m:mi>
+                  <m:mi>n</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>r</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>=</m:mo>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>p</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>Q</m:mi>
+                    <m:mi>N</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:munderover>
+                <m:mi>x</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>r</m:mi>
+                  <m:mi>M</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mi>w</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mn>2</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mfrac>
+                      <m:mrow>
+                        <m:mi>n</m:mi>
+                        <m:mi>p</m:mi>
+                      </m:mrow>
+                      <m:mi>N</m:mi>
+                    </m:mfrac>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>.</m:mo>
+              </m:mrow>
+            </m:mstyle>
+          </m:math>
+        </equation>
+        <para id="id278815">At this point we can start making comparisons. <link target-id="id271567"/> closely resembles <link target-id="id278464"/> and <link target-id="id271764"/> closely resembles <link target-id="id278686"/>. In fact, if we use the definition of <m:math overflow="scroll"><m:mrow><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:math> developed earlier, then <link target-id="id278686"/> becomes</para>
+        <equation id="id278840">
+          <m:math overflow="scroll" mode="display">
+            <m:mstyle scriptlevel="0" displaystyle="true">
+              <m:mrow>
+                <m:msub>
+                  <m:mi>X</m:mi>
+                  <m:mi>n</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>r</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>=</m:mo>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>p</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>N</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:munderover>
+                <m:mi>v</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>r</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>p</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>·</m:mo>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mn>2</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mfrac>
+                      <m:mrow>
+                        <m:mi>n</m:mi>
+                        <m:mi>p</m:mi>
+                      </m:mrow>
+                      <m:mi>N</m:mi>
+                    </m:mfrac>
+                  </m:mrow>
+                </m:msup>
+              </m:mrow>
+            </m:mstyle>
+          </m:math>
+        </equation>
+        <para id="id278933">which differs from the equation for <m:math overflow="scroll"><m:mrow><m:msub><m:mi>y</m:mi><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> developed in <link target-id="id273769"/> only in the absence of a residual carrier term. If, for example, we want to compute <m:math overflow="scroll"><m:mrow><m:msub><m:mi>y</m:mi><m:mi>n</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>, we can do it by selecting the right DFT output bin (<emphasis effect="italics">n</emphasis> in this case) and multiplying it by the residual carrier term, if any. Thus for all practical purposes, the <emphasis effect="italics">bank of tuners</emphasis> viewpoint and the <emphasis effect="italics">DFT-based filter bank</emphasis> viewpoint yield the same structure and same results.</para>
+      </section>
+      <section id="uid25">
+        <title>The Effect of Bin Decimation on an FFT</title>
+        <para id="id279017">More insight into the relationship between the DFT-based filter bank and the basic FDM-to-TDM transmultiplexer shown in <link target-id="uid17"/> can be gained by considering the common situation where an FFT is used to compute the DFT. In the preceding section, it was shown that the DFT filter implicitly uses a QN-point DFT but in fact only <emphasis effect="italics">N</emphasis> output bins are computed. Consider now the FFT flow graph shown in <link target-id="uid26"/>(a). The input is <m:math overflow="scroll"><m:mrow><m:mi>Q</m:mi><m:mi>N</m:mi></m:mrow></m:math> (8, in this case) weighted input samples <m:math overflow="scroll"><m:mrow><m:mover><m:mi>x</m:mi><m:mo>¯</m:mo></m:mover><m:mrow><m:mo>(</m:mo><m:mi>p</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> and the output is <m:math overflow="scroll"><m:mrow><m:mi>Q</m:mi><m:mi>N</m:mi></m:mrow></m:math> bins. Suppose now that all we want is the odd numbered output bins. Careful examination of the flow graph shows that more than just the output points can be deleted. Look at <m:math overflow="scroll"><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mn>0</m:mn><m:mo>)</m:mo></m:mrow></m:math>, for example. It is computed using numbers from the previous stage <emphasis effect="underline">which are only used to compute undesired outputs</emphasis>. Thus these intermediate terms need not be computed either. This process can continue until the point where the intermediate points are needed. To see how this works, examine <link target-id="uid26"/>(b). Removing all unneeded nodes reveals something very interesting. The FFT processing naturally breaks into two sections. The second section, the QN-point FFT pruned of all unneeded nodes, is recognized to have the flow graph of an N-point FFT. In fact, if the bin decimation is not offset from bin 0, then the <emphasis effect="italics">twiddle factors</emphasis> are exactly those of an N-point FFT as well. The section preceding the N-point FFT can be written as <emphasis effect="italics">N</emphasis> Q-point sums of weighted, delayed input data samples. These sums can be recognized as the <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo><m:mo>}</m:mo></m:mrow></m:math>. Thus by pruning out the unneeded nodes in a QN-point FFT taken over the weighted input data, the computation of the filter bank gracefully separates into the cascade of a preprocessor that computes the <m:math overflow="scroll"><m:mrow><m:mo>{</m:mo><m:mi>v</m:mi><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>,</m:mo><m:mi>p</m:mi><m:mo>)</m:mo><m:mo>}</m:mo></m:mrow></m:math> and an N-point FFT. The resulting block diagram is exactly the same as that shown in <link target-id="uid17"/>.</para>
+        <figure id="uid26"><media id="uid26_media" alt="Figure ten is comprised of two FFT flowgraphs. In part a, There are eight horizontal lines, four points along the lines, and various arrows pointing in diagonals across the lines. The lines on the left are labeled from top to bottom, x(0), x(4), x(2), x(6), x(1), x(5), x(3), and x(7). For the each horizontal section on each line, there is an arrow pointing to the right. In the section from the first point to the second point, a diagonal arrow moves down one line for x(0), x(2), x(1), and x(3) and a criss-crossing arrow moves up one line for  x(4), x(6), x(5), and x(7). In between the x(4) and x(2) lines, the x(6) and x(1) lines, the x(5) and x(3) lines, and below the x(7) line is a label that reads w^4_N. Aligned with the second point in between x(0) and x(4), x(2) and x(6), x(1) and x(5), x(3) and x(7), is the label w^0_N. The section of diagonal lines in between the second and third points across the figure contain diagonal spots that move two spaces down for x(0), x(4), x(1), and x(5), and two spaces up for x(2), x(6), x(3), and x(7). Aligned with the third points in between every line from top to bottom are labels that read w^0_N, w^2_N, w^4_N, w^6_N, w^0_N, w^2_N, w^4_N, and w^6_N. From the third to the fourth points, the diagonal lines move four spaces down from x(0), x(4), x(2), and x(6), and four spaces up from x(1), x(5), x(3), and x(7) In between the fourth spaces are the following labels from top to bottom, w^0_N, w^1_N, w^2_N, w^3_N, w^4_N, w^5_N, w^6_N, w^7_N. To the right of the fourth points are the labels from top to bottom, x(0), x(1), x(2), x(3), x(4), x(5), x(6), and x(7). In part b, there are 8 lines that converge to four lines, with a similar setup as part a, four points across with diagonal lines in between. The eight beginning lines are labeled from top to bottom, x(0), x(4), x(2), x(6), x(1), x(5), x(3), and x(7). The lines following x(0), x(2), x(1), and x(3) are diagonal, pointing one space down, thus terminating those lines across and leaving four remaining horizontal lines across x(4), x(6), x(5), and x(7). Below these horizontal lines, and to the right of the second point, is the label w^4_N. The lines continue horizontally, and after the third point are the labels w^2_N, w^6_N, w^2_N, and w^6_N. After the fourth point are the labels w^1_N, w^3_N, w^5_N, and w^7_N. In between the second and third points, diagonal lines point one space down on x(4) and x(5), and point one space up on x(6) and x(7). In between points three and four are diagonal lines that point two lines down for  x(4) and x(6) and two lines up for x(5) and x(7). To the right of the four lines are the labels x(1), x(3), x(5), and x(7). A vertical dashed line in the second point divides the left part of the flowgraph as Preprocessor and the right part as Reduced FFT.">
+            <image mime-type="image/png" src="../../media/fig14.png" id="uid26_onlineimage" width="500"><!-- NOTE: attribute width changes image size online (pixels). original width is 1536. --></image>
+            <image for="pdf" mime-type="application/postscript" src="../../media/fig14.eps" id="uid26_printimage"/>
+          </media>
+          
+        <caption>Pruning a Decimation-in-Time (DIT) Fast Fourier Transform (FFT)</caption></figure>
+      </section>
+      <section id="uid27">
+        <title>Relationship of the Filter Bank Approach to Digital Spectrum Analysis</title>
+        <para id="id279198">A matter of confusion to many engineers is that the filter bank scheme seems to produce time samples from FFT bins. This confusion has its root in the fact that the DFT, and hence the FFT, are usually discussed in the context of digital spectrum analysis and are typically spoken of as methods of converting from the time domain to the frequency domain. How then can a DFT-based filter bank produce time samples from spectral bins? In fact, the right perspective is the opposite one.</para>
+        <para id="id279206">Consider again <link target-id="uid20"/> from the viewpoint of digital spectrum analysis. A simple FFT-based spectrum analyzer accepts <emphasis effect="italics">N</emphasis> samples of the input sequence, weights or <emphasis effect="italics">windows</emphasis> the data, transforms it by using an N-point FFT, and then estimates the power spectral density by computing the magnitude square of the bin outputs. Comparing these steps to <link target-id="uid20"/>, we see that they are identical except for two things: (1) the magnitude squaring operation at the bin outputs and (2) the fact that in spectrum analysis the window and transform operation is rarely done for every input sample. (Typically it is done every N-th sample [called <emphasis effect="italics">1:1 overlapping</emphasis>] or even less frequently.) These facts suggest that DFT/FFT-based digital spectrum analysis is derived from the filter bank concept rather than the other way around. The filter bank shown in <link target-id="uid20"/> uses a transform computed over a record of weighted, delayed input data to split the input signal's energy into <emphasis effect="italics">N</emphasis> spectral bands. The degree to which this separation is completed depends on the choice of windowing or weighting function and on the length of the transform. If the function is chosen properly, the windowing operation and the DFT/FFT computation can be computed less frequently, that is, decimation can be introduced. In this context, the simple FFT-based spectrum analyzer can be recognized to perform an instantaneous power measurement at the output of each of the filters in the bank. The quality of the analyzer depends on the window function chosen and the DFT/FFT order <emphasis effect="italics">N</emphasis> (as they affect the passband shape), the rate at which the filter outputs are computed (given by the decimation factor <emphasis effect="italics">M</emphasis>), and the number of instantaneous power measurements averaged to obtain the spectral estimate. Thus we can conclude that the digital spectrum analyzer approximates the true power spectrum by measuring the power seen in each of the bandpass filter outputs produced by the DFT-based filter bank.</para>
+        <para id="id279272">An interesting sidelight is that the most common name for the transmultiplexer preprocessor stems from the filter bank's relationship with digital spectrum analysis. Look again at <link target-id="uid26"/>. The input to the QN-point FFT is <m:math overflow="scroll"><m:mrow><m:mi>Q</m:mi><m:mi>N</m:mi></m:mrow></m:math> weighted and delayed input samples. From the bank-of-tuners viewpoint we know that the weighting function <m:math overflow="scroll"><m:mrow><m:mi>w</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> is just the tuner pulse response <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> needed to bandlimit the tuned signal properly. In the context of spectrum analysis, however, this function is called a data window. They are in fact identical and the tuner viewpoint provides the analytical basis on which to design the needed window. We've already observed that after pruning the FFT, the QN-point transform separates into two sections. The first section folds together <emphasis effect="italics">Q</emphasis> windowed samples at a time to generate the N-point input to the FFT. From this viewpoint, it is commonly referred to as the window-and-fold section of the FDM-to-TDM transmultiplexer.</para>
+      </section>
+    </section>
+    <section id="cid3">
+      <title>Stylized FORTRAN Implementation of a Basic FDM-TDM Transmux</title>
+      <para id="id279346">Table 1 shows a stylized example of a software implementation of an FDM-TDM transmultiplexer. Some details of the initialization steps have been blurred for the sake of simplicity and the parameters user are certainly not those appropriate to all applications, but the code should serve as an accurate guide to the amount of computation needed and its organization.</para>
+      <code id="uid28" display="block" class="listing">SUBROUTINE TMUX(INPUT_ARRAY, INPUT_POINTER, OUTPUT_VECTOR)
+C
+C   SUBROUTINE TMUX - IMPLEMENTS A BASIC FDM-TO-TDM TRANSMUX.
+C   A NEW VECTOR OF CHANNELIZED CHANNEL OUTPUTS, CALLED
+C   "OUTPUT_VECTOR" IS PRODUCED EACH TIME THE SUBROUTINE IS CALLED,
+C   UNLESS THE DATA IN "INPUT_ARRAY" IS EXPENDED.
+C
+    PARAMETER N = 64        !NUMBER OF CHANNELS AND/OR BINS
+    PARAMETER Q = 3         !WEIGHTING FUNCTION EXPANSION FACTOR
+    PARAMETER M = N         !DECIMATION FACTOR
+C    THIS CHOICE OF M YIELDS BASIC TRANSMUX
+C
+    INTEGER M, N, Q, INPUT_POINTER, J, K, INDEX
+    COMPLEX INPUT_ARRAY(1), OUTPUT_VECTORS(N), VRP(N)
+    REAL WEIGHTING(N*Q)
+C
+    DATA WEIGHTING/ * QN values of the weighting function h(k) */
+C
+C   ****************** MOVE TIME POINTER **************************
+C
+    INPUT_POINTER = INPUT_POINTER + M
+C
+C   ****************** COMPUTE v(r,p) *****************************
+C
+    DO 10 J=1,N
+10  VRP(J) = CMPLX(0.,0.) !ZERO THE VECTOR VRP
+C
+    DO 30 J=1,N
+     DO 20 K=1 Q
+      INDEX = (K-1)*N+J-1   !COMPUTE OFFSET IN DATA AND WEIGHTING
+      VRP(J) = VRP(J) + INPUT_ARRAY(INPUT_POINTER -INDEX) *
+ 1      WEIGHTING(INDEX+1)
+20     CONTINUE
+30  CONTINUE
+C
+C   ****************** COMPUTE VECTOR OF OUTPUTS ******************
+C   ****************** USING INVERSE FFT ROUTINE ******************
+C
+    CALL IFFT(VRP,OUTPUT_VECTOR,N)
+C
+C   ****************** REMOVE RESIDUAL CARRIER TERM ***************
+C
+C   ------------ IF M NOT EQUAL TO N, REMOVE CARRIER HERE
+C
+C   ********************* NORMAL RETURN ***************************
+C
+    RETURN
+C
+    END
+<caption>Stylized FORTRAN Example of an FDM-TDM Transmultiplexer</caption></code>
+    </section>
+  </content>
+  <bib:file>
+    <bib:entry id="bid0">
+      <bib:article>
+        <!--required fields-->
+        <bib:author>M.G. Bellanger, et. al.</bib:author>
+        <bib:title>Digital filtering by Polyphase Network: Application to Sample Rate Alteration and Filter Banks</bib:title>
+        <bib:journal>IEEE Trans. on Acoustics, Speech, and Signal Processing</bib:journal>
+        <bib:year>1976</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:number>2</bib:number>
+        <bib:pages>109-114</bib:pages>
+        <bib:month>April</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+  </bib:file>
+</document>

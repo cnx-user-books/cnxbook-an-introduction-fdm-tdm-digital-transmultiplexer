@@ -1,0 +1,220 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Example: Using an FDM-TDM Transmux to Demodulate R.35 Telgraphy Signals</title>
+  <metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m32638</md:content-id>
+  <md:title>Example: Using an FDM-TDM Transmux to Demodulate R.35 Telgraphy Signals</md:title>
+  <md:abstract/>
+  <md:uuid>aada88c0-7624-43ca-bd79-caec529f707c</md:uuid>
+</metadata>
+
+<content>
+    <para id="id262063">Suppose that our design objective is to build a digital processor capable of demodulating all of the FSK canals found in the R.35 signal shown in <link document="m31548" target-id="uid2">Figure 1 from "An Introduction to the FDM-TDM Digital Transmultiplexer: Introduction"</link>. Suppose further that we choose to build the demodulator for each FSK signal along the lines of the one shown<footnote id="eip-id1170392304955">Note that this demodulator design is slightly different than the one discussed in <link document="" target-id="">the section "What is an FDM-TDM Transmultiplexer"</link>.</footnote> in <link target-id="uid4"/>(a). Both are used in practice. This type of FSK demodulator uses two fllters: one centered at the <emphasis effect="italics">mark</emphasis> frequency <m:math overflow="scroll"><m:msub><m:mi>f</m:mi><m:mrow><m:mi>m</m:mi><m:mi>k</m:mi></m:mrow></m:msub></m:math> and another the <emphasis effect="italics">space</emphasis> frequency <m:math overflow="scroll"><m:msub><m:mi>f</m:mi><m:mrow><m:mi>s</m:mi><m:mi>p</m:mi></m:mrow></m:msub></m:math>. The powers or amplitudes of the two filter outputs are compared to determine whether the signal instantaneously falls mostly in the vicinity of the mark or is closer to the space. The bit synchronizer logic monitors the transitions between mark and space (and vice versa), using the information to determine the right instants to sample the thresholded difference waveform and produce binary decisions.</para>
+    <para id="id262121"><link target-id="uid4"/> shows the block diagram of the demodulating process when extended to handle all 24 FSK canals in an R.35 signal. Initially it appears to only be 24 parallel demodulators. On closer inspection however, it may be recognized that the center frequencies of all the filters differ by integer multiples of a single frequency increment <m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi></m:mrow></m:math>. This suggests the use of a digital filter bank to compute all ofthe required bandpass filters. We now proceed to see how the system design for this filter bank is done.</para>
+    <para id="id262140">The system design of the transmultiplexer/filter bank is specified by a small set of parameters. We determine these parameters as follows:</para>
+    <list id="id262145" display="block" list-type="bulleted"><item id="uid1"><m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi></m:mrow></m:math>: Inspection of the frequency allocations for the R.35 signal shows that all possible mark and space frequencies are separated by integer multiples of 60 Hz. Thus it is natural to set <m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi><m:mo>=</m:mo><m:mn>60</m:mn></m:mrow></m:math> Hz.
+</item>
+	<item id="uid2"><emphasis effect="italics">f<sub>s</sub></emphasis> and <emphasis effect="italics">N</emphasis>: With <m:math overflow="scroll"><m:mi>Δ</m:mi><m:mi>f</m:mi></m:math> determined, the choice of <emphasis effect="italics">N</emphasis>, the DFT dimension, and the choice of the input sampling rate <emphasis effect="italics">f<sub>s</sub></emphasis>, are locked together. We bound <emphasis effect="italics">N</emphasis> from below, by noting that at least 48 filters are needed, two for each FSK canal. In principle, the value of <emphasis effect="italics">N</emphasis> can be chosen to be any number higher than 48. If the use of the FFT is contemplated then <emphasis effect="italics">N</emphasis> is usually chosen to the first power of 2 or 4 higher than the minimum value<footnote id="uid3"><link target-id="Section 5"/> introduces some additional considerations in the design of digital systems in which the transmultiplexer is only a part.</footnote>. Assuming the use of either a radix-2 or radix-4 FFT, plus the use of complex-valued input data, the prudent value of <emphasis effect="italics">N</emphasis> is 64. This immediately leads to a complex-valued input sampling rate of <m:math overflow="scroll"><m:mrow><m:mi>N</m:mi><m:mo>·</m:mo><m:mi>Δ</m:mi><m:mi>f</m:mi><m:mo>=</m:mo><m:mn>3840</m:mn></m:mrow></m:math> Hz. If the input were real-valued instead, then the chosen sampling rate would be twice that, or 7680 Hz.
+<figure id="uid4"><media id="uid4_media" alt="Figure one is comprised of two flow charts. Part a is titled FSK Demodulator Employing Bandpass Filters Centered at the Mark and Space Frequencies. It begins on the left side with the caption, Input FSK signal. Below and to the side are a series of waves on an arbitrary horizontal line, labeled f_sp, f_mk, f_sp, f_mk. From the first caption, a line extends up and down, then to the right towards two rectangles. The upper rectangle is titled Bandpass Filter Centered @f_sp. The lower rectangle is titled Bandpass Filter Centered @f_mk. Above the upper rectangle is a small graph of two waves that begin and end along a horizontal axis, labeled f, and have peaks and the labeled points f_m on the left and f_s on the right. Both rectangles continue with an arrow pointing to the right at two more rectangles containing the caption |⋅|. After this are two arrows from these rectangles both pointing at the same circle in the middle, containing a large plus sign. The arrow from the upper row of rectangles is labeled with a +, and the arrow from the bottom row is labeled with a -. To the right of the circle is a line pointing at another rectangle, containing a large f-shaped line intersection. In the middle of this connecting line to the rectangle is an arrow pointing downward at another rectangle titled Bit Sync. This rectangle is followed by another arrow pointing back up towards the rectangle containing the f-shape, with the arrow labeled {. . 1, 0, 1, 0, . . .}. To the right of the f-shaped rectangle is one arrow pointing directly to the right, labeled {1 0}, and one pointing up and to the right, labeled Binary Decisions. Above both rectangles is a graph containing a wavering graph about a horizontal axis, with the positive portion of the graph labeled f_sp, and the lower portion labeled f_mk. Part b is titled Extension to an FDM FSK VFT Signal by Using a Transmultiplexer to Perform the Required Bandpass Filtering. The left side begins with the title Input FDM VFT Signals Carrying N FSK Canals. This caption is followed by a flowchart that spreads out to six rows. These rows begin with rectangles that read from top to bottom, BPF @ f_mk, 1 = f_b, BPF @ f_sp, 1 = f_b + ∆f, BPF @ f+mk, 2 = f_b + 2 ⋅ ∆f, BPF @ f_sp, 2 = f_b + 3 ⋅ ∆f, BPF @ f_mk, N = f_b + (2N-2) ⋅ ∆f, BPF @ f_sp, N = f_b + (2N-1) ⋅ ∆f. In between the fourth and fifth rectangles are a series of vertical dots indicating a continuing series. To the right of these rectangles aligned in their rows are six more rectangles each containing the caption |⋅|. In groups of two, the adjacent rectangle rows meet together at a circle containing a +. The arrows leading to this circle from the rectangles are labeled + above and - below. To the right of these circles are three rectangles labeled Bit Sync and Slice. To the right of these are arrows pointing to the right at captions that read from top to bottom, Binary Output for Canal 1, Binary Output for Canal 2, and Binary Output for Canal N."><image mime-type="image/png" src="../../media/fig15.png" id="uid4_onlineimage" width="500"><!-- NOTE: attribute width changes image size online (pixels). original width is 2747. --></image><image for="pdf" mime-type="application/postscript" src="../../media/fig15.eps" id="uid4_printimage"/></media><caption>A Basic Two-Filter FSK Demodulator and its Filter Bank Extension</caption></figure></item>
+	<item id="uid5"><emphasis effect="italics">L</emphasis> and <emphasis effect="italics">Q</emphasis>: Wth <emphasis effect="italics">N</emphasis> determined, we find that <emphasis effect="italics">L</emphasis> and <emphasis effect="italics">Q</emphasis> are locked together and that they are a function of the exact filter design used to select the pulse response (or, equivalently, the window function) used to determine the shape of the bandpass fllters. The issues to be considered in the design of the pulse response are discussed in <link document="m32646">"An Introduction to the FDM-TDM Digital Transmultiplexer: Appendix A"</link>. Without reiterating them here, we observe that following those rules yields a minimum pulse response duration <emphasis effect="italics">L</emphasis> of about 174. For this application we extend the filter pulse duration to 192, allowing <emphasis effect="italics">Q</emphasis> to equal exactly 3.
+</item>
+	<item id="uid6"><emphasis effect="italics">M</emphasis>: With the input sampling rate set, the decimation factor <emphasis effect="italics">M</emphasis> determines the output sampling rate at each of the filter outputs. Thus <m:math overflow="scroll"><m:msub><m:mi>f</m:mi><m:mrow><m:mi>o</m:mi><m:mi>u</m:mi><m:mi>t</m:mi></m:mrow></m:msub></m:math>, the output sampling rate, equals <m:math overflow="scroll"><m:mfrac><m:mn>3840</m:mn><m:mi>M</m:mi></m:mfrac></m:math> Hz. The required output rate depends on the types of signals present and the types of processing to be done to them. In the case of demodulating asynchronous FSK signals, experience has shown that the output sampling rate needs to exceed the highest FSK baud rate expected by a factor of four or more. The highest baud rate allowed by the CCITT for an R.35 canal is 75 Hz<footnote id="uid7">The other rates are 50 and 60 Hz.</footnote>. Thus the output sampling rate <m:math overflow="scroll"><m:msub><m:mi>f</m:mi><m:mrow><m:mi>o</m:mi><m:mi>u</m:mi><m:mi>t</m:mi></m:mrow></m:msub></m:math> must exceed 300 Hz. By choosing <m:math overflow="scroll"><m:mrow><m:mi>M</m:mi><m:mo>=</m:mo><m:mn>12</m:mn></m:mrow></m:math>, we obtain an output sampling rate of <m:math overflow="scroll"><m:mrow><m:msub><m:mi>f</m:mi><m:mrow><m:mi>o</m:mi><m:mi>u</m:mi><m:mi>t</m:mi></m:mrow></m:msub><m:mo>=</m:mo><m:mn>320</m:mn></m:mrow></m:math> Hz.
+</item>
+</list>
+    <para id="id262712">A demodulator using these parameters is shown in <link target-id="uid8"/>. When developed in 1985 it was termed the <emphasis effect="italics">filter bank</emphasis> card and was used to simultaneously demodulate 24 voice grade channels, each containing 24 R.35 FSK canals. Thus <m:math overflow="scroll"><m:mrow><m:mn>24</m:mn><m:mo>·</m:mo><m:mn>24</m:mn><m:mo>·</m:mo><m:mn>2</m:mn><m:mo>=</m:mo><m:mn>1152</m:mn></m:mrow></m:math> fllters were needed to isolate the mark and space energy of all FSK canals. When demodulating R.35 signals, each filter produces outputs at a rate of 320 per second. The input sampled waveforms are tuned and filtered by a preceding tuner to spectrally align the filter bank's bins with the mark and space frequencies of the R.35 signal.</para>
+    <para id="id262747">Arrows in <link target-id="uid8"/> point to the key computational elements on the filter bank card. One multiplier-accumulator device handled the window-and-fold, or preprocessing, function for all 24 voice channel inputs. The second computed the needed FFTs. When processing R.35 signals in all 24 channels, <m:math overflow="scroll"><m:mrow><m:mn>320</m:mn><m:mo>·</m:mo><m:mn>24</m:mn><m:mo>=</m:mo><m:mn>76800</m:mn></m:mrow></m:math> FFTs of dimension <m:math overflow="scroll"><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>64</m:mn></m:mrow></m:math> were performed per second. The third arrow points to a floating-point processor used to measure the instantaneous power at the bandpass filter outputs and threshold their differences to produce binary decisions.</para>
+    <para id="id262786">In passing, we note that this design exploits the fact that the FSK demodulator only requires knowledge of the magnitude of each filter output. Recalling the general transmux equation given in <link document="m32670" target-id="id273769">Equation 9 from "Derivation of the equations for a Basic FDM-TDM Transmux"</link> and substituting the appropriate values of <m:math overflow="scroll"><m:mrow><m:mi>N</m:mi><m:mo>,</m:mo><m:mi>Q</m:mi></m:mrow></m:math>, and <emphasis effect="italics">M</emphasis> produces the equation:</para>
+    <equation id="id262812">
+      <m:math overflow="scroll" mode="display">
+        <m:mstyle scriptlevel="0" displaystyle="true">
+          <m:mrow>
+            <m:msub>
+              <m:mi>y</m:mi>
+              <m:mi>n</m:mi>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>r</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mn>2</m:mn>
+                <m:mi>π</m:mi>
+                <m:mfrac>
+                  <m:mrow>
+                    <m:mn>12</m:mn>
+                    <m:mo>·</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mi>r</m:mi>
+                  </m:mrow>
+                  <m:mn>64</m:mn>
+                </m:mfrac>
+              </m:mrow>
+            </m:msup>
+            <m:mo>·</m:mo>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+              <m:mrow>
+                <m:mi>p</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+              <m:mn>63</m:mn>
+            </m:munderover>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mi>j</m:mi>
+                <m:mn>2</m:mn>
+                <m:mi>π</m:mi>
+                <m:mfrac>
+                  <m:mrow>
+                    <m:mi>n</m:mi>
+                    <m:mi>p</m:mi>
+                  </m:mrow>
+                  <m:mn>64</m:mn>
+                </m:mfrac>
+              </m:mrow>
+            </m:msup>
+            <m:mi>v</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>r</m:mi>
+              <m:mo>,</m:mo>
+              <m:mi>p</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:mstyle>
+      </m:math>
+    </equation>
+    <para id="id262928">The exponential preceding the sum has unity magnitude and therefore does not affect <m:math overflow="scroll"><m:mrow><m:mrow><m:mo>|</m:mo></m:mrow><m:msub><m:mi>y</m:mi><m:mi>n</m:mi></m:msub><m:mrow><m:mrow><m:mo>(</m:mo><m:mi>r</m:mi><m:mo>)</m:mo></m:mrow><m:mo>|</m:mo><m:mo>.</m:mo></m:mrow></m:mrow></m:math>. It is therefore not necessary to compute the product of the exponential and the sum. The magnitude measurement is given by</para>
+    <equation id="id262964">
+      <m:math overflow="scroll" mode="display">
+        <m:mstyle scriptlevel="0" displaystyle="true">
+          <m:mrow>
+            <m:mrow>
+              <m:mo>|</m:mo>
+            </m:mrow>
+            <m:msub>
+              <m:mi>y</m:mi>
+              <m:mi>n</m:mi>
+            </m:msub>
+            <m:mrow>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>r</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>|</m:mo>
+              <m:mo>=</m:mo>
+              <m:mo>|</m:mo>
+            </m:mrow>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+              <m:mrow>
+                <m:mi>p</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+              <m:mn>63</m:mn>
+            </m:munderover>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mi>j</m:mi>
+                <m:mn>2</m:mn>
+                <m:mi>π</m:mi>
+                <m:mfrac>
+                  <m:mrow>
+                    <m:mi>n</m:mi>
+                    <m:mi>p</m:mi>
+                  </m:mrow>
+                  <m:mn>64</m:mn>
+                </m:mfrac>
+              </m:mrow>
+            </m:msup>
+            <m:mrow>
+              <m:mi>v</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>r</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>p</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>|</m:mo>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:mstyle>
+      </m:math>
+    </equation>
+    <figure id="uid8"><media id="uid8_media" alt="Figure two is a photograph of a filter bank card, with three sections in the car labeled from top to bottom, Multiplier-Accumulator (MAC) used for FFT Operations, Floating Point ALU used for Making and Comparing Power Measurements, and Multiplier-Accumulator (MAC) used for Window-and-fold Operations.">
+        <image mime-type="image/png" src="../../media/fig16.png" id="uid8_onlineimage" width="500"><!-- NOTE: attribute width changes image size online (pixels). original width is 2500. --></image>
+        <image for="pdf" mime-type="application/postscript" src="../../media/fig16.eps" id="uid8_printimage"/>
+      </media>
+      
+    <caption>Photograph of the Filter Bank Card Designed in 1985 to Demodulate FSK VFT Signals - <m:math overflow="scroll"><m:mrow><m:mi>M</m:mi><m:mo>=</m:mo><m:mn>12</m:mn></m:mrow></m:math>, <m:math overflow="scroll"><m:mrow><m:mi>Q</m:mi><m:mo>=</m:mo><m:mn>3</m:mn></m:mrow></m:math>, <m:math overflow="scroll"><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>64</m:mn></m:mrow></m:math>, <m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi><m:mo>=</m:mo><m:mn>60</m:mn></m:mrow></m:math> Hz. A modern implementation would require a fraction of the resources of a single field-programmable gate array (FPGA)</caption></figure>
+    <para id="id263129">This same filter bank card is also capable of demodulating FSK signals conforming to the R.37 and R.38A ITU-T recommendations. The R.37 signal, for example, uses 12 canals instead of 24, and each of them operates at twice the rate and with twice the mark-space frequency separation of the R.35 signal. Repeating the system design just performed yields the following:</para>
+    <list id="id263135" display="block" list-type="bulleted">
+      <item id="uid9"><m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi><m:mo>=</m:mo><m:mn>120</m:mn></m:mrow></m:math> Hz
+</item>
+      <item id="uid10"><m:math overflow="scroll"><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>32</m:mn></m:mrow></m:math> and <m:math overflow="scroll"><m:mrow><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mo>=</m:mo><m:mn>3840</m:mn></m:mrow></m:math> Hz
+</item>
+      <item id="uid11"><m:math overflow="scroll"><m:mrow><m:mi>L</m:mi><m:mo>=</m:mo><m:mn>96</m:mn></m:mrow></m:math> and <m:math overflow="scroll"><m:mrow><m:mi>Q</m:mi><m:mo>=</m:mo><m:mn>3</m:mn></m:mrow></m:math></item>
+      <item id="uid12"><m:math overflow="scroll"><m:mrow><m:msub><m:mi>f</m:mi><m:mrow><m:mi>o</m:mi><m:mi>u</m:mi><m:mi>t</m:mi></m:mrow></m:msub><m:mo>=</m:mo><m:mn>640</m:mn></m:mrow></m:math> Hz
+</item>
+    </list>
+    <para id="id263277">Note that <emphasis effect="italics">Q</emphasis> and <emphasis effect="italics">f<sub>s</sub></emphasis> remain the same as for R.35, and that <m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi></m:mrow></m:math> and <m:math overflow="scroll"><m:msub><m:mi>f</m:mi><m:mrow><m:mi>o</m:mi><m:mi>u</m:mi><m:mi>t</m:mi></m:mrow></m:msub></m:math> double because of the increased mark-space separation and allowable baud rates, while <emphasis effect="italics">L</emphasis> and <emphasis effect="italics">N</emphasis> are halved. The impact of processing this additional signal can be assessed by using the formula for the number of multiply-adds required, specifically</para>
+    <equation id="id263349">
+      <m:math overflow="scroll" mode="display">
+        <m:mrow>
+          <m:msub>
+            <m:mi>G</m:mi>
+            <m:mi> transmux </m:mi>
+          </m:msub>
+          <m:mo>=</m:mo>
+          <m:mfrac>
+            <m:mrow>
+              <m:mn>2</m:mn>
+              <m:mi>Q</m:mi>
+              <m:mi>N</m:mi>
+              <m:msub>
+                <m:mi>f</m:mi>
+                <m:mi>s</m:mi>
+              </m:msub>
+            </m:mrow>
+            <m:mi>M</m:mi>
+          </m:mfrac>
+          <m:mo>+</m:mo>
+          <m:mfrac>
+            <m:mrow>
+              <m:mn>2</m:mn>
+              <m:mi>N</m:mi>
+              <m:msub>
+                <m:mi>f</m:mi>
+                <m:mi>s</m:mi>
+              </m:msub>
+            </m:mrow>
+            <m:mi>M</m:mi>
+          </m:mfrac>
+          <m:mo>·</m:mo>
+          <m:msub>
+            <m:mi> log </m:mi>
+            <m:mn>2</m:mn>
+          </m:msub>
+          <m:mi>N</m:mi>
+          <m:mo>.</m:mo>
+        </m:mrow>
+      </m:math>
+    </equation>
+    <para id="id263419">It can be verified that the number of multiply-adds needed to perform the window-and-fold function for the filter bank is exactly the same as is needed for the R.35 signal, since the ratio <m:math overflow="scroll"><m:mfrac><m:mi>N</m:mi><m:mi>M</m:mi></m:mfrac></m:math> holds constant. Moreover, the amount of computation needed for the radix-2 FFT is <m:math overflow="scroll"><m:mfrac><m:mn>5</m:mn><m:mn>6</m:mn></m:mfrac></m:math> of that needed for R.35, the ratio between <m:math overflow="scroll"><m:mrow><m:msub><m:mi> log </m:mi><m:mn>2</m:mn></m:msub><m:mn>32</m:mn></m:mrow></m:math> and <m:math overflow="scroll"><m:mrow><m:msub><m:mi> log </m:mi><m:mn>2</m:mn></m:msub><m:mn>64</m:mn></m:mrow></m:math>. Thus a filter bank with the computational horsepower to handle R.35 can also handle R.37. The R.38A standard represents another factor of two in frequency separations and allowable baud rates. Once again it can be verified that the window-and-fold computation is the same and the FFT computation is smaller yet. Thus a properly designed filter bank processor capable of handling the R.35 standard can also handle R.37 and R.38A as well. A subtle difference is that the input signal must be tuned slightly differently for the three different standards.</para>
+  </content>
+  <bib:file/>
+</document>

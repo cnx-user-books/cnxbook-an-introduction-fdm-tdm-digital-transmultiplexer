@@ -1,0 +1,486 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Appendix A</title>
+  <metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m32646</md:content-id>
+  <md:title>Appendix A</md:title>
+  <md:abstract/>
+  <md:uuid>bffabdc0-e38a-4b99-a9eb-a00df6d5caeb</md:uuid>
+</metadata>
+
+<content>
+    <para id="id210420">The section <link document="m32670">Derivation of the equations for a Basic FDM-TDM Transmux</link> showed the FDM-TDM transmultiplexer can be viewed as an efficient implementation of a bank of digital tuners, and that the data-weighting function <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> is just the pulse response of the FIR lowpass filter used in these equivalent tuners. We therefore approach the design of <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> by designing the proper tuner pulse response.</para>
+    <para id="id210461">The perfect filter pulse response would pass the signal of interest with no gain or phase distortion, would completely suppress all other FDM channels, and would require little computation. These are not all simultaneously achievable, of course, and the design of the actual filter is a compromise between these issues. It is further complicated by the fact that software packages are not generally available to perform some of the types of optimization needed to design these filters. We proceed first by examining how an optimal equal-ripple linear phase FIR filter performs.</para>
+    <section id="cid1">
+      <title>Use of Optimal, Linear Phase, Equal-Ripple Design Techniques</title>
+      <para id="id210477">The filter design problem at hand can be understood by examining <link target-id="uid1"/>. The perfect filter, shown in <link target-id="uid1"/>(a), passes the channel of interest with unity gain and zero phase shift across its bandwidth of <emphasis effect="italics">B</emphasis> Hz, centered at DC, and completely attenuates energy at all other frequencies between <m:math overflow="scroll"><m:mfrac><m:mrow><m:mo>-</m:mo><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub></m:mrow><m:mn>2</m:mn></m:mfrac></m:math> and <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mn>2</m:mn></m:mfrac></m:math>.</para>
+      <para id="id210529">In fact, it is not necessary to suppress all out-of-band energy to protect the signal of interest. The principal reason for this filtering is to suppress the out-of-band components that alias into the band of interest when the output of the tuner (that is, transmultiplexer) is decimated by the factor <emphasis effect="italics">M</emphasis>. These bands are shown in <link target-id="uid1"/>(b) for the general case in which <m:math overflow="scroll"><m:mrow><m:mi>M</m:mi><m:mo>≠</m:mo><m:mi>N</m:mi></m:mrow></m:math>, while <link target-id="uid1"/>(c) shows the important special case of the <emphasis effect="italics">basic FDM-TDM transmux</emphasis> in which <m:math overflow="scroll"><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mi>M</m:mi></m:mrow></m:math>. In the latter case, the FDM channels not of interest alias directly onto the signal of interest while, in the former, the channels not of interest may be spread around the band more.</para>
+      <para id="id210577">As alluded to earlier, practical FIR filters of finite duration cannot pass the signal interest perfectly and suppress all other energy completely. The response shown in <link target-id="uid1"/>(d) is the generalized response of a good practical approximation, the response provided by an optimal FIR linear-phase, equal-ripple filter of the sort designed by the Parks-McClellan software package. These filters provide flat differential group delay and allow the designer to optimally trade between passband ripple, stopband suppression, and transition band as a function of the filter order <emphasis effect="italics">L</emphasis>. A description of this general filter design methodology can be found in <link target-id="bid0"/>.</para>
+      <figure id="uid1"><media id="uid1_media" alt="This figure contains four separate graphs arranged vertically. The upper graph is labeled (a) Model of the perfect lowpass filter. It consist of a long horizontal line labeled Frequency with the extremes labeled -f_s/2 on the left and f_s/2 on the right. The middle is labeled 0. There are five right triangles on this line. The middle right triangle is situated directly in the middle with a vertical line rising through its center and the triangle is contained with in three line forming a box around it. To right of the upper right corner is the phrase Gain=1. There are two right triangles on either side of the center triangle. Below the right two there is a line measuring the width between the center points of the two triangles. In the middle of this line is the phrase delta f= f_s/N. In between the two triangles is an arrow pointing to the long horizontal line indicating the space as Gain=0. The second image is labeled (b) Tuner frequency response highlighting spectral bands that alias into the signal of interest when N≠M. This graph consist of a long horizontal line labeled frequency with the extremes labeled on the left -f_s/2 and f_s/2 on the right. The middle is marked 0. On top of this line are five right triangles at equal distances from each other. Underneath the line there are four black rectangles. These black triangles roughly correspond to the triangle above the line. The middle triangle does not have a black rectangle under it, but a vertical line rise from the center of this triangle. An arrow points to both the right two rectangles labeleing them Aliasing Bands when M=4. There is another arrow pointing to the middle left rectangle, but there is no label. The third graph is very similar to the previous graph and it is labeled (c) Tuner frequency response highlighting spectral bands that alias into the signal of interest when N=M. It is exactly the same except the label for the two right black rectangles is now Aliasing Bands when M=5=N, and there are arrows pointing to both of the left black rectangles, but they still do not have have labels. Also the black triangles correspond better to the triangles in this graph. The fourth graph is very similar to the previous graph, and it is labeled (d) Generalized frequency response of an optimal equal-ripple FIR filter, again highlighting spectral bands that alias into the signal of interest. Just like the previous graphs there are five right triangls  and four corresponding black rectangles. A horizontal line labeled Frequency spans the bottom of the graph with extremes labeled -f_s/2 on the left and f_s/2 on the right while the middle is labeled 0. A vertical black line exist in the middle of the of the center triangle. With this graph as waveform begins on the far left side of the graph and wavers across the horizontal line until it nearly reaches the middle triangle. At this point it takes on an almost vertical slope and then wavers over the center triangle and then falls at an equally vertical slope on the right side of the center triangle. The wave form continues across the horizontal line until the graphs ends on the right.">
+          <image mime-type="image/png" src="../../media/fig25.png" id="uid1_onlineimage" width="700"><!-- NOTE: attribute width changes image size online (pixels). original width is 2363. --></image>
+          <image for="pdf" mime-type="application/postscript" src="../../media/fig25.eps" id="uid1_printimage"/>
+        </media>
+        
+      <caption>Frequency Responses of Perfect and Realizable Tuner Filters</caption></figure>
+      <para id="id210611">Superimposing <link target-id="uid1"/>(c) with the optimal response shown in Figure 1 of <link target-id="bid0"/> to produce <link target-id="uid2"/> shows that we must specify the channel bandwidth <emphasis effect="italics">B</emphasis>, the transition bandwidth <m:math overflow="scroll"><m:mrow><m:mi>δ</m:mi><m:mi>f</m:mi></m:mrow></m:math>, the input sampling rate <emphasis effect="italics">f<sub>s</sub></emphasis>, the degree of passband ripple tolerable, denoted <emphasis effect="italics">PBR</emphasis> and the minimum tolerable stopband attenuation in dB, denoted <emphasis effect="italics">SBR</emphasis>. A multi-term empirical formula can be found in <link target-id="bid1"/> which determines the filter <emphasis effect="italics">L</emphasis> quite accurately for a given set of design parameters. Reference <link target-id="bid0"/> simplifies the Rabiner and Gold formula considerably to produce the design equation</para>
+      <equation id="id210680">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>L</m:mi>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mrow>
+                <m:mi>α</m:mi>
+                <m:msub>
+                  <m:mi>f</m:mi>
+                  <m:mi>s</m:mi>
+                </m:msub>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>δ</m:mi>
+                <m:mi>f</m:mi>
+              </m:mrow>
+            </m:mfrac>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id210711">where <m:math overflow="scroll"><m:mrow><m:mi>L</m:mi><m:mo>,</m:mo><m:mspace width="4pt"/><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub></m:mrow></m:math>, and <m:math overflow="scroll"><m:mrow><m:mi>δ</m:mi><m:mi>f</m:mi></m:mrow></m:math> are as just defined, and <emphasis effect="italics">α</emphasis> is given by</para>
+      <equation id="id210755">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>α</m:mi>
+            <m:mo>=</m:mo>
+            <m:mn>0</m:mn>
+            <m:mo>.</m:mo>
+            <m:mn>22</m:mn>
+            <m:mo>+</m:mo>
+            <m:mn>0</m:mn>
+            <m:mo>.</m:mo>
+            <m:mn>0366</m:mn>
+            <m:mo>·</m:mo>
+            <m:mi>S</m:mi>
+            <m:mi>B</m:mi>
+            <m:mi>R</m:mi>
+          </m:mrow>
+        </m:math>
+      </equation>
+      
+      <para id="id210976">The validity of these simplified formulas depends on a number of assumptions, detailed in <link target-id="bid0"/>, but all of them are sufficiently satisfied in this case to permit accuracy in the estimation of <emphasis effect="italics">L</emphasis> within 5% or so.</para>
+      <para id="id210994">Examination of <link target-id="uid2"/> shows that <m:math overflow="scroll"><m:mrow><m:mi>δ</m:mi><m:mi>f</m:mi></m:mrow></m:math>, the filter transition band, can be no larger than <m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi><m:mo>-</m:mo><m:mi>B</m:mi></m:mrow></m:math>, the difference between the channel spacing and the bandwidth of each channel. Recalling also that <m:math overflow="scroll"><m:mrow><m:mi>N</m:mi><m:mo>·</m:mo><m:mi>Δ</m:mi><m:mi>f</m:mi><m:mo>=</m:mo><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub></m:mrow></m:math>, we find that</para>
+      <equation id="id211050"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>L</m:mi>
+            <m:mo>=</m:mo>
+            <m:mi>N</m:mi>
+            <m:mi>α</m:mi>
+            <m:mfrac>
+              <m:mrow>
+                <m:mi>Δ</m:mi>
+                <m:mi>f</m:mi>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>δ</m:mi>
+                <m:mi>f</m:mi>
+              </m:mrow>
+            </m:mfrac>
+            <m:mo>=</m:mo>
+            <m:mi>N</m:mi>
+            <m:mi>α</m:mi>
+            <m:mfenced separators="" open="{" close="}">
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mrow>
+                  <m:mn>1</m:mn>
+                  <m:mo>-</m:mo>
+                  <m:mfrac>
+                    <m:mi>B</m:mi>
+                    <m:mrow>
+                      <m:mi>Δ</m:mi>
+                      <m:mi>f</m:mi>
+                    </m:mrow>
+                  </m:mfrac>
+                </m:mrow>
+              </m:mfrac>
+            </m:mfenced>
+            <m:mrow>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id211119">Thus, to first order, the pulse response duration of the required filter is proportional to the number of channels <emphasis effect="italics">N</emphasis> and is hyperbolic in the <emphasis effect="italics">percentage bandwidth</emphasis>, the ratio of the channel bandwidth <emphasis effect="italics">B</emphasis> to the channel spacing <m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi></m:mrow></m:math>. The effect of the proportionality to <emphasis effect="italics">α</emphasis> will be examined shortly.</para>
+      <figure id="uid2"><media id="uid2_media" alt="This graph consist of a horizontal line labeled Frequency spanning the length of the image with its extremes labeled -f_s/2 on the left and  f_s/2 on the right. There are five right triangles spaced at equal distances from each other sitting on the line. On top of the line there is also a waveform running across the horizontal line. The waveform continues past the first two triangles and then the wave and then ends at a large right triangle next to the middle smaller right triangle. On the other side of this triangle is another large right triangle that is turned the opposite direction with its right angle on the bottom left. The expanse between the far right of the large triangle of the left and the far left of the right triangle is labeled below the horizontal line and is labeled B. In the middle of the small middle triangle is a line that extends vertically and then intersect a line that connects the top corners of the large triangles. The middle line extending from the center circle is also crosses two parallel horizontal lines. An arrow points to these horizontal lines and labels it Passband Ripple PBR. The expanse between the beginning and the end of the right large triangle is labeled below the horizontal line as sf. The expanse from the center of the line to the middle of the second little triangle from the right. it is labeled delta f. On the right side of the large right triangle the waveform begins again. Between the right two triangles is labeled Stopband Ripple SBR. ">
+          <image mime-type="image/png" src="../../media/fig26.png" id="uid2_onlineimage" width="700"><!-- NOTE: attribute width changes image size online (pixels). original width is 2294. --></image>
+          <image for="pdf" mime-type="application/postscript" src="../../media/fig26.eps" id="uid2_printimage"/>
+        </media>
+        
+      <caption>Overlay of the Required Tuner Filter with the Generalized Response of an Optimal Linear Phase Equal-Ripple FIR Filter</caption></figure>
+    </section>
+    <section id="cid2">
+      <title>Relationship to the Design Parameter <emphasis effect="italics">Q</emphasis></title>
+      <para id="id211191">The development presented in the section <link document="m32670">Derivation of the equations for a Basic FDM-TDM Transmux</link> defined the integer variable <emphasis effect="italics">Q</emphasis> as the ratio of <emphasis effect="italics">L</emphasis> and <emphasis effect="italics">N</emphasis>. It was pointed out there without proof that in fact <emphasis effect="italics">Q</emphasis> was an important design parameter, not just the artifact of two others. This can now be seen by combining the relationship <m:math overflow="scroll"><m:mrow><m:mi>L</m:mi><m:mo>≡</m:mo><m:mi>Q</m:mi><m:mi>N</m:mi></m:mrow></m:math> with <link target-id="id211050"/> to produce an expression for <emphasis effect="italics">Q</emphasis>:</para>
+      <equation id="id211252"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>Q</m:mi>
+            <m:mo>=</m:mo>
+            <m:mi>α</m:mi>
+            <m:mfenced separators="" open="{" close="}">
+              <m:mfrac>
+                <m:mrow>
+                  <m:mi>Δ</m:mi>
+                  <m:mi>f</m:mi>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>δ</m:mi>
+                  <m:mi>f</m:mi>
+                </m:mrow>
+              </m:mfrac>
+            </m:mfenced>
+            <m:mo>=</m:mo>
+            <m:mi>α</m:mi>
+            <m:mfenced separators="" open="{" close="}">
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mrow>
+                  <m:mn>1</m:mn>
+<m:mo>-</m:mo>
+                  <m:mfrac>
+                    <m:mi>B</m:mi>
+                    <m:mrow>
+                      <m:mi>Δ</m:mi>
+                      <m:mi>f</m:mi>
+                    </m:mrow>
+                  </m:mfrac>
+                </m:mrow>
+              </m:mfrac>
+            </m:mfenced>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id211317">Since <emphasis effect="italics">N</emphasis> depends strictly on the number of channels into which the input band is divided, <emphasis effect="italics">Q</emphasis> contains all of the information about the impact of the desired filter characteristics.</para>
+    </section>
+    <section id="cid3">
+      <title>Continuation of the Telegraphy Demodulation Example</title>
+      <para id="id211346">Consider again the example of demodulating R.35 FDM FSK VFT canals discussed in the section <link document="m32638">Example: Using an FDM-TDM Transmux to Demodulate R.35 Telegraphy Signals</link>. In that section, we determined that the following parameters would be appropriate: <m:math overflow="scroll"><m:mrow><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mo>=</m:mo><m:mn>3840</m:mn></m:mrow></m:math> Hz, <m:math overflow="scroll"><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>64</m:mn></m:mrow></m:math>, and <m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi><m:mo>=</m:mo><m:mn>60</m:mn></m:mrow></m:math> Hz. To determine <emphasis effect="italics">Q</emphasis>, and hence the rate of computation needed for the data weighting segment of the transmultiplexer, we need to specify <emphasis effect="italics">B</emphasis> and <m:math overflow="scroll"><m:mrow><m:mi>S</m:mi><m:mi>B</m:mi><m:mi>R</m:mi></m:mrow></m:math>, the degree of stopband suppression required.</para>
+      <para id="id211428">Generally speaking, the filters in an FSK demodulator need to have unity gain at the mark or space frequency and zero gain at the space or mark frequency, respectively. A computer simulation used to verify the design of the demodulator showed that suppression of 50 dB was more than enough to provide the needed performance. At first glance it might appear that the transition band <m:math overflow="scroll"><m:mrow><m:mi>δ</m:mi><m:mi>f</m:mi></m:mrow></m:math> can be allowed to equal the tone spacing <m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi><m:mo>=</m:mo><m:mn>60</m:mn></m:mrow></m:math> Hz, making the percentage bandwidth equal to zero. Actual FSK VFT systems, however, sometimes experience bulk frequency shifts of several Hertz. In order to maintain full performance in the presence of such frequency offsets, the tuner filters need to be designed with a passband bandwidth of 15 Hz or so. Using <m:math overflow="scroll"><m:mrow><m:mi>S</m:mi><m:mi>B</m:mi><m:mi>R</m:mi><m:mo>=</m:mo><m:mn>50</m:mn></m:mrow></m:math> dB in <link target-id="id210755"/>, we find with <link target-id="id211252"/> that the required value of <emphasis effect="italics">Q</emphasis> for this application is about 2.71. The actual value chosen for this application was 3, producing a pulse response duration of <m:math overflow="scroll"><m:mrow><m:mi>L</m:mi><m:mo>=</m:mo><m:mi>Q</m:mi><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>192</m:mn></m:mrow></m:math>, with the remaining degrees of freedom in the filter design used to widen the filter still more, allowing for even more frequency offset.</para>
+    </section>
+    <section id="cid4">
+      <title>Implications of the Filter Design on Signal-to-Noise Ratio and Noise Power Ratio</title>
+      <para id="id211523">The pulse response <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> chosen for the transmultiplexer determines many of the transmux's key technical performance parameters, including:</para>
+      <list id="id211543" display="block" list-type="bulleted">
+        <item id="uid3">passband bandwidth, gain, and gain ripple
+</item>
+        <item id="uid4">passband differential group delay (constrained to zero by using an FIR linear phase design approach)
+</item>
+        <item id="uid5">adjacent channel rejection (also known as <emphasis effect="italics">intelligible crosstalk</emphasis>)
+</item>
+        <item id="uid6">channel signal-to-noise ratio (SNR) (also known as <emphasis effect="italics">unintelligible crosstalk</emphasis> and noise power ratio (NPR), a name based on one method of measurement)
+</item>
+      </list>
+      <para id="id211606">We focus here on the last two. At first it might seem that these two are equivalent, but in fact
+the second is usually the more demanding of the two. This may be demonstrated by re-examining <link target-id="uid1"/>(a). An adjacent channel rejection specification of 55 dB, say, means that no signal appearing anywhere in the input bandwidth of <emphasis effect="italics">f<sub>s</sub></emphasis> Hz can appear in the band of interest at any level higher than 55 dB below the signal of interest. If the signal of interest and the one not of interest have the same power levels, then this specification implies that the filter pulse response should suppress the signal not of interest by at least 55 dB before it is potentially aliased into the band of interest. Thus the adjacent channel rejection specification treats each interferer separately and forces each of them to be suppressed to a level below intelligibility. Typical specifications for voice channel demultiplexers, for example, are 55 dB of suppression for any signal more than 300 Hz above or below the channel of interest.</para>
+      <para id="id211637">The last specification limits the total noise that enters the band of interest from other channels. These channels are assumed to be statistically independent, implying that whatever energy that aliases into the band of interest from each of the channels is uncorrelated with the others, that their powers add, and that none of them is individually intelligible.</para>
+      <para id="id211643">The channel SNR can be quantified by using the expression</para>
+      <equation id="id211647"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>S</m:mi>
+            <m:mi>N</m:mi>
+            <m:mi>R</m:mi>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mrow>
+                <m:msubsup>
+                  <m:mo>∫</m:mo>
+                  <m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mi>π</m:mi>
+                    <m:mi>B</m:mi>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>π</m:mi>
+                    <m:mi>B</m:mi>
+                  </m:mrow>
+                </m:msubsup>
+                <m:msup>
+                  <m:mfenced separators="" open="|" close="|">
+                    <m:mi>H</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>ω</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mfenced>
+                  <m:mn>2</m:mn>
+                </m:msup>
+                <m:msub>
+                  <m:mi>P</m:mi>
+                  <m:mi>c</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mi>d</m:mi>
+                <m:mi>ω</m:mi>
+              </m:mrow>
+              <m:mrow>
+                <m:msubsup>
+                  <m:mrow><m:mo>∑</m:mo></m:mrow>
+                  <m:mrow>
+                    <m:mi>n</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                    <m:mo>,</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>≠</m:mo>
+                    <m:mi>c</m:mi>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>C</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:msubsup>
+                <m:msubsup>
+                  <m:mo>∫</m:mo>
+                  <m:mrow>
+                    <m:mn>2</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mi>n</m:mi>
+                    <m:mi>Δ</m:mi>
+                    <m:mi>f</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mi>π</m:mi>
+                    <m:mi>B</m:mi>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mn>2</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mi>n</m:mi>
+                    <m:mi>Δ</m:mi>
+                    <m:mi>f</m:mi>
+                    <m:mo>+</m:mo>
+                    <m:mi>π</m:mi>
+                    <m:mi>B</m:mi>
+                  </m:mrow>
+                </m:msubsup>
+                <m:msup>
+                  <m:mfenced separators="" open="|" close="|">
+                    <m:mi>H</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>ω</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mfenced>
+                  <m:mn>2</m:mn>
+                </m:msup>
+                <m:msub>
+                  <m:mi>P</m:mi>
+                  <m:mi>n</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mi>d</m:mi>
+                <m:mi>ω</m:mi>
+              </m:mrow>
+            </m:mfrac>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id211842">where <emphasis effect="italics">B</emphasis> is the bandwidth of the channel of interest, <emphasis effect="italics">C</emphasis> is the number of channels with signals present, <emphasis effect="italics">c</emphasis> is the index of the band of current interest, <m:math overflow="scroll"><m:mrow><m:mi>H</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math> is the frequency response of the pulse response <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>, and <m:math overflow="scroll"><m:mrow><m:msub><m:mi>P</m:mi><m:mi>n</m:mi></m:msub><m:mrow><m:mrow><m:mo>(</m:mo><m:mi>a</m:mi><m:mo>)</m:mo></m:mrow><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is the power spectrum of the <emphasis effect="italics">n</emphasis>-th signal.</para>
+      <para id="id211934">If we assume that all <emphasis effect="italics">C</emphasis> channels have the same average power <emphasis effect="italics">P</emphasis>, that the power gain of the filter is unity for the channel of interest, and that all other channels are suppressed by exactly <emphasis effect="italics">S</emphasis> dB, then <link target-id="id211647"/> simplifies to</para>
+      <equation id="id211962">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>S</m:mi>
+            <m:mi>N</m:mi>
+            <m:mi>R</m:mi>
+            <m:mo>=</m:mo>
+            <m:mi>S</m:mi>
+            <m:mo>-</m:mo>
+            <m:mn>10</m:mn>
+            <m:mo>·</m:mo>
+            <m:msub>
+              <m:mtext>log</m:mtext>
+              <m:mn>10</m:mn>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>C</m:mi>
+              <m:mo>-</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mi>i</m:mi>
+            <m:mi>n</m:mi>
+            <m:mspace width="4pt"/>
+            <m:mi>d</m:mi>
+            <m:mi>B</m:mi>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id212018">The implications of <link target-id="id211962"/> can be seen with an example. Suppose that the application at hand requires the demultiplexing of 60 FDM voice channels, that the adjacent channel rejection is specified to be 60 dB, and that the unintelligible crosstalk or SNR specification is 55 dB. Evaluation of <link target-id="id210755"/> shows that <emphasis effect="italics">α</emphasis>, on which <emphasis effect="italics">Q</emphasis> and <emphasis effect="italics">L</emphasis> depend, needs to be about 2.42 to suppress any single component by 60 dB. <link target-id="id211962"/>, however, shows that to satisfy the unintelligible noise specification, all channels not of interest need to be suppressed by an extra <m:math overflow="scroll"><m:mrow><m:mn>10</m:mn><m:mo>·</m:mo><m:mi>l</m:mi><m:mi>o</m:mi><m:msub><m:mi>g</m:mi><m:mn>10</m:mn></m:msub><m:mn>59</m:mn><m:mo>=</m:mo><m:mn>17</m:mn><m:mo>.</m:mo><m:mn>8</m:mn></m:mrow></m:math> dB<footnote id="uid7">For a 960-channel transmultiplexer this extra suppression goes up to 29.8 dB</footnote>. To meet this specification, the pulse response needs to suppress the other input channels by <m:math overflow="scroll"><m:mrow><m:mn>55</m:mn><m:mo>+</m:mo><m:mn>17</m:mn><m:mo>.</m:mo><m:mn>8</m:mn><m:mo>=</m:mo><m:mn>72</m:mn><m:mo>.</m:mo><m:mn>8</m:mn></m:mrow></m:math> dB, with the associated growth in <emphasis effect="italics">α</emphasis> from 2.42 to 2.88 and some additional design concern in hardware using finite word length arithmetic.</para>
+      <para id="id212145">Combining <link target-id="id211050"/>, <link target-id="id210755"/>, and <link target-id="id211962"/>, we find that <emphasis effect="italics">L</emphasis> is given by</para>
+      <equation id="id212159">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>L</m:mi>
+            <m:mspace width="4pt"/>
+            <m:mo>=</m:mo>
+            <m:mspace width="4pt"/>
+            <m:mi>N</m:mi>
+            <m:mi>α</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>C</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mfrac>
+              <m:mrow>
+                <m:mi>Δ</m:mi>
+                <m:mi>f</m:mi>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>δ</m:mi>
+                <m:mi>f</m:mi>
+              </m:mrow>
+            </m:mfrac>
+            <m:mspace width="4pt"/>
+            <m:mo>=</m:mo>
+            <m:mspace width="4pt"/>
+            <m:mi>N</m:mi>
+            <m:mi>α</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>C</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mfenced separators="" open="{" close="}">
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mrow>
+                  <m:mn>1</m:mn>
+                  <m:mo>-</m:mo>
+                  <m:mfrac>
+                    <m:mrow>
+                      <m:mi>Δ</m:mi>
+                      <m:mi>f</m:mi>
+                    </m:mrow>
+                    <m:mi>B</m:mi>
+                  </m:mfrac>
+                </m:mrow>
+              </m:mfrac>
+            </m:mfenced>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id212251">where <m:math overflow="scroll"><m:mrow><m:mi>α</m:mi><m:mo>(</m:mo><m:mi>C</m:mi><m:mo>)</m:mo></m:mrow></m:math> is given by</para>
+      <equation id="id212271">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>α</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>C</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mspace width="4pt"/>
+            <m:mo>=</m:mo>
+            <m:mspace width="4pt"/>
+            <m:mn>0</m:mn>
+            <m:mo>.</m:mo>
+            <m:mn>22</m:mn>
+            <m:mo>+</m:mo>
+            <m:mn>0</m:mn>
+            <m:mo>.</m:mo>
+            <m:mn>0366</m:mn>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>S</m:mi>
+              <m:mi>N</m:mi>
+              <m:msub>
+                <m:mi>R</m:mi>
+                <m:mi>r</m:mi>
+              </m:msub>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>+</m:mo>
+            <m:mn>0</m:mn>
+            <m:mo>.</m:mo>
+            <m:mn>366</m:mn>
+            <m:mspace width="4pt"/>
+            <m:msub>
+              <m:mtext>log</m:mtext>
+              <m:mn>10</m:mn>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>C</m:mi>
+              <m:mo>-</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id212362">and <m:math overflow="scroll"><m:mrow><m:mi>S</m:mi><m:mi>N</m:mi><m:msub><m:mi>R</m:mi><m:mi>r</m:mi></m:msub></m:mrow></m:math> is the required SNR performance in dB. Note that when <emphasis effect="italics">C</emphasis> is a large fraction of <emphasis effect="italics">N</emphasis>, which is usually the case, the pulse response duration <emphasis effect="italics">L</emphasis> actually grows faster than proportionally to the number of bins <emphasis effect="italics">N</emphasis>.</para>
+      <para id="id212422">A warning is in order here. While accurate in principle and generally accurate numerically, this section presents a simplified view of the filter optimization problem and the implications of each of the technical requirements. Each actual application requires a careful evaluation of the specifications appropriate to it and the impact to each of the transmultiplexer's design parameters. In addition, note that we used <link target-id="id211962"/> to reach some of these conclusions when, in fact, <link target-id="id211647"/> is really the right one to use. To illustrate how this might affect the resulting design, observe that <link target-id="id211962"/> implicitly assumes a pulse response of the type shown in <link target-id="uid2"/>, which suppresses all channels not of interest about equally. Consider then the frequency responses shown in <link target-id="uid8"/>. The first is a standard Parks-McClellan design in which the stopband ripple objective is the same over the whole stopband. The second two are alternative designs that use similar or less amounts of computation. The one shown in <link target-id="uid8"/>(b) slowly increases the stopband suppression with higher frequency, essentially removing those channels from the SNR calculation. Another scheme, shown in <link target-id="uid8"/>(c), obtains added suppression in the bands known to alias into the band of interest by releasing control in the bands that will not alias in. In passing, it should be noted that the Parks-McClellan software package can be modified to perform both of these filter designs. To summarize, the equations presented in this section serve as a good guide to the selection of the pulse response <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> and its duration <emphasis effect="italics">L</emphasis>, but skillful use of <link target-id="id211647"/> and the full design formulas for FIR linear phase filters can reduce <emphasis effect="italics">L</emphasis> and the implied required real-time computation level by 10 to 40%.</para>
+      <figure id="uid8"><media id="uid8_media" alt="This figure consist of three images arranged vertically. The top graph is labeled (a) An equal-ripple filter with uniform stopband specification and consist of horizontal line with the extremes labeled -f_s/2 on the left and +f_s/2 on the right. The middle is labeled 0. There are five right triangles are spaced at equal distances on this horizontal line. The middle triangle is centered on the zero point of the graph. Above the triangles is a waveform it is relatively straight but wavers.right after the wave passes the second triangle the wave slopes upward over the middle triangle and the goes back down and wavers over the right two triangles. The next graph is very similar to the previous graph and it is labeled (b) A filter using frequency tapering. The graph is exactly the same as the previous graph as the previous one, except for the that the waveform is a little different. The waveform exist in parallel with a straight line. The line and wave slope slightly positive and then arches over the middle triangle. Above the arch is the word Passband. The right side slopes downward and to the right. An arrow points to this sections and labels it Increased Attenuation with frequency. The third and final graph is labeled (c) A filter using extra rejection at bands known to alias and it is generally the same as the previous two graphs except that the waveform is different. The waveform starts at an elevated height drops down over the triangle and alternates like this over and between all of the triangles. This is the case with all triangles except the middle triangle. The waveform arches over the middle triangle. This arch is labeled Passband. the area of the waveform between the last two triangles is labeled Reduced Attenuation and the area over the last triangle is labeled Increased Attenuation.">
+          <image mime-type="image/png" src="../../media/fig27.png" id="uid8_onlineimage" width="700"><!-- NOTE: attribute width changes image size online (pixels). original width is 2489. --></image>
+          <image for="pdf" mime-type="application/postscript" src="../../media/fig27.eps" id="uid8_printimage"/>
+        </media>
+        
+      <caption>Filter Design Alternatives to Reduce the Required Filter Order</caption></figure>
+    </section>
+    <section id="cid5">
+      <title>Example of a Voice Channel Demultiplexer</title>
+      <para id="id212495">Several of the examples presented in <link document="m32668">The Impact of Digital Tuning on the Overall design of an FDM-TDM Transmux</link> concern the use of FDM-TDM transmultiplexers to demultiplex the voice channels found in an FDM telephone baseband. In this section, we examine briefly an example of the design of such a transmultiplexer. For the purpose of this example, we focus on the design of the pulse responses for the group transmultiplexer VLSI chip shown in <link document="m32668" target-id="uid18">Figure 6 from The Impact of Digital Tuning on the Overall design of an FDM-TDM Transmux</link>.</para>
+      <para id="id212502">Repeating from <link document="m32668">The Impact of Digital Tuning on the Overall design of an FDM-TDM Transmux</link>, the general design parameters for the group transmultiplexer are:
+<m:math overflow="scroll"><m:mrow><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mo>=</m:mo><m:mn>64</m:mn></m:mrow></m:math> kHz, <m:math overflow="scroll"><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>16</m:mn></m:mrow></m:math>, <m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi><m:mo>=</m:mo><m:mn>4</m:mn></m:mrow></m:math> kHz, <m:math overflow="scroll"><m:mrow><m:mi>C</m:mi><m:mo>=</m:mo><m:mn>12</m:mn></m:mrow></m:math>, and the 3-dB bandwidth <m:math overflow="scroll"><m:mrow><m:mi>B</m:mi><m:mo>=</m:mo><m:mn>3700</m:mn></m:mrow></m:math> Hz. We desire the passband to be as flat as possible, that the adjacent channel rejection meet or exceed 55 dB at 300 Hz into adjacent channels, and that the SNR and NPR meet or exceed 52 dB. We also strongly desire that <emphasis effect="italics">Q</emphasis> equal 16, since such a power-of-two value would simplify the design of the hardware.</para>
+      <para id="id212597">We do a first cut by evaluating <m:math overflow="scroll"><m:mrow><m:mi>δ</m:mi><m:mi>f</m:mi></m:mrow></m:math> to be 450 Hz, the difference between the edge of the equal-ripple passband and the point 300 Hz into the adjacent channel. Suppose that we optimistically assume that only 55 dB of suppression is needed in the stopband. Using these values, plus the fact that <m:math overflow="scroll"><m:mrow><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mo>=</m:mo><m:mn>64</m:mn></m:mrow></m:math> kHz, in <link target-id="id210680"/> yields <m:math overflow="scroll"><m:mrow><m:mi>L</m:mi><m:mo>=</m:mo><m:mn>318</m:mn></m:mrow></m:math>, which implies a value of <m:math overflow="scroll"><m:mrow><m:mi>Q</m:mi><m:mo>=</m:mo><m:mn>19</m:mn><m:mo>.</m:mo><m:mn>85</m:mn></m:mrow></m:math>. This is close to, but exceeds, a <emphasis effect="italics">nice</emphasis> power of two, that is, 16. By working the filter design problem carefully it is possible to design pulse responses that do meet the requirements. Two of these are shown in <link target-id="uid9"/>. One has a wide passband, at the expense of greater passband ripple, while the other trades bandwidth for ripple performance. The filter that was developed for this purpose used integral ROM to hold these pulse responses and allowed the user to control which is to be employed at a given time.</para>
+    </section>
+    <section id="cid6">
+      <title>Other Criteria for Filter Design</title>
+      <para id="id212686">The focus of this section has been on the design of the transmultiplexer pulse response when viewed as a single tuner. In fact, most are designed this way. There are other applications however, that require that other considerations enter the design process. An example is the interference canceller discussed in <link document="m32675" target-id="cid4">A Pair of Examples from An Introduction to the FDM-TDM Digital Transmultiplexer: Appendix C</link>. In this case, the filter pulse response is designed to bandlimit, as before, but in addition, constraints are introduced that have the effect of guaranteeing good broadband behavior as well.</para>
+      <figure id="uid9"><media id="uid9_media" alt=" This figure is comprised of two graphs of waves. The first graph is labeled (a) Narrower Passband with Lower Passband Ripple. The y axis is labeled dB and ranges from -100 to 20 while the x axis is labeled Frequency (kHz) ranging from -2 to 8. There are two wave initially. The upper one is generally steady. It slopes up to about y=0 initially and stays flat alot y=0 until (2,0) where it begins to slope downward. The wave levels out at about y=-60 and wavers while gently sloping downward and to the left. The second wave slopes drastically up to about y=-20 and oscillates until about (1.5,-20) where it slopes drastically down. The area of the graph between x=2 and x=6 is labeled with a curly brace as Channel 2, and the area of the graph between x=7 and x=8 is labled with a curly brace Channel 3. The second graph is labeled (b) Wider Passband with Greater Passband Ripple and this graph looks pretty much the same as the first.">
+          <image mime-type="image/png" src="../../media/fig28.png" id="uid9_onlineimage" width="500"><!-- NOTE: attribute width changes image size online (pixels). original width is 1678. --></image>
+          <image for="pdf" mime-type="application/postscript" src="../../media/fig28.eps" id="uid9_printimage"/>
+        </media>
+        
+      <caption>Frequency Response of FIR Filter Designed for a Voice Channel Transmultiplexer</caption></figure>
+    </section>
+  </content>
+  <bib:file>
+    <bib:entry id="bid1">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Rabiner, L.R. and Gold, B.</bib:author>
+        <bib:title>Theory and Application of Digital Signal Processing</bib:title>
+        <bib:publisher>Prentice-Hall</bib:publisher>
+        <bib:year>1975</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid0">
+      <bib:techreport>
+        <!--required fields-->
+        <bib:author>Treichler, J.R.</bib:author>
+        <bib:title>Notes on the design of Optimal FIR Filters</bib:title>
+        <bib:institution>Applied Signal Technology Technical Note TN-070-89</bib:institution>
+        <bib:year>1989</bib:year>
+        <!--optional fields-->
+        <bib:type>Technical report</bib:type>
+        <bib:number/>
+        <bib:address/>
+        <bib:month/>
+        <bib:note/>
+      </bib:techreport>
+    </bib:entry>
+  </bib:file>
+</document>

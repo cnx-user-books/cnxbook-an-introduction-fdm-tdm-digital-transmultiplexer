@@ -1,0 +1,852 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:bib="http://bibtexml.sf.net/">
+  <title>The Impact of Digital Tuning on the Overall design of an FDM-TDM Transmux</title>
+  <metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m32668</md:content-id>
+  <md:title>The Impact of Digital Tuning on the Overall design of an FDM-TDM Transmux</md:title>
+  <md:abstract/>
+  <md:uuid>c372127d-5a3a-4637-9993-8ad62dd0e4a2</md:uuid>
+</metadata>
+
+<content>
+    <section id="cid1">
+      <title>Problem Statement</title>
+      <para id="id141960">So far we have presumed that the FDM input signal to the transmux has been magically provided and that it has been sampled at the proper rate. In fact, the signal available to the processor might not be in the desired form and signal processing may be required to convert it appropriately. As we shall see, the computation required for this can be significant in itself. As a result, these signal conditioning steps must be taken into account in the optimal design of the whole system. In this section, we focus on the use of digital tuners for this signal conditioning and examine the tradeoffs between the parameters of a tuner and the transmultiplexer that follows it.</para>
+    </section>
+    <section id="cid2">
+      <title>Total Computational Requirements</title>
+      <para id="id141978">There are a few practical applications in which the input signal is complex-valued, sampled at the desired rate, and spectrally registered with the filters produced by the transmux-based filter bank. More typically, however, applications involve real-valued input signals, the signal is not aligned with the filters in the bank, or the signal of interest must be extracted from a wideband signal. It is common in these cases to use a digital tuner to select the portion of the spectral band in which the transmux will operate. This tuner will usually have a block diagram exactly like that seen in <link document="m32670" target-id="uid1">Figure 1 from "Derivation of the equations for a Basic FDM-TDM Transmux"</link>. The incoming sampled signal is quadrature downconverted, filtered using an FIR linear phase filter, and then decimated<footnote id="uid1">We assume one-step decimation in this analysis. An important exception to this approach is described in Section 5.4.3.</footnote>. The decimated tuner output is applied to the preprocessor portion of the transmultiplexer. For the analysis here we assume that the input is real-valued (from an A/D converter, for example), that the tuner input sampling rate is given by <m:math overflow="scroll"><m:msub><m:mi>f</m:mi><m:mrow><m:mi>i</m:mi><m:mi>n</m:mi></m:mrow></m:msub></m:math>, that the pulse response duration of the tuner's filter is given by <emphasis effect="italics">L<sub>t</sub></emphasis> and that its decimation factor is <emphasis effect="italics">M<sub>t</sub></emphasis>. The spectral band over which the tuner offers rated passband performance and adjacent signal rejection is denoted by <emphasis effect="italics">B<sub>t</sub></emphasis>. The combined block diagram of the tuner and FDM-TDM transmultiplexer is shown in <link target-id="Figure 17"/>, along with the key variables needed to determine the joint optimal design.</para>
+      <figure id="uid2"><media id="uid2_media" alt="Figure one is a flowchart. Beginning on the left, a caption reads Digital Input @f_in. An arrow points to the right from the caption at a circle containing a large x. A rectangle below, titled Digital Local Oscillator, contains an arrow that points upward at the circle. To the right of the circle is an arrow pointing right at a rectangle labeled Lowpass Filter/Resampler. Below this rectangle on the left is the caption {L_t}, and below to the right is the caption {M_t}. This half of the flowchart is labeled Digital Tuner. Above the center of the figure is the caption Intermediate Signal @f_s. To the right of the aforementioned rectangle is an arrow pointing to the right at another rectangle, labeled Polyphase Filters. Below this rectangle and to the left is the label {B_t}, and below the rectangle to the right is the label {Q}. This rectangle is followed by another arrow pointing to the right at another rectangle, labeled FFT. Below this rectangle is the label {N}. To the right of this rectangle is an arrow pointing to the right at the caption Channelized Output @f_out. Below the caption is the label {M}. The right side of this flowchart is labeled FDM-TDM Transmux.">
+          <image mime-type="image/png" src="../../media/fig17.png" id="uid2_onlineimage" width="500"><!-- NOTE: attribute width changes image size online (pixels). original width is 2721. --></image>
+          <image for="pdf" mime-type="application/postscript" src="../../media/fig17.eps" id="uid2_printimage"/>
+        </media>
+        
+      <caption>Key Variables in the Size Optimization of a Digital Tuner and Transmultiplexer</caption></figure>
+      <para id="id142071">We obtain an equation for the total number of multiply-adds required by adding the transmux expression found in <link document="m32670" target-id="id275928">Equation 18 from "Derivation of the equations for a Basic FDM-TDM Transmux"</link> with the computation requirements of the preceding tuner. This produces the following:</para>
+      <equation id="id142076">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>G</m:mi>
+              <m:mi> total </m:mi>
+            </m:msub>
+            <m:mspace width="4pt"/>
+            <m:mo>=</m:mo>
+            <m:mspace width="4pt"/>
+            <m:msub>
+              <m:mi>G</m:mi>
+              <m:mi> tuner </m:mi>
+            </m:msub>
+            <m:mspace width="4pt"/>
+            <m:mo>+</m:mo>
+            <m:mspace width="4pt"/>
+            <m:msub>
+              <m:mi>G</m:mi>
+              <m:mi> transmux </m:mi>
+            </m:msub>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <equation id="id142124"><m:math overflow="scroll" mode="display">
+<m:mo>=</m:mo>
+          <m:mrow>
+            <m:mn>2</m:mn>
+            <m:msub>
+              <m:mi>f</m:mi>
+<m:mrow>              
+<m:mi>i</m:mi>
+           
+            <m:mi>n</m:mi>
+</m:mrow>
+</m:msub>           
+ <m:mrow>
+              <m:mo>{</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>+</m:mo>
+              <m:mfrac>
+                <m:msub>
+                  <m:mi>L</m:mi>
+                  <m:mi>t</m:mi>
+                </m:msub>
+                <m:msub>
+                  <m:mi>M</m:mi>
+                  <m:mi>t</m:mi>
+                </m:msub>
+              </m:mfrac>
+              <m:mo>}</m:mo>
+            </m:mrow>
+            <m:mo>+</m:mo>
+            <m:mfrac>
+              <m:mrow>
+                <m:mn>2</m:mn>
+                <m:msub>
+                  <m:mi>f</m:mi>
+                  <m:mi>s</m:mi>
+                </m:msub>
+                <m:mi>N</m:mi>
+              </m:mrow>
+              <m:mi>M</m:mi>
+            </m:mfrac>
+            <m:mo>·</m:mo>
+            <m:mrow>
+              <m:mo>{</m:mo>
+              <m:mi>Q</m:mi>
+              <m:mo>+</m:mo>
+              <m:mi>l</m:mi>
+              <m:mi>o</m:mi>
+              <m:msub>
+                <m:mi>g</m:mi>
+                <m:mn>2</m:mn>
+              </m:msub>
+              <m:mi>N</m:mi>
+              <m:mo>}</m:mo>
+            </m:mrow>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id141441">By inspection we see that <m:math overflow="scroll"><m:mrow><m:mfrac><m:mrow><m:mi>f</m:mi><m:mi>i</m:mi><m:mi>n</m:mi></m:mrow><m:msub><m:mi>M</m:mi><m:mi>t</m:mi></m:msub></m:mfrac><m:mo>=</m:mo><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub></m:mrow></m:math> and that <m:math overflow="scroll"><m:mrow><m:msub><m:mi>f</m:mi><m:mi> out </m:mi></m:msub><m:mo>=</m:mo><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mi>M</m:mi></m:mfrac><m:mo>=</m:mo><m:mfrac><m:msub><m:mi>f</m:mi><m:mrow><m:mi>i</m:mi><m:mi>n</m:mi></m:mrow></m:msub><m:mrow><m:msub><m:mi>M</m:mi><m:mi>t</m:mi></m:msub><m:mi>M</m:mi></m:mrow></m:mfrac></m:mrow></m:math>.</para>
+      <para id="id142492">We observe that the bandwidth of the signal exiting the tuner, denoted <emphasis effect="italics">B<sub>t</sub></emphasis>, must be less than <emphasis effect="italics">f<sub>s</sub></emphasis>, the transmux input rate, in order to satisfy the Nyquist sampling theorem. Their ratio is a key element in the computational tradeoff between the tuner and the transmux. With <emphasis effect="italics">B<sub>t</sub></emphasis> fixed, an increase in <emphasis effect="italics">f<sub>s</sub></emphasis> increases the computation needed for the transmux while decreasing that needed for the tuner. We make this explicit by developing a formula for the tuner's pulse response duration <emphasis effect="italics">L<sub>t</sub></emphasis>. Again assuming one-step decimation and appealing to the design formulas discussed in <link target-id="bid0"/>, <emphasis effect="italics">L<sub>t</sub></emphasis> is closely approximated by</para>
+      <equation id="id142584">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>L</m:mi>
+              <m:mi>t</m:mi>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mrow>
+                <m:msub>
+                  <m:mi>α</m:mi>
+                  <m:mi>t</m:mi>
+                </m:msub>
+                <m:msub>
+                  <m:mi>f</m:mi>
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+                    <m:mi>n</m:mi>
+                  </m:mrow>
+                </m:msub>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>Δ</m:mi>
+                <m:msub>
+                  <m:mi>f</m:mi>
+                  <m:mi>t</m:mi>
+                </m:msub>
+              </m:mrow>
+            </m:mfrac>
+            <m:mo>,</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id142637">where <emphasis effect="italics">α<sub>t</sub></emphasis> is determined by the degree of stopband rejection desired<footnote id="uid3">Specifically, <m:math overflow="scroll"><m:mrow><m:msub><m:mi>a</m:mi><m:mi>t</m:mi></m:msub><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>22</m:mn><m:mo>+</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>0366</m:mn><m:mo>·</m:mo><m:mi>S</m:mi><m:mi>B</m:mi><m:mi>R</m:mi></m:mrow></m:math>, where <emphasis effect="italics">SBR</emphasis> is the minimum stopband rejection in decibels. A typical value for <emphasis effect="italics">SBR</emphasis> is 60 dB, yielding an <emphasis effect="italics">α<sub>t</sub></emphasis> of 2.42.</footnote> and <m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:msub><m:mi>f</m:mi><m:mi>t</m:mi></m:msub></m:mrow></m:math> is the tuner's transition band. In this case, the transition band can be no greater than the difference between <emphasis effect="italics">B<sub>t</sub></emphasis> and <emphasis effect="italics">f<sub>s</sub></emphasis>. If we assume the use of this limiting value, <emphasis effect="italics">L<sub>t</sub></emphasis> is given by</para>
+      <equation id="id142787"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>L</m:mi>
+              <m:mi>t</m:mi>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mrow>
+                <m:msub>
+                  <m:mi>α</m:mi>
+                  <m:mi>t</m:mi>
+                </m:msub>
+                <m:msub>
+                  <m:mi>f</m:mi>
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+                    <m:mi>n</m:mi>
+                  </m:mrow>
+                </m:msub>
+              </m:mrow>
+              <m:mrow>
+                <m:mfrac>
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>f</m:mi>
+<m:mrow>
+                      <m:mi>i</m:mi>
+                    <m:mi>n</m:mi>
+</m:mrow>
+</m:msub>        
+          </m:mrow>
+                  <m:msub>
+                    <m:mi>M</m:mi>
+                    <m:mi>t</m:mi>
+                  </m:msub>
+                </m:mfrac>
+                <m:mo>-</m:mo>
+                <m:msub>
+                  <m:mi>B</m:mi>
+                  <m:mi>t</m:mi>
+                </m:msub>
+              </m:mrow>
+            </m:mfrac>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id142860">Substituting this expression and expressing all sampling rates in terms of the input rate <m:math overflow="scroll"><m:msub><m:mi>f</m:mi><m:mrow><m:mi>i</m:mi><m:mi>n</m:mi></m:mrow></m:msub></m:math> produces an equation for the total number of multiply-adds required.</para>
+      <equation id="id142880">
+        <m:math overflow="scroll" mode="display">
+          <m:mtable>
+            <m:mtr>
+              <m:mtd columnalign="left">
+                <m:msub>
+                  <m:mi>G</m:mi>
+                  <m:mi> total </m:mi>
+                </m:msub>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mn>2</m:mn>
+                  <m:msub>
+                    <m:mi>f</m:mi>
+                    <m:mrow>
+                      <m:mi>i</m:mi>
+                      <m:mi>n</m:mi>
+                    </m:mrow>
+                  </m:msub>
+                  <m:mo>·</m:mo>
+                  <m:mrow>
+                    <m:mo>{</m:mo>
+                    <m:mn>1</m:mn>
+                    <m:mo>+</m:mo>
+                    <m:mfrac>
+                      <m:mrow>
+                        <m:msub>
+                          <m:mi>α</m:mi>
+                          <m:mi>t</m:mi>
+                        </m:msub>
+                        <m:msub>
+                          <m:mi>f</m:mi>
+                          <m:mrow>
+                            <m:mi>i</m:mi>
+                            <m:mi>n</m:mi>
+                          </m:mrow>
+                        </m:msub>
+                      </m:mrow>
+                      <m:mrow>
+                        <m:msub>
+                          <m:mi>f</m:mi>
+                          <m:mrow>
+                            <m:mi>i</m:mi>
+                            <m:mi>n</m:mi>
+                          </m:mrow>
+                        </m:msub>
+                        <m:mo>-</m:mo>
+                        <m:msub>
+                          <m:mi>M</m:mi>
+                          <m:mi>t</m:mi>
+                        </m:msub>
+                        <m:msub>
+                          <m:mi>B</m:mi>
+                          <m:mi>t</m:mi>
+                        </m:msub>
+                      </m:mrow>
+                    </m:mfrac>
+                    <m:mo>}</m:mo>
+                  </m:mrow>
+                  <m:mo>+</m:mo>
+                  <m:mfrac>
+                    <m:mrow>
+                      <m:mn>2</m:mn>
+                      <m:msub>
+                        <m:mi>f</m:mi>
+                        <m:mrow>
+                          <m:mi>i</m:mi>
+                          <m:mi>n</m:mi>
+                        </m:mrow>
+                      </m:msub>
+                      <m:mi>N</m:mi>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mi>M</m:mi>
+                      <m:msub>
+                        <m:mi>M</m:mi>
+                        <m:mi>t</m:mi>
+                      </m:msub>
+                    </m:mrow>
+                  </m:mfrac>
+                  <m:mrow>
+                    <m:mo>{</m:mo>
+                    <m:mi>Q</m:mi>
+                    <m:mo>+</m:mo>
+                    <m:msub>
+                      <m:mi> log </m:mi>
+                      <m:mn>2</m:mn>
+                    </m:msub>
+                    <m:mi>N</m:mi>
+                    <m:mo>}</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd columnalign="left">
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mn>2</m:mn>
+                  <m:msub>
+                    <m:mi>f</m:mi>
+                    <m:mrow>
+                      <m:mi>i</m:mi>
+                      <m:mi>n</m:mi>
+                    </m:mrow>
+                  </m:msub>
+                  <m:mo>·</m:mo>
+                  <m:mrow>
+                    <m:mo>{</m:mo>
+                    <m:mn>1</m:mn>
+                    <m:mo>+</m:mo>
+                    <m:mfrac>
+                      <m:msub>
+                        <m:mi>α</m:mi>
+                        <m:mi>t</m:mi>
+                      </m:msub>
+                      <m:mrow>
+                        <m:mn>1</m:mn>
+                        <m:mo>-</m:mo>
+                        <m:mo>(</m:mo>
+                        <m:mfrac>
+                          <m:mrow>
+                            <m:msub>
+                              <m:mi>M</m:mi>
+                              <m:mi>t</m:mi>
+                            </m:msub>
+                            <m:msub>
+                              <m:mi>B</m:mi>
+                              <m:mi>t</m:mi>
+                            </m:msub>
+                          </m:mrow>
+                          <m:msub>
+                            <m:mi>f</m:mi>
+                            <m:mrow>
+                              <m:mi>i</m:mi>
+                              <m:mi>n</m:mi>
+                            </m:mrow>
+                          </m:msub>
+                        </m:mfrac>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                    </m:mfrac>
+                    <m:mo>+</m:mo>
+                    <m:mfrac>
+                      <m:mi>N</m:mi>
+                      <m:mrow>
+                        <m:mi>M</m:mi>
+                        <m:msub>
+                          <m:mi>M</m:mi>
+                          <m:mi>t</m:mi>
+                        </m:msub>
+                      </m:mrow>
+                    </m:mfrac>
+                    <m:mrow>
+                      <m:mo>{</m:mo>
+                      <m:mi>Q</m:mi>
+                      <m:mo>+</m:mo>
+                      <m:mi>l</m:mi>
+                      <m:mi>o</m:mi>
+                      <m:msub>
+                        <m:mi>g</m:mi>
+                        <m:mn>2</m:mn>
+                      </m:msub>
+                      <m:mi>N</m:mi>
+                      <m:mo>}</m:mo>
+                    </m:mrow>
+                    <m:mo>}</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id143159">Another useful form of this equation makes the functional dependence on <emphasis effect="italics">f<sub>s</sub></emphasis> more explicit. We do this by using the expressions</para>
+      <equation id="id143177"><m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>N</m:mi>
+            <m:mo>≡</m:mo>
+            <m:mfrac>
+              <m:msub>
+                <m:mi>f</m:mi>
+                <m:mi>s</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mi>Δ</m:mi>
+                <m:mi>f</m:mi>
+              </m:mrow>
+            </m:mfrac>
+            <m:mo>,</m:mo>
+            <m:mspace width="4pt"/>
+            <m:msub>
+              <m:mi>M</m:mi>
+              <m:mi>t</m:mi>
+            </m:msub>
+            <m:mo>≡</m:mo>
+            <m:mfrac>
+              <m:msub>
+                <m:mi>f</m:mi>
+                <m:mrow>
+                  <m:mi>i</m:mi>
+                  <m:mi>n</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:msub>
+                <m:mi>f</m:mi>
+                <m:mi>s</m:mi>
+              </m:msub>
+            </m:mfrac>
+            <m:mo>,</m:mo>
+            <m:mspace width="4pt"/>
+            <m:mi> and </m:mi>
+            <m:mspace width="4pt"/>
+            <m:mi>K</m:mi>
+            <m:mo>≡</m:mo>
+            <m:mfrac>
+              <m:mrow>
+                <m:mi>N</m:mi>
+             
+              </m:mrow>
+              <m:mrow>
+                <m:mi>M</m:mi>
+              
+              </m:mrow>
+            </m:mfrac>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id143268">and the assumption that a radix-2 FFT is employed to compute the DFT. With these, the expression for the total number of multiply-adds can be written as</para>
+      <equation id="id143272">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>G</m:mi>
+              <m:mi> total </m:mi>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:mn>2</m:mn>
+            <m:msub>
+              <m:mi>f</m:mi>
+              <m:mrow>
+                <m:mi>i</m:mi>
+                <m:mi>n</m:mi>
+              </m:mrow>
+            </m:msub>
+            <m:mo>+</m:mo>
+            <m:mfrac>
+              <m:mrow>
+                <m:mn>2</m:mn>
+                <m:msub>
+                  <m:mi>α</m:mi>
+                  <m:mi>t</m:mi>
+                </m:msub>
+                <m:msub>
+                  <m:mi>f</m:mi>
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+                    <m:mi>n</m:mi>
+                  </m:mrow>
+                </m:msub>
+              </m:mrow>
+              <m:mrow>
+                <m:mn>1</m:mn>
+                <m:mo>-</m:mo>
+                <m:mfrac>
+                  <m:mrow>
+                    <m:mi>B</m:mi>
+                    <m:mi>t</m:mi>
+                  </m:mrow>
+                  <m:msub>
+                    <m:mi>f</m:mi>
+                    <m:mi>s</m:mi>
+                  </m:msub>
+                </m:mfrac>
+              </m:mrow>
+            </m:mfrac>
+            <m:mo>+</m:mo>
+            <m:mn>2</m:mn>
+            <m:msub>
+              <m:mi>f</m:mi>
+              <m:mi>s</m:mi>
+            </m:msub>
+            <m:mi>K</m:mi>
+            <m:mo>·</m:mo>
+            <m:mrow>
+              <m:mo>{</m:mo>
+              <m:mi>Q</m:mi>
+              <m:mo>+</m:mo>
+              <m:mi>l</m:mi>
+              <m:mi>o</m:mi>
+              <m:msub>
+                <m:mi>g</m:mi>
+                <m:mn>2</m:mn>
+              </m:msub>
+              <m:mfrac>
+                <m:msub>
+                  <m:mi>f</m:mi>
+                  <m:mi>s</m:mi>
+                </m:msub>
+                <m:mrow>
+                  <m:mi>Δ</m:mi>
+                  <m:mi>f</m:mi>
+                </m:mrow>
+              </m:mfrac>
+              <m:mo>}</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+      </equation>
+    </section>
+    <section id="cid3">
+      <title>Parameter Optimization</title>
+      <para id="id143411">Given expressions such as those shown in <link target-id="id142880"/> and <link target-id="id143272"/> it is possible to accurately estimate the total amount of multiply-add computation needed for a tuner/transmux processor. It is also possible to perform tradeoffs between the various parameters in order to optimize the resulting design. While this can in principle be done with any of the design parameters, we demonstrate in this section the computational implications of varying the parameter <emphasis effect="italics">f<sub>s</sub></emphasis>, the input sampling rate to the transmultiplexer. In practice, this usually turns out to be one of the designer's most important parameter choices.</para>
+      <para id="id143433"><link target-id="uid4"/> shows the computational requirements for a hypothetical transmultiplexer. In this case, the input sampling rate <m:math overflow="scroll"><m:msub><m:mi>f</m:mi><m:mrow><m:mi>i</m:mi><m:mi>n</m:mi></m:mrow></m:msub></m:math> is assumed to be 6.4 MHz. The tuner must select an FDM telephone supergroup from the input signal and demultiplex all 60 voice channels in the supergroup. The tuner's bandwidth <emphasis effect="italics">B<sub>t</sub></emphasis> must therefore be greater than or equal to 240 kHz and <emphasis effect="italics">f<sub>s</sub></emphasis> must exceed that. For the telephone demultiplexing application, the channel spacing <m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi></m:mrow></m:math> is usually 4 kHz and the <emphasis effect="italics">over-sampling factor</emphasis><emphasis effect="italics">K</emphasis> is typically chosen to be unity. <link target-id="uid4"/> shows five curves, one for each segment of the computation and one for the composite. The number of multiply-adds required by the input mixer is constant, since the input sampling rate <m:math overflow="scroll"><m:msub><m:mi>f</m:mi><m:mrow><m:mi>i</m:mi><m:mi>n</m:mi></m:mrow></m:msub></m:math> is fixed. The computation required by the tuner's filter falls as <emphasis effect="italics">f<sub>s</sub></emphasis> rises from 240 kHz and tends toward the input Nyquist frequency of 3.2 MHz. The cause of this can be ascertained by examining <link target-id="id142787"/>. As <emphasis effect="italics">f<sub>s</sub></emphasis> decreases toward <emphasis effect="italics">B<sub>t</sub></emphasis>, the transition band decreases, <emphasis effect="italics">L<sub>t</sub></emphasis> increases hyperbolically, and the amount of computation needed for the tuner's filter grows without bound.</para>
+      <figure id="uid4"><media id="uid4_media" alt="Figure two is a graph, with horizontal axis labeled Intermediate Sampling Rate f_s (in kHz), and vertical axis labeled Mega-multiples/Seconds. The horizontal axis ranges in value from 0 to 1000 in increments of 200, and the vertical axis ranges in value from 0 to 150 in increments of 50. There are six curves on this graph. Beginning from the origin are two lines with a constant, extremely shallow slope so that their endpoints are approximately (1000, 15) and (1000, 20) respectively. There is also a roughly horizontal line along the vertical value of approximately 12. The end points of these lines are labeled Weighting FFT Mixer There is a vertical line along a horizontal value of approximately 240, and its distance from the vertical axis is labeled Tuner Bandwidth (One Supergroup). A line begins at approximately (300, 160) with a strong negative slope, until approximately (400, 70) where the slope becomes much more shallow, and the curve continues to decrease at a much slower rate to a final point of (1000, 45), labeled Tuner. This includes a couple black dots along its path, at approximately (320, 110), (390, 75), (500, 55), (550, 52), (600, 50), and (1000, 45). A dashed curve begins slightly above the aformentioned curve, follows closely to its shape until the three dots that are closely-spaced together on the shallow part of the line. On the dashed curve, these three points are labeled, Most Efficient Choices. After these points, the curve begins to increase with a shallows slope to an end point at (1000, 80) labeled Total. There is a caption box with the following equations: f_s = 6.40 MHz, α = 2.5, B = 252 kHz, Q = 10, ∆f = 4 kHz.">
+          <image mime-type="image/png" src="../../media/fig18.png" id="uid4_onlineimage" width="500"><!-- NOTE: attribute width changes image size online (pixels). original width is 2847. --></image>
+          <image for="pdf" mime-type="application/postscript" src="../../media/fig18.eps" id="uid4_printimage"/>
+        </media>
+        
+      <caption>Tradeoff between the Design Parameter <emphasis effect="italics">f<sub>s</sub></emphasis> and Total Computation in a Hypothetical Supergroup Transmultiplexer</caption></figure>
+      <para id="id143606">The next two curves describe the effect of <emphasis effect="italics">f<sub>s</sub></emphasis> on the two components of the transmultiplexer. For a given value of <emphasis effect="italics">Q</emphasis>, the computation required by the preprocessor is strictly proportional to <emphasis effect="italics">f<sub>s</sub></emphasis>. The FFT's computation rises slightly faster than proportionally since the number of FFT bins grows as <emphasis effect="italics">f<sub>s</sub></emphasis> does. The sum of these constituent curves represents the total amount of multiply-add computation needed. Note that it has a broad minimum. It rises precipitously as <emphasis effect="italics">f<sub>s</sub></emphasis> decreases toward <emphasis effect="italics">B<sub>t</sub></emphasis> and more slowly as <emphasis effect="italics">f<sub>s</sub></emphasis> increases toward its other limit <m:math overflow="scroll"><m:mstyle scriptlevel="0" displaystyle="true"><m:mfrac><m:msub><m:mi>f</m:mi><m:mrow><m:mi>i</m:mi><m:mi>n</m:mi></m:mrow></m:msub><m:mn>2</m:mn></m:mfrac></m:mstyle></m:math>.</para>
+      <para id="id143727">The value of <emphasis effect="italics">f<sub>s</sub></emphasis> which leads to the minimum amount of computation is a complicated and nonlinear function of virtually all of the design parameters. While an exact closed form equation for this minimum point is not attainable, it is possible to develop a useful approximation. We now proceed to do that.</para>
+      <para id="id143746">We have made various assumptions about <emphasis effect="italics">f<sub>s</sub></emphasis> along the way, the most important being that it is an integer multiple (and usually a power-of-two multiple) of the filter bank's channel separation <m:math overflow="scroll"><m:mrow><m:mo>Δ</m:mo><m:mi>f</m:mi></m:mrow></m:math>. For this analysis, however, we temporarily release that constraint and treat it as a continuous variable. To find its optimal value we can then evaluate the first derivative of <emphasis effect="italics">G<sub>total</sub></emphasis> with respect to <emphasis effect="italics">f<sub>s</sub></emphasis> and then find the value of <emphasis effect="italics">f<sub>s</sub></emphasis> which makes the first derivative equal to zero. We first find that the derivative is given by</para>
+      <equation id="id143823">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mfrac>
+              <m:mrow>
+                <m:mi>d</m:mi>
+                <m:msub>
+                  <m:mi>G</m:mi>
+                  <m:mi> total </m:mi>
+                </m:msub>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>d</m:mi>
+                <m:msub>
+                  <m:mi>f</m:mi>
+                  <m:mi>s</m:mi>
+                </m:msub>
+              </m:mrow>
+            </m:mfrac>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mn>2</m:mn>
+                <m:msub>
+                  <m:mi>α</m:mi>
+                  <m:mi>t</m:mi>
+                </m:msub>
+                <m:msub>
+                  <m:mi>f</m:mi>
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+                    <m:mi>n</m:mi>
+                  </m:mrow>
+                </m:msub>
+                <m:mo>,</m:mo>
+                <m:msub>
+                  <m:mi>B</m:mi>
+                  <m:mi>t</m:mi>
+                </m:msub>
+              </m:mrow>
+              <m:msup>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:msub>
+                    <m:mi>f</m:mi>
+                    <m:mi>s</m:mi>
+                  </m:msub>
+                  <m:mo>-</m:mo>
+                  <m:msub>
+                    <m:mi>B</m:mi>
+                    <m:mi>t</m:mi>
+                  </m:msub>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mn>2</m:mn>
+              </m:msup>
+            </m:mfrac>
+            <m:mo>+</m:mo>
+            <m:mn>2</m:mn>
+            <m:mi>K</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>Q</m:mi>
+              <m:mo>+</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>+</m:mo>
+            <m:mn>2</m:mn>
+            <m:mi>K</m:mi>
+            <m:mo>·</m:mo>
+            <m:mi>l</m:mi>
+            <m:mi>o</m:mi>
+            <m:msub>
+              <m:mi>g</m:mi>
+              <m:mn>2</m:mn>
+            </m:msub>
+            <m:mfrac>
+              <m:msub>
+                <m:mi>f</m:mi>
+                <m:mi>s</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mi>Δ</m:mi>
+                <m:mi>f</m:mi>
+              </m:mrow>
+            </m:mfrac>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id143976">Setting the derivative to zero leads to an implicit, nonlinear expression. While it can be solved numerically, a practically valid assumption allows a closed form solution. We first define the variable <emphasis effect="italics">γ</emphasis>, given</para>
+      <equation id="id143989">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mi>γ</m:mi>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mrow>
+                <m:mi>K</m:mi>
+                <m:mo>{</m:mo>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>Q</m:mi>
+                  <m:mo>+</m:mo>
+                  <m:mn>1</m:mn>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>+</m:mo>
+                <m:mrow>
+                  <m:mo>{</m:mo>
+                  <m:mi>l</m:mi>
+                  <m:mi>o</m:mi>
+                  <m:msub>
+                    <m:mi>g</m:mi>
+                    <m:mn>2</m:mn>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>[</m:mo>
+                    <m:mfrac>
+                      <m:msub>
+                        <m:mi>f</m:mi>
+                        <m:mi>s</m:mi>
+                      </m:msub>
+                      <m:mrow>
+                        <m:mi>Δ</m:mi>
+                        <m:mi>f</m:mi>
+                      </m:mrow>
+                    </m:mfrac>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                  <m:mo>}</m:mo>
+                </m:mrow>
+                <m:mo>}</m:mo>
+              </m:mrow>
+              <m:msub>
+                <m:mi>α</m:mi>
+                <m:mi>t</m:mi>
+              </m:msub>
+            </m:mfrac>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id144072">With this definition we can write the equation determining the optimum point as</para>
+      <equation id="id144076">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:mfrac>
+              <m:mrow>
+                <m:msub>
+                  <m:mi>f</m:mi>
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+                    <m:mi>n</m:mi>
+                  </m:mrow>
+                </m:msub>
+                <m:msub>
+                  <m:mi>B</m:mi>
+                  <m:mi>t</m:mi>
+                </m:msub>
+              </m:mrow>
+              <m:msup>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:msub>
+                    <m:mi>f</m:mi>
+                    <m:mi>s</m:mi>
+                  </m:msub>
+                  <m:mo>-</m:mo>
+                  <m:msub>
+                    <m:mi>B</m:mi>
+                    <m:mi>t</m:mi>
+                  </m:msub>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mn>2</m:mn>
+              </m:msup>
+            </m:mfrac>
+            <m:mo>=</m:mo>
+            <m:mi>γ</m:mi>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id144141">For convenience, we also define the factor <emphasis effect="italics">ρ</emphasis>, a function of the tuner bandwidth reduction ratio, by <m:math overflow="scroll"><m:mrow><m:mi>ρ</m:mi><m:mo>=</m:mo><m:mfrac><m:msub><m:mi>f</m:mi><m:mrow><m:mi>i</m:mi><m:mi>n</m:mi></m:mrow></m:msub><m:msub><m:mi>B</m:mi><m:mi>t</m:mi></m:msub></m:mfrac></m:mrow></m:math>. Using this definition, <link target-id="id144076"/> can be compactly, but deceptively, written as</para>
+      <equation id="id144185">
+        <m:math overflow="scroll" mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msub>
+                  <m:mi>f</m:mi>
+                  <m:mi>s</m:mi>
+                </m:msub>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mi> optimum </m:mi>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:msub>
+              <m:mi>B</m:mi>
+              <m:mi>t</m:mi>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>+</m:mo>
+              <m:msqrt>
+                <m:mfrac>
+                  <m:mi>ρ</m:mi>
+                  <m:mi>γ</m:mi>
+                </m:mfrac>
+              </m:msqrt>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id144241">This expression is deceptive since it proves to be implicit. The term <emphasis effect="italics">γ</emphasis> depends on <emphasis effect="italics">f<sub>s</sub></emphasis>, keeping <link target-id="id144185"/> from being easily solved exactly. However, the equation proves to be useful anyway. Examination of the definition of <emphasis effect="italics">γ</emphasis> shows that it depends on the logarithm of <emphasis effect="italics">f<sub>s</sub></emphasis> and, in fact, is often quite insensitive to the actual choice of <emphasis effect="italics">f<sub>s</sub></emphasis>. Once a general range of <emphasis effect="italics">f<sub>s</sub></emphasis> has been determined, a nominal value of <emphasis effect="italics">γ</emphasis> can in turn be found and plugged into <link target-id="id144185"/> to find a value of <emphasis effect="italics">f<sub>s</sub></emphasis> very close to the unconstrained optimum.</para>
+      <para id="id144344">We can use the hypothetical supergroup tuner/transmux to demonstrate this procedure. Suppose we guess the optimum value of <emphasis effect="italics">f<sub>s</sub></emphasis> to be 480 kHz, twice the required tuner bandwidth <emphasis effect="italics">B<sub>t</sub></emphasis> of 240 kHz. Plugging this into the expression for <emphasis effect="italics">γ</emphasis> yields 10.4 and using that in <link target-id="id144185"/> indicates that the optimum value for <emphasis effect="italics">f<sub>s</sub></emphasis> should be about 625 kHz. <link target-id="uid4"/> shows the curve to be quite flat in the vicinity of the optimum point, allowing the actual value of <emphasis effect="italics">f<sub>s</sub></emphasis> to be chosen consistently with some of the constraints so far ignored in this analysis. In particular, we desire <emphasis effect="italics">f<sub>s</sub></emphasis> to be a power of two or four times the channel spacing of 4 kHz in this case. Thus a reasonable choice for <emphasis effect="italics">f<sub>s</sub></emphasis> in this case is 512 kHz.</para>
+      <para id="id144446">We can observe some general trends affecting the optimal choice of <emphasis effect="italics">f<sub>s</sub></emphasis>. It grows higher as the tuner input sampling rate <m:math overflow="scroll"><m:msub><m:mi>f</m:mi><m:mrow><m:mi>i</m:mi><m:mi>n</m:mi></m:mrow></m:msub></m:math> does, reflecting the associated growth in tuner computation. It tends to decrease with growth in <emphasis effect="italics">Q</emphasis>, <emphasis effect="italics">K</emphasis>, and <emphasis effect="italics">N</emphasis>, all of which imply more computation in the transmultiplexer. We note also that this formula depends strongly on the assumption of one-step decimation in the tuner. If a multistage tuner is used, the balance will be different. A rule of thumb can be developed by using <link target-id="id144185"/>. Over a broad range of practical examples,the optimal ratio between <emphasis effect="italics">f<sub>s</sub></emphasis> and <emphasis effect="italics">B<sub>t</sub></emphasis> attains values between 1.3 and 2.3 for one-stage decimation. When this ratio (that is, <m:math overflow="scroll"><m:mrow><m:mn>1</m:mn><m:mo>+</m:mo><m:msqrt><m:mfrac><m:mi>ρ</m:mi><m:mi>γ</m:mi></m:mfrac></m:msqrt></m:mrow></m:math>) exceeds 2.5 or so, the tuner computation overwhelms that of the transmux and alternative designs for the tuner should be examined. Multistage decimation is only one possible alternative. <link target-id="bid0"/></para>
+      <para id="id144565">One implication of <emphasis effect="italics">f<sub>s</sub></emphasis> being significantly larger than <emphasis effect="italics">B<sub>t</sub></emphasis> is that many of the channels or filters in the transmux-based filter bank are not useful. To visualize this, consider <link target-id="uid6"/>. <link target-id="uid6"/>(a) shows the power transfer function of the tuner filter before its output is decimated to the rate <emphasis effect="italics">f<sub>s</sub></emphasis>. The passband of the filter is <emphasis effect="italics">B<sub>t</sub></emphasis> Hz wide, the transition band on each side of the passband is <m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:msub><m:mi>f</m:mi><m:mi>t</m:mi></m:msub></m:mrow></m:math> Hz wide, and the stopband extends from <m:math overflow="scroll"><m:mstyle scriptlevel="0" displaystyle="true"><m:mrow><m:mfrac><m:msub><m:mi>B</m:mi><m:mi>t</m:mi></m:msub><m:mn>2</m:mn></m:mfrac><m:mo>+</m:mo><m:mi>Δ</m:mi><m:msub><m:mi>f</m:mi><m:mi>t</m:mi></m:msub></m:mrow></m:mstyle></m:math> Hz to the Nyquist folding frequency <m:math overflow="scroll"><m:mfrac><m:msub><m:mi>f</m:mi><m:mrow><m:mi>i</m:mi><m:mi>n</m:mi></m:mrow></m:msub><m:mn>2</m:mn></m:mfrac></m:math>. <link target-id="uid6"/>(b) shows the power transfer fumction of the decimated filter.
+In this case, we assume that the transition band <m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:msub><m:mi>f</m:mi><m:mi>t</m:mi></m:msub></m:mrow></m:math> is slightly less than <m:math overflow="scroll"><m:mrow><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mo>-</m:mo><m:msub><m:mi>B</m:mi><m:mi>t</m:mi></m:msub></m:mrow></m:math>. With this choice, some energy passed by the tuner through the transition bands folds back into the output, but none falls in the passband. <link target-id="uid6"/>(c) shows the channels of the transmux-based filter bank overlaying the tuner's power transfer function. The channels falling within the passband are clean, that is, the tuner's passband ripple and stopband rejection apply there, but the channels falling in the transition band are subject to several degradations (for example, gain slope and out-of-band signal aliasing) and are therefore not useful in most cases. Thus even though the transmultiplexer breaks the <emphasis effect="italics">f<sub>s</sub></emphasis> Hz band at the output of the tuner into <emphasis effect="italics">N</emphasis> channels, only C of them, where <m:math overflow="scroll"><m:mrow><m:mi>C</m:mi><m:mo>=</m:mo><m:mfrac><m:msub><m:mi>B</m:mi><m:mi>t</m:mi></m:msub><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi></m:mrow></m:mfrac><m:mo>=</m:mo><m:mfrac><m:mrow><m:mi>N</m:mi><m:mo>·</m:mo><m:msub><m:mi>B</m:mi><m:mi>t</m:mi></m:msub></m:mrow><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub></m:mfrac></m:mrow></m:math>, are typically used for downstream processing.</para>
+    </section>
+    <section id="cid4">
+      <title>Hardware Examples of Tuner/Transmux Tradeoffs</title>
+      <para id="id144838">This company has built a number of digital transmultiplexers for various applications and all of them employ some form of digital tuner. The next three sections present a few of these designs with the intent of demonstrating how the overall system design decisions were made.</para>
+      <section id="uid5">
+        <title>A Single-Card Supergroup Tuner/Transmux</title>
+        <para id="id144852">As a part of an IR&amp;D program, the company developed an FDM supergroup transmultiplexer during 1985. Its basic requirements were to accept an FDM supergroup (that is, 60 voice grade channels spaced at regular intervals of 4 kHz over a band of 240 kHz) located at any of several possible spectral bands. These bands include 2-242 kHz, 12-252 kHz, 60-300 kHz, 312-552 kHz, and 564-804 kHz. Another key goal was excellent technical performance. To achieve this, the transmultiplexer portion was designed to use 16-bit arithmetic and key design parameters of <m:math overflow="scroll"><m:mrow><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mo>=</m:mo><m:mn>4</m:mn></m:mrow></m:math> kHz, <m:math overflow="scroll"><m:mrow><m:mi>K</m:mi><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow></m:math>, and <m:math overflow="scroll"><m:mrow><m:mi>Q</m:mi><m:mo>=</m:mo><m:mn>16</m:mn></m:mrow></m:math>.</para>
+        
+        <para id="eip-654">Since a supergroup only occupies 240 kHz, a convenient choice of <emphasis effect="italics">f<sub>s</sub></emphasis> would be 256 kHz. This value exceeds 240 kHz and makes <emphasis effect="italics">N</emphasis> equal 64, an integer power of two and four. This value proves not to be globally optimum, however, as we will see after examining the tuner's requirements.</para><figure id="uid6"><media id="uid6_media" alt="Figure three contains three parts. Part as is a graph titled, Power Transfer Function of Undecimated Filter. It consists of a series of plotted waves on a horizontal axis that ranges in Frequency from -f_in/2 to f_in/2  The waves begin from left to right with two small waves that both begin and end on the horizontal axis. There is then a break in the graph, and a new wave begins a portion towards the right. The new wave follows the shape of the previous waves, but one quarter of the wave where it would have began on the horizontal axis looks like it has been erased. There are four small waves in this section, with an arrow above them labeled Power (dB). After the small waves is one large wave, approximately 5 times the amplitude and 8 times the wavelength of the smaller waves to its left and right. The large wave has a long, wide peak. The width of the increasing portion of the wave before it reaches its peak is labeled ∆f_t. The width of the peak is measured as B_t passband. The width of the decreasing portion of the wave is measured as ∆f_t. After the large wave are six more small waves, this time with amplitude measured as stopband. Part b is titled Power Transfer Function of Decimated Filter Output. It consists of a series of waves plotted along a horizontal frequency axis that ranges in value from  -f_in/2M_t=-f_2/2 to f_in/2M_t = f_2/2. In the middle of the graph are seven waves with small amplitude and uneven shape. An arrow points at these waves, labeling them Aliased Stopband Component. Above these waves is a larger wave similar to the large wave in part a, with a wide peak. The width of the peak is measured and labeled as Passband B_t. The figure is not drawn to be wide enough to fit the entire large wave, and so it is cut off at the edge points at some vertical value above the peaks of the smaller waves. From the edge of the waves, which do not reach the edge of the figure, there are dashed diagonal lines connected to the edge of the larger wave. Part c is titled Overlay of Filter Bank Channels onto the Transfer Function of the Decimated Filter Output. The shapes in this part look roughly similar to part b, except that the small waves have wide peaks and overlap, and they extend to the edge of the figure, with the excess waves beyond what existed previously now shaded grey. The small waves are labeled Channels Falling in the Tuner Passband. The grey shaded area is labeled Corrupted Filter Bank Channels, and the large wave is labeled Tuner Passband.">
+            <image mime-type="image/png" src="../../media/fig19.png" id="uid6_onlineimage" width="500"><!-- NOTE: attribute width changes image size online (pixels). original width is 2847. --></image>
+            <image for="pdf" mime-type="application/postscript" src="../../media/fig19.eps" id="uid6_printimage"/>
+          </media>
+          
+        <caption>The Impact of the Tuner's Transition Bandwidth on the Number of Useful Filterbank Outputs</caption></figure>
+        <para id="id145023">The highest input frequency of interest to the tuner is 804 kHz. The sampling rate must therefore exceed this value by two or more. The actual rate chosen was 2.048 kHz. This was based on several considerations:</para>
+        <list id="id145028" display="block" list-type="bulleted"><item id="uid7">It satisfies the Nyquist sampling theorem and includes some allowance for the imperfections of analog antialias filtering.
+</item>
+          <item id="uid8">It is a power-of-two integer multiple of <m:math overflow="scroll"><m:mrow><m:mo>Δ</m:mo><m:mi>f</m:mi><m:mo>=</m:mo><m:mn>4</m:mn></m:mrow></m:math> kHz.
+</item>
+          <item id="uid9">It was the highest sampling rate attainable with financially acceptable 12-bit A/D converters of the era. Twelve-bit digitization was desired to maximize the unit's noise power ratio (NPR) and dynamic range.
+</item>
+        </list>
+        <para id="id145096">By inspection it would appear that the proper value of <m:math overflow="scroll"><m:mrow><m:mi>l</m:mi><m:mi>o</m:mi><m:msub><m:mi>g</m:mi><m:mn>2</m:mn></m:msub><m:mrow><m:mo>(</m:mo><m:mfrac><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi></m:mrow></m:mfrac><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:mi>l</m:mi><m:mi>o</m:mi><m:msub><m:mi>g</m:mi><m:mn>2</m:mn></m:msub><m:mi>N</m:mi></m:mrow></m:math> is 8, 9, or 10. Assuming a nominal value of 9, we can use <link target-id="id144185"/> to accurately estimate the optimum value of <emphasis effect="italics">f<sub>s</sub></emphasis>. Performing this calculation yields 437 kHz. In the actual design, this value was rounded up to 512 kHz, the next-higher power-of-two integer multiple of 4 kHz. The choice of <m:math overflow="scroll"><m:mrow><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mo>=</m:mo><m:mn>512</m:mn></m:mrow></m:math> kHz in turn means that the tuner decimation <emphasis effect="italics">M<sub>t</sub></emphasis> must equal 4 and the tuner's pulse response duration <emphasis effect="italics">L<sub>t</sub></emphasis> must equal at least 20.</para>
+        <para id="id145221">The resulting tuner/transmultiplexer, shown in <link target-id="uid12"/> and described in <link target-id="bid1"/>, was built on a single circuit card. The 12-bit A/D module was mounted separately in the chassis. One multiplier chip operating at 4.096 megamultiplies/sec performed the tuner's quadrature downconversion. Two multiplier-accumulators (MACs) filtered and decimated the downconverted signal, preserving the center 248 kHz. Two more MACs perform the window-and-fold preprocessing for the transmultiplexer while a single MAC is used to compute the radix-2 FFT. Seven stages are used to compute the 128-point FFT and an additional one is used to perform sideband inversion on those voice channels designated by the user. This transmultiplexer also happens to use the so-called <emphasis effect="italics">offset-bin</emphasis> DFT instead of the usual DFT. The motivation for this and the method for implementing it are discussed in <link document="m32672" target-id="cid2">Offset Bin Operation from "An Introduction to the FDM-TDM Digital Transmultiplexer: Appendix B"</link>.</para>
+      </section>
+      <section id="uid10">
+        <title>Design of the FSK VFT Telegraphy Demodulator</title>
+        <para id="id145258">The section <link document="m32638">"Example: Using an FDM-TDM Transmux to Demodulate R.35 Telgraphy Signals"</link> discussed the use of an FDM-to-TDM transmultiplexer as an integral part of a demodulator capable of handling all 24 FSK signals present in an FDM voice frequency telegraphy (VFT) system. The analysis developed in that section showed that, in absence of other system-level factors, the best input sampling rate to the transmux-based filter bank was 3840 Hz, 64 times the 60 Hz fundamental tone spacing in the R.35 standard. In this section, we re-examine that choice in terms of the tuner required to provide the VFT signal to the transmultiplexer.</para>
+        <para id="id145266">To pass all 24 FSK components of an R.35 VFT signal, the tuner must have a passband <emphasis effect="italics">B<sub>t</sub></emphasis> of slightly more than 2880 Hz. The system must be able to accept real-valued digital samples from a commercial PCM link. These are provided at a rate of 8000 samples/sec<footnote id="uid11">This demodulator was also capable of digitizing real-valued analog inputs at a rate of 16 kHz.</footnote>. From the section <link document="m32638">"Example: Using an FDM-TDM Transmux to Demodulate R.35 Telegraphy Signals"</link> we recall that the other key parameters in the filter bank's design are: <m:math overflow="scroll"><m:mrow><m:mi>Q</m:mi><m:mo>=</m:mo><m:mn>3</m:mn></m:mrow></m:math>, <m:math overflow="scroll"><m:mrow><m:mi>M</m:mi><m:mo>=</m:mo><m:mn>12</m:mn></m:mrow></m:math> (assuming the input rate is 3840 Hz), <m:math overflow="scroll"><m:mstyle scriptlevel="0" displaystyle="true"><m:mrow><m:mi>K</m:mi><m:mo>=</m:mo><m:mfrac><m:mn>16</m:mn><m:mn>3</m:mn></m:mfrac></m:mrow></m:mstyle></m:math>, and <m:math overflow="scroll"><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>64</m:mn></m:mrow></m:math>. Using the values in <link target-id="id144185"/>, and assuming a nominal value of 2.5 for <emphasis effect="italics">α<sub>t</sub></emphasis>, yields 3920 Hz as the optimal value of <emphasis effect="italics">fs</emphasis>. This is very close to the best choice without taking the tuner into account. We therefore fix on 3840 Hz as the overall best choice.</para>
+        <figure id="uid12"><media id="uid12_media" alt="Figure four is a photograph of a supergroup tuner and transmultiplexer.">
+            <image mime-type="image/png" src="../../media/fig20.png" id="uid12_onlineimage" width="500"><!-- NOTE: attribute width changes image size online (pixels). original width is 2131. --></image>
+            <image for="pdf" mime-type="application/postscript" src="../../media/fig20.eps" id="uid12_printimage"/>
+          </media>
+          
+        <caption>Photograph of a Supergroup Tuner and Transmultiplexer <link target-id="bid1"/>, circa 1985- <m:math overflow="scroll"><m:mrow><m:mi>M</m:mi><m:mo>=</m:mo><m:mn>32</m:mn></m:mrow></m:math>, <m:math overflow="scroll"><m:mrow><m:mi>Q</m:mi><m:mo>=</m:mo><m:mn>16</m:mn></m:mrow></m:math>, <m:math overflow="scroll"><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>128</m:mn></m:mrow></m:math>, <m:math overflow="scroll"><m:mrow><m:mi>Δ</m:mi><m:mi>f</m:mi><m:mo>=</m:mo><m:mn>4</m:mn></m:mrow></m:math> kHz</caption></figure>
+        <para id="id145470">The next problem encountered, however, is that the choice of <m:math overflow="scroll"><m:msub><m:mi>f</m:mi><m:mrow><m:mi>i</m:mi><m:mi>n</m:mi></m:mrow></m:msub></m:math> as 8000 Hz and <emphasis effect="italics">f<sub>s</sub></emphasis> as 3840 Hz means that the tuner's decimation factor <emphasis effect="italics">M<sub>t</sub></emphasis> is not an integer. In particular, with these sampling rate choices, <emphasis effect="italics">M<sub>t</sub></emphasis> is given by <m:math overflow="scroll"><m:mstyle scriptlevel="0" displaystyle="true"><m:mfrac><m:mn>25</m:mn><m:mn>12</m:mn></m:mfrac></m:mstyle></m:math>. As a result, a simple one-step decimating tuner of the type shown in <link document="m32670" target-id="uid1">Figure 1 from "Derivation of the equations for a Basic FDM-TDM Transmux"</link> cannot be used directly.</para>
+        <para id="id145554">The solution to this problem comes with the use of digital interpolation and decimation techniques. These are described in <link target-id="bid0"/> and we refer to it here as digital resampling, the process of creating new digital samples at the desired rate from a sequence sampled at a different rate. The block diagram of this process is shown in the top portion of <link target-id="uid14"/>. The incoming real-valued signal is first quadrature downconverted to move the band of interest into the passband of the digital lowpass filter and to register the filter bank's filters with the mark and space frequencies of the VFT signal. Conceptually, the downconverted quadrature signal is then zero-filled<footnote id="uid13">The zero-filling factor is 6 for input signals sampled at 16 kHz.</footnote> by a factor of 12, lowpass filtered, and then decimated by a factor of 25. The zero-filling artificially increases the sampling rate to 96 kHz, creating 11 extra images of the input signal in the process. The lowpass filter removes these images and bandlimits the zero-filled signal to just the 2880 Hz band of interest. The decimation leads to an output rate of <m:math overflow="scroll"><m:mstyle scriptlevel="0" displaystyle="true"><m:mrow><m:mfrac><m:mn>96000</m:mn><m:mn>25</m:mn></m:mfrac><m:mo>=</m:mo><m:mn>3840</m:mn></m:mrow></m:mstyle></m:math> Hz, exactly the desired value. In fact, the signal is never physically zero-filled. Pointers in the hardware keep track of where the non-zero data points lie and use that information to avoid doing unnecessary multiplication.</para>
+        <para id="id145608">The bottom portion of <link target-id="uid14"/> shows a circuit card assembly built to perform the downconversion and resampling processes for 24 input voice channels. An multiplier chip was used for the downconversion of all 24 channels and a pair of MACs performs the filtering needed to resample all 24 inputs. Programmable ROMs were used to generate the sequencing signals needed for the resampler. The extra MAC and ALU visible on the card are used to spectrum-analyze all 24 input channels with 60 Hz resolution at about 40 times a second. This spectral data is D/A-converted and provided to an oscilloscope for use by the equipment's operator.</para>
+        <para id="id145617">Note that even though resampling is being performed, the equations used to choose the optimum value of <emphasis effect="italics">f<sub>s</sub></emphasis> are still valid. The fundamental reason for this is that the filter segment of the tuner is still of the FIR variety and that one-step decimation is still employed. As a result, the average computation for the tuner remains as predicted by <link target-id="id142880"/>.</para>
+        <para id="id145638">We might note in passing that the resampler used here is termed a <emphasis effect="italics">synchronous resampler</emphasis> since the ratio of the number of input samples to output samples is rigidly fixed. It is also possible to employ a so-called <emphasis effect="italics">asynchronous resampler</emphasis> to produce the desired samples. This is usually done when the input sampling rate varies slightly over time and it is desired to have the output rate locked to some frequency standard. The control of such resamplers is more complicated than the synchronous variety but the amount of computation needed for the downconversion and filtering is essentially the same.</para>
+        <figure id="uid14"><media id="uid14_media" alt="Figure five contains two parts. Part a, titled Block Diagram of a Synchronous Digital Resampler, is a flowchart. Beginning from the left, a caption reads x(k) @f_in 8 kHz. An arrow points to the right at a circle containing a large x. Below the circle is a box with the label, Digital Local Oscillator. An arrow from this box points up at the circle. Next to this arrow is the expression e^-jωkT. To the right of the circle is an arrow pointing to the right at another box, labeled Zero-fill by 12. To the right of this box is an arrow pointing to the right, and below this arrow is the expression 12⋅F_in = 96 kHz. The arrow points to the right at a box labeled FIR Digital Lowpass Filter. Another arrow pointing to the right follows, with the expression below, 12 ⋅ f_in = 96 kHz. The arrow points at a box labeled Decimate by 25. This is followed by a final arrow pointing to the right. Above the arrow is the expression z(r), and below the arrow is the expression f_out = f_in ⋅ 12/25 = 3840 Hz. Part b is a photograph of a tuner card with its width measured as the length of a ruler.">
+            <image mime-type="image/png" src="../../media/fig21.png" id="uid14_onlineimage" width="500"><!-- NOTE: attribute width changes image size online (pixels). original width is 2289. --></image>
+            <image for="pdf" mime-type="application/postscript" src="../../media/fig21.eps" id="uid14_printimage"/>
+          </media>
+          
+        <caption>The Use of a Resampling Tuner to Provide the Inputs to FSK VFT Demodulator "Filter Bank" Card</caption></figure>
+      </section>
+      <section id="uid15">
+        <title>ASIC-based Implementation of FDM Group Tuning and Transmultiplexing</title>
+        <para id="id145679">A number of apparently inoffensive assumptions were made in the development of the tradeoff formulas used in the previous examples. One was that one-step (also called <emphasis effect="italics">single stage</emphasis>) decimation is used in the tuner's filtering and the other is that the number of multiplications and additions forms good basis for comparing the complexity of various designs. This example demonstrates some counterexamples along the way to the description of a system that represents the current state of the art (circa 1990) in tuner and transmultiplexer design.</para>
+        <para id="id145692">Suppose that our goal is to accept a full 2700-channel FDM telephone baseband, select an FDM group with a tuner, and then demultiplex the constituent 12 voice grade channels with a transmultiplexer. In the now-familiar way, we develop the certain specifications for the transmultiplexer and tuner separately and then jointly optimize the shared parameters.</para>
+        <list id="id145698" display="block" list-type="bulleted">
+          <item id="uid16">Transmultiplexer: To achieve the desired channel shaping, we select <emphasis effect="italics">Q</emphasis> to be 16. To minimize the amount of computation, we set <emphasis effect="italics">K</emphasis> to unity. The window/tuner pulse response chosen provides an adjacent channel rejection of better than 55 dB and an NPR of about 55 dB.
+</item>
+          <item id="uid17">Tuner: A 2700-channel baseband extends up to 12388 kHz. Leaving a transition band for an analog antialias filter and looking for a power of two times 4 kHz leads to the selection of 32768 kHz as <m:math overflow="scroll"><m:msub><m:mi>f</m:mi><m:mrow><m:mi>i</m:mi><m:mi>n</m:mi></m:mrow></m:msub></m:math>, the baseband digitization rate. The tuner output bandwidth <emphasis effect="italics">B<sub>t</sub></emphasis> must be at least 48 kHz to pass an FDM group. Owing the high tuner decimation required, we assume that <emphasis effect="italics">α<sub>t</sub></emphasis> must be on the order of 3.
+</item>
+        </list>
+        <para id="id145796">We now turn to <link target-id="id144185"/> to determine the optimum value of <emphasis effect="italics">f<sub>s</sub></emphasis>, and with it, <m:math overflow="scroll"><m:mrow><m:msub><m:mi>M</m:mi><m:mi>t</m:mi></m:msub><m:mo>,</m:mo><m:mspace width="4pt"/><m:msub><m:mi>L</m:mi><m:mi>t</m:mi></m:msub></m:mrow></m:math>, and <emphasis effect="italics">N</emphasis>. Plugging in to this equation yields an optimal <emphasis effect="italics">f<sub>s</sub></emphasis> of about 490 kHz, more than ten times greater than the FDM group's bandwidth. In analyzing this result, we find that the amount of computation needed by a single-step FIR decimating tuner is so high that it dominates that needed by the transmultiplexer. Clearly another approach is needed.</para>
+        <para id="id145867">In response to this problem, the company developed a pair of custom application-specific ICs (ASICs) for selecting FDM groups from digitized basebands and another chip for transmultiplexing four FDM groups. The block diagram is essentially the same as that shown in <link target-id="m32670" document="uid1">Figure 1 from "Derivation of the equations for a Basic FDM-TDM Transmux"</link> except that a multistage decimating filter is used. In all, nine filter stages are employed. Each bandlimits the incoming signal sufficiently that a decimation by two is possible. The first few stages, the ones that must operate at very high rates, use pulse responses so simple (for example, <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mo>[</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mn>2</m:mn><m:mo>,</m:mo><m:mn>1</m:mn><m:mo>]</m:mo></m:mrow></m:math>) that only shifting and addition are needed. The effect of nine divisions by 2 is the reduction of the sampling rate <emphasis effect="italics">f<sub>s</sub></emphasis> to 64 kHz. The 48-kHz-wide FDM group is thus represented at the output of the tuner chips as complex-valued samples at a rate of 64 kHz.</para>
+        <para id="id145926">The transmultiplexer ASIC accepted four FDM groups, each quadrature-sampled at 64 kHz, and demultiplexes all 48 voice grade channels. A block diagram of a single path through the device is shown in <link target-id="uid18"/>. The window-and-fold circuit was implemented by using onboard weighting coefficients and serial multipliers. The partial sums were stored in off-chip RAM. The output of the window-and-fold circuit was then transformed using a 16-point DFT. The complex-valued bin outputs, produced at a 4 kHz rate, were sent out over a serial interface.</para>
+        <figure id="uid18"><media id="uid18_media" alt="Figure six is a complex flow chart. Two rows begin the flow, the top labeled I and the bottom labeled Q. A line extends to the right with a hash mark in the middle numbered as 1. The line extends to two rectangles, both labeled NIBEXT. An arrow on the right side of these rectangles points to the left. Above the middle of these arrows is a single rectangle, labeled Ext RAM 8k x 8, and two arrows that point in both directions extend down to the two lines below. In the middle of these two arrows are hash marks that are numbered with a 4. To the right of the arrows that point to the left are two rectangles labeled Word EXT. After this point, to the right, is a large dashed box labeled WF that encapsulates the next handful of objects. Lines extend to the right from the Word EXT boxes, with hash marks numbered as 16. These lines connect to two circles containing a large x. A multi-directional arrow connects these two circles together, and from the middle of this arrow extends a line downward. This line includes a hash mark numbered 16, and it connects to a box below containing the label WF Coef ROM. Below this rectangle is the caption 512 x 16. To the right of the x-circles is a line containing hash marks numbered as 32. These lines connect to two more circles containing a large plus sign. A line from the right side of these circles extends horizontally, and contains the hash mark numbered 16. In the middle of these lines are an arrow that points upward, to the right, and back down to the top of the circles with plus signs. This is the end of the WF section. The lines with the hash marks numbered 16 extend to the right and connect to a single large rectangle, labeled Dual Port 32 x 32. To the right of the large rectangle are two lines that include hash marks numbered 16. Across these lines is a second large dashed rectangular box, titled DFT, that encapsulates the next handful of objects. Out of the two 16-hash marks, the hash mark  on the top line occurs before the line enters the DFT box, and the bottom occurs inside the DFT box. These lines connect to two more circles that contain a large x, aligned with those below them from top to bottom. Along these lines before the circles, there are extension lines above and below to various other segments of the graph. First, two arrows from the middle of these lines point upward, then to the right, at two more circles containing a large x. Below the lines, towards the bottom of this portion of the figure in the DFT box are two boxes labeled Cos ROM, 16 x 16, and Sine ROM, 16 x 16. From the Cos box, a line extends upward to the upper-most x-circle, and a line extends to the lowest x-circle. From the Sine box, a line extends up to a set of arrows that connect the two middle x-circles, one from the original group, and one from the group situated above. The upper circles both point at a single circle to the right containing a - sign. This is connected with a short line to another circle, containing a + sign. A line extends to the right after this circle, and points outside the DFT box to a rectangle. The rectangle contains a P, a short arrow pointing to the right, and an S. On the line in between the circle with the plus sign and the rectangle, there is a line segment that points up, to the left, and back down to the top of the circle. This line contains a hash mark numbered 32. To the right of the rectangle on the rightmost part of the flow chart is a final arrow pointing at a label I. The arrow contains a hash mark numbered with a 1. The lower x-circles follow a similar flow, except the + sign circle precedes the - sign circle. The P S rectangle is the same, but the arrow pointing to the right points at the caption Q. Also, an arrow from the line in between the circles and the P S rectangle  extends downward and to the right at a final rectangle, labeled Power Meas, which continues with an arrow to the right that points at the caption P.">
+            <image mime-type="image/png" src="../../media/fig22.png" id="uid18_onlineimage" width="500"><!-- NOTE: attribute width changes image size online (pixels). original width is 3157. --></image>
+            <image for="pdf" mime-type="application/postscript" src="../../media/fig22.eps" id="uid18_printimage"/>
+          </media>
+          
+        <caption>Block Diagram of a Quad Group Transmux ASIC</caption></figure>
+        <para id="id145945">Several of the design choices made with these chips are different that those seen earlier in the technical note. The first, seen in the tuner chips, is the use of multistage decimation. As <link target-id="bid0"/> shows, this can almost always reduce the total amount of multiply-add computation needed for the tuner, at a certain cost in design simplicity. The other issue, evident in the design of both the tuner and the transmultiplexer, is that memory and control are at least as costly commodities in an ASIC design as are multiplications and additions. A vivid example is that the transmux ASIC used direct computation of the DFT rather than using an FFT. Even though the amount of multiplication is on the order of four times as much using the DFT, the overall DFT design used less silicon than the equivalent FFT.</para>
+      </section>
+    </section>
+  </content>
+  <bib:file>
+    <bib:entry id="bid0">
+      <bib:book>
+        <!--required fields-->
+        <bib:author>Crochiere, R.E. and Rabiner, L.R.</bib:author>
+        <bib:title>Multirate Digital Signal Processing</bib:title>
+        <bib:publisher>Prentice-Hall</bib:publisher>
+        <bib:year>1983</bib:year>
+        <!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address/>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+    <bib:entry id="bid1">
+      <bib:techreport>
+        <!--required fields-->
+        <bib:author>Wolff, Vin G.</bib:author>
+        <bib:title>Design of a Supergroup Dechannelizer</bib:title>
+        <bib:institution>Applied Signal Technology Final Report FR-008-86</bib:institution>
+        <bib:year>1986</bib:year>
+        <!--optional fields-->
+        <bib:type>Technical report</bib:type>
+        <bib:number/>
+        <bib:address/>
+        <bib:month/>
+        <bib:note/>
+      </bib:techreport>
+    </bib:entry>
+  </bib:file>
+</document>

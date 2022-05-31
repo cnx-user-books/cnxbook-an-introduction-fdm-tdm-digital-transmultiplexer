@@ -1,0 +1,37 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Conclusion</title>
+  <metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m32642</md:content-id>
+  <md:title>Conclusion</md:title>
+  <md:abstract/>
+  <md:uuid>93541d9a-e625-4b08-a1b3-c04c0af8e473</md:uuid>
+</metadata>
+
+<content>
+    <para id="id68186">The FDM-TDM digital transmultiplexer has become an important building block in a variety of signal processors. The main goal of this technical note is to explain how the equations for it are derived and to provide some information about how its parameters are chosen in practical application.</para>
+    <para id="id68192">In addition to fulfilling this role, additional information has been included about the design tradeoffs that must occur between the transmultiplexer and the processing steps preceding and succeeding it. In particular, we focused on the computational tradeoffs between the transmultiplexer and the digital tuner which frequently precedes it.</para>
+    <para id="id68198">Several appendices are attached that describe variations of the basic FDM-TDM transmux, such as the offset-bin transmux, and related design issues, such as some of the considerations involved in the design of the weighting function <m:math overflow="scroll"><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>.</para>
+    <para id="id68223">A final warning is in order. This technical note focuses on a fairly narrow topic, that is, radix-2 and radix-4 FFT-based, single-stage, FIR FDM-TDM transmultiplexers. While this subclass of transmultiplexers is widely used, it is by no means the only one. The referenced paper by Schuermann and Göckler <link target-id="bid0"/> presents a broad overview of FDM-TDM and TDM- FDM transmultiplexers and should be consulted by the serious engineer or student.</para>
+  </content>
+  <bib:file>
+    <bib:entry id="bid0">
+      <bib:inproceedings>
+        <!--required fields-->
+        <bib:author>Schuermann, H. and Göckler, H.</bib:author>
+        <bib:title>A Comprehensive Survey of Digital Transmultiplexing Methods</bib:title>
+        <bib:booktitle>Proc. IEEE</bib:booktitle>
+        <bib:year>1981</bib:year>
+        <!--optional fields-->
+        <bib:editor/>
+        <bib:volume>69</bib:volume>
+        <bib:series/>
+        <bib:pages/>
+        <bib:address/>
+        <bib:month/>
+        <bib:organization/>
+        <bib:publisher/>
+        <bib:note/>
+      </bib:inproceedings>
+    </bib:entry>
+  </bib:file>
+</document>

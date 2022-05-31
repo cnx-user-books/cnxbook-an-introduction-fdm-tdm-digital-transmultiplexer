@@ -1,0 +1,19 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Introduction</title>
+  <metadata xmlns:md="http://cnx.rice.edu/mdml">
+  <md:content-id>m31543</md:content-id>
+  <md:title>Introduction</md:title>
+  <md:abstract/>
+  <md:uuid>2e7699e6-50e0-4156-87c5-e58dccb666f6</md:uuid>
+</metadata>
+
+<content>
+    <para id="id184274">This technical note describes the FDM-TDM transmultiplexer, a class of digital signal processing algorithms used to construct a bank of digital filters. Such a filter bank can be used to separate the spectrally disjoint portions of an input signal. The need for such a filter bank arises frequently in practical applications and the growing capability of digital signal processing (DSP) devices makes the digital transmux approach ever more attractive compared to`alternate system designs. </para>
+    <para id="eip-214">This technical note begins by motivating the use of a digital filter bank for signal selection and processing applications. <link document="m32670">The section "Derivation of the equations for a Basic FDM-TDM Transmux"</link> describes in analytical detail two classic, but distinct, ways of deriving the equations for an FDM-TDM transmultiplexer. Use of the resulting design equations is illustrated in <link document="m32638">the section "Example: Using an FDM-TDM Transmux to Demodulate R.35 Telegraphy Signals "</link>. There it is explained how the algorithms are used to form the basis for a very efficient demodulator for frequency-shift-keyed (FSK) voice frequency telegraphy (VFT) signals.</para><para id="id184285">The transmultiplexer rarely appears alone in signal sorting and processing applications and therefore it must be designed in coordination with other parts of the system. An important example of this is digital tuning of the input signal, an operation that frequently precedes the transmultiplexing operation. <link document="m32668">The section "The Impact of Digital Tuning on the Overall design of an FDM-TDM Transmux"</link> examines the design interactions between these two functions and describes several examples of how these tradeoffs have been made in actual equipment.</para>
+    <para id="id184292">Appendices are included that provide additional analytical details and a discussion of the issues associated with designing filter pulse responses for transmultiplexers.</para>
+
+<note id="eip-117">This document was originally written in 1989, a time when advancing semiconductor technology was first making it economically practical to use digital signal processing (DSP) concepts to build useful products. Because it was written so long ago, the reader will find the technology used in the examples to be overtaken by modern DSP products and devices. That noted, the mathematics captured here and the systems engineering trade-offs presented are still accurate and relevant for modern applications and implementations.</note>
+    
+  </content>
+  <bib:file/>
+</document>
